@@ -1,0 +1,20 @@
+#ifndef __VALUES_SYMBOL_H
+#define __VALUES_SYMBOL_H
+#include <string>
+#include "Values/Values"
+
+namespace Values {
+
+struct Symbol : Node {
+private:
+	std::string text;
+	friend const char* getSymbol1Name(NodeT node);
+public:
+	Symbol(const char* text) {
+		this->text = text;
+	}
+	virtual void str(FILE* destination) const;
+};
+
+}
+#endif /* ndef __VALUES_SYMBOL_H */

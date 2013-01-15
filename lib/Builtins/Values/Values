@@ -1,0 +1,84 @@
+#ifndef __VALUES_H
+#define __VALUES_H
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <map>
+namespace Values {
+
+/* it doesn't matter to me what exactly Node is, I'm just using struct here so it shuts up */
+struct Node {
+	virtual ~Node(void);
+	virtual void str(FILE* destination) const;
+};
+/* this is used as the "result" of the parser (one of it is the result) */
+typedef const struct Node* NodeT;
+/* given a string, returns a node that can be quickly checked for identicalness */
+NodeT symbolFromStr(const char* name);
+
+/* given two nodes, constructs a "Cons" with a head and tail and return it */
+NodeT cons(NodeT head, NodeT tail);
+
+/* given a std::string, somehow puts it into something resembling a NodeT */
+NodeT strCXX(const std::string& value);
+
+/* given a string, returns a node that can be quickly checked for identicalness (and is not a symbol). */
+NodeT keywordFromStr(const char* name);
+
+/* given a formal parameter and a body, returns a node that represents a function with that formal parameter and body */
+NodeT fn(NodeT formalParameter, NodeT body);
+
+/* given a callable and argument, returns a node that represents a Call */
+NodeT call(NodeT callable, NodeT argument);
+
+/* given a symbol, returns its text. If not a symbol, returns NULL */
+const char* getSymbol1Name(NodeT node);
+
+/* given a keyword, returns its text. If not a keyword, returns NULL */
+const char* getKeyword1Name(NodeT node);
+
+/* given a Cons, returns its head */
+NodeT getConsHead(NodeT);
+
+/* given a Cons, returns its tail. Tail is USUALLY nil or a(nother) Cons */
+NodeT getConsTail(NodeT);
+
+/* given a Call, returns its callable. */
+NodeT getCallCallable(NodeT);
+
+/* given a Call, returns its argument. */
+NodeT getCallArgument(NodeT);
+
+/* given a Fn, returns its formal parameter. */
+NodeT getFnParameter(NodeT);
+
+/* given a Fn, returns its body. */
+NodeT getFnBody(NodeT);
+
+/* finds out whether node is a Symbol */
+bool symbolP(NodeT node);
+
+/* finds out whether node is a Keyword */
+bool keywordP(NodeT node);
+
+bool fnP(NodeT);
+bool callP(NodeT);
+bool consP(NodeT);
+bool nilP(NodeT);
+NodeT operation(NodeT callable, NodeT argument1, NodeT argument2);
+/*extern NodeT nil;*/
+#define nil NULL
+
+void str(NodeT, FILE*);
+
+/* semi-private */
+enum {
+	TAG_SYMBOL,
+	TAG_KEYWORD,
+	TAG_OPAQUE,
+};
+int tagFromNode(NodeT node);
+typedef std::map<std::string, NodeT> Hashtable;
+
+}
+#endif /* ndef __VALUES_H */

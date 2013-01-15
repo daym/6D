@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for s in test/*.5D
+do
+	er="${s%.5D}.expectedResult"
+	gr="${s%.5D}.gotResult" 
+	testShuntingYard/Debug/testShuntingYard "${s}" >"${gr}"
+	diff -upr "${gr}" "${er}"
+done

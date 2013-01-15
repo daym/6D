@@ -1,0 +1,9 @@
+#ifndef __FORMATTERS_TEXPRESSION_H
+#define __FORMATTERS_TEXPRESSION_H
+namespace Formatters {
+namespace TExpression {
+void print(FILE* destination, Values::NodeT node);
+}
+}
+#endif /* ndef __FORMATTERS_TEXPRESSION_H */
+
