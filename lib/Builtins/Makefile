@@ -1,9 +1,25 @@
 
+BUILTINS_LIB = lib6dbuiltins.so.1
+BUILTINS_HEADERS = include/5D/Allocators lib/Builtins/include/5D/Evaluators lib/Builtins/include/5D/FFIs lib/Builtins/include/5D/ModuleSystem lib/Builtins/include/5D/Operations lib/Builtins/include/5D/Values lib/Builtins/include/5D/ModuleSystem
+
 LIBGC_LD_WRAP_CFLAGS = -D_REENTRANT -DGC_THREADS -DUSE_LD_WRAP
-CXXFLAGS += -O1 -g3 -Wall -I. -fno-strict-overflow -Wno-deprecated -Wno-div-by-zero `pkg-config --cflags glib-2.0 gthread-2.0 libxml-2.0 libffi` $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include
-OBJECTS = Formatters/Math.o Formatters/SExpression.o Formatters/TExpression.o Scanners/Lang5D.o Scanners/Scanner.o Scanners/ShuntingYardParser.o Values/Values.o Values/Keyword.o Values/Symbol.o Allocators/Allocators.o
+#LIBGC_LD_WRAP_LDFLAGS = -Wl,--wrap -Wl,read -Wl,--wrap -Wl,dlopen -Wl,--wrap -Wl,pthread_create -Wl,--wrap -Wl,pthread_join -Wl,--wrap -Wl,pthread_detach -Wl,--wrap -Wl,pthread_sigmask -Wl,--wrap -Wl,sleep
+CXXFLAGS += -fPIC -O1 -g3 -Wall -I. -fno-strict-overflow -Wno-deprecated -Wno-div-by-zero `pkg-config --cflags glib-2.0 gthread-2.0 libxml-2.0 libffi` $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include
+LDFLAGS += -ldl -lgc -lpthread `pkg-config --libs glib-2.0 gthread-2.0 libxml-2.0 libffi` $(LIBGC_LD_WRAP_LDFLAGS)
+OBJECTS = Formatters/Math.o \
+Formatters/SExpression.o \
+Formatters/TExpression.o \
+Scanners/Lang5D.o \
+Scanners/Scanner.o \
+Scanners/ShuntingYardParser.o \
+Values/Values.o \
+Values/Keyword.o \
+Values/Symbol.o \
+Allocators/Allocators.o
+LIB = lib6dbuiltins.so.1
+STATIC_LIB = lib6dbuiltins1.a  
+
 .SUFFIXES:            # Delete the default suffixes
-%.o: %.cc
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 all: Tests/01_ShuntingYard/testShuntingYard
@@ -25,3 +41,5 @@ test: Tests/01_ShuntingYard/testShuntingYard
 
 clean:
 	rm -f $(OBJECTS)
+distclean: clean
+	rm -f $(LIB) $(STATIC_LIB)
