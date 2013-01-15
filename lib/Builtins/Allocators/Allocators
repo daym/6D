@@ -1,3 +1,2 @@
-#include <string.h>
-#define GCx_strdup strdup
+#include "6D/Allocators"
 
