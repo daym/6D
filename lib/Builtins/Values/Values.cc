@@ -152,7 +152,34 @@ void Str::str(FILE* destination) const {
 	for(size_t sz = size; sz > 0; --sz, ++s) {
 		char c = *s;
 		if(c < 32) {
-			fprintf(destination, "\\x%02X", c);
+			switch(c) {
+			case '\n':
+				fprintf(destination, "\\n");
+				break;
+			case '\r':
+				fprintf(destination, "\\r");
+				break;
+			case '\b':
+				fprintf(destination, "\\b");
+				break;
+			case '\t':
+				fprintf(destination, "\\t");
+				break;
+			case '\f':
+				fprintf(destination, "\\f");
+				break;
+			case '\a':
+				fprintf(destination, "\\a");
+				break;
+			case '\v':
+				fprintf(destination, "\\v");
+				break;
+			default:
+				fprintf(destination, "\\x%02X", c);
+			}
+		} else if(c == '\\' || c == '"' /*|| c == '\''*/) {
+			fputc('\\', destination);
+			fputc(c, destination);
 		} else
 			fputc(c, destination);
 	}
