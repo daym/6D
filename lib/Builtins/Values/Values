@@ -23,7 +23,7 @@ enum {
 	TAG_OPAQUE,
 };
 int tagFromNode(NodeT node);
-typedef std::map<std::string, NodeT> Hashtable;
+//typedef std::map<std::string, NodeT> Hashtable;
 
 }
 #endif /* ndef __VALUES_H */

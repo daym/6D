@@ -156,5 +156,8 @@ void Str::str(FILE* destination) const {
 	}
 	fputc('"', destination);
 }
+NodeT pair(NodeT a, NodeT b) {
+	return cons(a, b);
+}
 
 };

@@ -1,6 +1,7 @@
 #include <map>
 #include "Values/Values"
 #include "Values/Keyword"
+#include "Values/Hashtable"
 
 namespace Values {
 

@@ -71,6 +71,7 @@ NodeT operation(NodeT callable, NodeT argument1, NodeT argument2);
 
 void str(NodeT, FILE*);
 
+NodeT pair(NodeT a, NodeT b);
 
 }
 #endif /* ndef __6D_VALUES_H */

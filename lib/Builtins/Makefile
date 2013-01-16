@@ -15,7 +15,8 @@ Values/Values.o \
 Values/Keyword.o \
 Values/Symbol.o \
 Allocators/Allocators.o \
-Values/wstrings.o
+Values/wstrings.o \
+Values/Hashtable.o
 LIB = lib6dbuiltins.so.1
 STATIC_LIB = lib6dbuiltins1.a  
 
@@ -36,8 +37,8 @@ Scanners/Lang5D.o: Scanners/Lang5D.cc Scanners/Scanner Scanners/ShuntingYardPars
 Scanners/Scanner.o: Scanners/Scanner.cc Scanners/Scanner 
 Scanners/ShuntingYardParser.o: Scanners/ShuntingYardParser.cc Scanners/ShuntingYardParser 
 Values/Values.o: Values/Values.cc Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values
-Values/Keyword.o: Values/Keyword.cc Values/Keyword
-Values/Symbol.o: Values/Symbol.cc Values/Symbol
+Values/Keyword.o: Values/Keyword.cc Values/Keyword Values/Hashtable
+Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
 Allocators/Allocators.o: Allocators/Allocators.cc Allocators/Allocators include/6D/Allocators
 Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Scanners/Lang5D Formatters/TExpression
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
