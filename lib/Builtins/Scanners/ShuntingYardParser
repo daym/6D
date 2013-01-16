@@ -77,7 +77,8 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env) {
 						if (env.operatorLE(input, pendingOperator)) {
 							env.callRpnOperator(operators.top(), result);
 							operators.pop();
-						}
+						} else
+							break;
 					}
 					operators.push(input);
 					argcount = env.operatorArgcount(input);
