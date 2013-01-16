@@ -5,6 +5,7 @@
 #include <vector>
 #include "Values/Values"
 #include "Scanners/Scanner"
+#include "Allocators/Allocators"
 namespace Scanners {
 
 class Lang5D {
@@ -66,8 +67,8 @@ public:
 	Values::NodeT openingParenOf(Values::NodeT node) const;
 	bool operatorLE(Values::NodeT a, Values::NodeT b) const;
 	Values::NodeT readShebang(FILE* file, int& linenumber, int c) const;
-	Values::NodeT astFromRpn(const std::vector<Values::NodeT>& list) const;
-	void callRpnOperator(Values::NodeT operator_, std::vector<Values::NodeT>& /*ref*/values) const;
+	Values::NodeT astFromRpn(const std::vector<Values::NodeT ALLOCATOR_VECTOR>& list) const;
+	void callRpnOperator(Values::NodeT operator_, std::vector<Values::NodeT ALLOCATOR_VECTOR>& /*ref*/values) const;
 	Values::NodeT parse(Scanner<Lang5D>& scanner) const;
 	Values::NodeT parse1(FILE* f, const char* name) const;
 };

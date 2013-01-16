@@ -452,7 +452,7 @@ Values::NodeT Lang5D::readToken(FILE* file, int& linenumber) const {
 		return error("<token>", std::string(buf));
 	}
 }
-void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT>& values) const {
+void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>& values) const {
 	int argcount = operatorArgcount(operator_);
 	if(argcount < 0)
 		argcount = -argcount;
@@ -472,9 +472,9 @@ void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT>& values) const 
 }
 Values::NodeT Lang5D::parse(Scanner<Lang5D>& scanner) const {
 	Values::NodeT result;
-	std::vector<NodeT> prog;
+	std::vector<NodeT ALLOCATOR_VECTOR> prog;
 	prog = Scanners::parse(scanner, *this);
-	std::vector<NodeT>::const_iterator iter = prog.begin(); 
+	std::vector<NodeT ALLOCATOR_VECTOR>::const_iterator iter = prog.begin(); 
 	if(iter != prog.end()) {
 		result = *iter;
 		++iter;

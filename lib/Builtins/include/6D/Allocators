@@ -30,4 +30,12 @@ static inline char* GCx_strdup(const char* value) {
 void* ealloc(size_t size, void* source);
 void efree(void* beginning);
 
+#ifdef GC_THREADS
+#define ALLOCATOR_STACK , std::deque<NodeT, gc_allocator<Values::NodeT> > 
+#define ALLOCATOR_VECTOR , gc_allocator<Values::NodeT>
+#else
+#define ALLOCATOR_STACK
+#define ALLOCATOR_VECTOR
+#endif
+
 #endif /* ndef __6D_ALLOCATORS_H */
