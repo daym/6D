@@ -12,6 +12,8 @@ class Lang5D {
 protected:
 	Values::NodeT collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const;
 	Values::NodeT collect1(FILE* file, int& linenumber, bool (*continueP)(int input)) const;
+	Values::NodeT collectC(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const;
+	Values::NodeT collect1C(FILE* file, int& linenumber, bool (*continueP)(int input)) const;
 	Values::NodeT collectNumeric2(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const;
 	int collectNumeric3(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const;
 	Values::NodeT collectUnicodeID(FILE* file, int& linenumber, int prefix, const std::string& prev) const;

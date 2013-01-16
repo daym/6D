@@ -339,6 +339,81 @@ Values::NodeT Lang5D::collect1(FILE* file, int& linenumber, bool (*continueP)(in
 	else
 		return collect(file, linenumber, prefix, continueP);
 }
+Values::NodeT Lang5D::collectC(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const {
+	int c;
+	std::stringstream sst;
+	sst << (char) prefix;
+	while((c = GETC) != EOF && (*continueP)(c)) {
+		if(c == '\\') {
+			int c2 = GETC;
+			switch(c2) {
+			case '\\':
+			case '"':
+			case '\'':
+			//case '?':
+				sst << (char) c2;
+				break;
+			case 'n':
+				sst << (char) '\n';
+				break;
+			case 'r':
+				sst << (char) '\r';
+				break;
+			case 'b':
+				sst << (char) '\b';
+				break;
+			case 't':
+				sst << (char) '\t';
+				break;
+			case 'f':
+				sst << (char) '\f';
+				break;
+			case 'a':
+				sst << (char) '\a';
+				break;
+			case 'v':
+				sst << (char) '\v';
+				break;
+			case 'x':
+				{
+					GETC;
+					GETC;
+					abort();
+				}
+				break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+				{
+					abort();
+				}
+			default:
+				return error("<escapedValue>", "<junk>");
+			}
+			continue;
+		}
+		sst << (char) c;
+	}
+	std::string s = sst.str();
+	UNGETC(c);
+	if(s.length() > 0) {
+		return symbolFromStr(s.c_str());
+	} else
+		return error("<value>", "<nothing>");
+}
+Values::NodeT Lang5D::collect1C(FILE* file, int& linenumber, bool (*continueP)(int input)) const {
+	int prefix;
+	prefix = GETC;
+	if(prefix == EOF)
+		return error("<value>", "<EOF>");
+	else
+		return collect(file, linenumber, prefix, continueP);
+}
 Values::NodeT Lang5D::collectUnicodeID(FILE* file, int& linenumber, int prefix, const std::string& prev) const {
 	int c;
 	std::stringstream sst;
@@ -416,9 +491,21 @@ Values::NodeT Lang5D::readSpecialCoding(FILE* file, int& linenumber, int c2) con
 	}
 }
 Values::NodeT Lang5D::readString(FILE* file, int& linenumber, int c) const {
-	if(c == '"')
-		return collect1(file, linenumber, stringBodyCharP);
-	else
+	if(c == '"') { /* FIXME error handling */
+		Values::NodeT n = collect1(file, linenumber, stringBodyCharP);
+		int c2 = GETC;
+		if(c2 != '"') {
+			char buf[2] = {0,0};
+			buf[0] = c2;
+			return error("<doublequote>", buf);
+		} else if(errorP(n)) {
+			return n;
+		} else {
+			char const* nn = getSymbol1Name(n);
+			assert(nn);
+			return strCXX(nn);
+		}
+	} else
 		return error("<string>", "<junk>");
 }
 Values::NodeT Lang5D::readToken(FILE* file, int& linenumber) const {
