@@ -29,6 +29,8 @@ NodeT operation(NodeT callable, NodeT argument1, NodeT argument2) {
 struct Call : Node {
 	NodeT callable;
 	NodeT argument;
+	NodeT result;
+	int resultGeneration;
 	Call(NodeT aCallable, NodeT aArgument) :
 		callable(aCallable),
 		argument(aArgument)
