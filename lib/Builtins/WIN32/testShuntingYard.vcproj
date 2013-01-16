@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(ProjectDir)\.."
+				AdditionalIncludeDirectories="$(ProjectDir)\..;$(ProjectDir)\..\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -115,7 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="$(ProjectDir)\.."
+				AdditionalIncludeDirectories="$(ProjectDir)\..;$(ProjectDir)\..\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -173,15 +173,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\Values\Keyword.cpp"
+				RelativePath="..\Values\Hashtable.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\Scanners\Lang5D.cpp"
+				RelativePath="..\Values\Keyword.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\Formatters\Math.cpp"
+				RelativePath="..\Scanners\Lang5D.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\Formatters\Math.cc"
 				>
 			</File>
 			<File
@@ -189,7 +193,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Formatters\SExpression.cpp"
+				RelativePath="..\Formatters\SExpression.cc"
 				>
 			</File>
 			<File
@@ -197,11 +201,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\stdafx.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Values\Symbol.cpp"
+				RelativePath="..\Values\Symbol.cc"
 				>
 			</File>
 			<File
@@ -209,7 +209,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Values\Values.cpp"
+				RelativePath="..\Formatters\TExpression.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\Values\Values.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\Values\wstrings.cc"
 				>
 			</File>
 		</Filter>
@@ -260,10 +268,6 @@
 			</File>
 			<File
 				RelativePath="..\Formatters\TExpression"
-				>
-			</File>
-			<File
-				RelativePath="..\Formatters\TExpression.cpp"
 				>
 			</File>
 			<File
