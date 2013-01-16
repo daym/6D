@@ -1,3 +1,33 @@
+#ifndef __6D_ALLOCATORS_H
+#define __6D_ALLOCATORS_H
 #include <string.h>
-#define GCx_strdup strdup
+#include <stdlib.h>
+#ifndef WIN32
+#include <sys/types.h>
+#endif
+#ifdef GC_THREADS
+#include <gc/gc.h>
+#include <gc/gc_allocator.h>
+#include <gc/gc_cpp.h>
+#else
+#define GC_MALLOC_ATOMIC malloc
+#endif
+void initAllocators(void);
+static inline char* GCx_strdup(const char* value) {
+//#ifdef USE_LD_WRAP
+//	return(strdup(value));
+//#else
+#ifdef GC_STRDUP
+	return(GC_STRDUP(value));
+#else
+	char* result;
+	result = (char*) GC_MALLOC_ATOMIC(strlen(value) + 1);
+	memcpy(result, value, strlen(value) + 1);
+	return(result);
+#endif
+}
+/* Executable Memory */
+void* ealloc(size_t size, void* source);
+void efree(void* beginning);
 
+#endif /* ndef __6D_ALLOCATORS_H */

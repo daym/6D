@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
+#ifdef __GNUC__
+#define G_5D_GNUC_PURE __attribute__ ((pure))
+#else
+#define G_5D_GNUC_PURE
+#endif
 namespace Values {
 
 /* this is used as the "result" of the parser (one of it is the result) */

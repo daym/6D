@@ -1,10 +1,17 @@
 #ifndef __VALUES_H
 #define __VALUES_H
 #include "6D/Values"
+#include "Allocators/Allocators"
+
 namespace Values {
 
 /* it doesn't matter to me what exactly Node is, I'm just using struct here so it shuts up */
-struct Node {
+
+struct Node 
+#ifdef GC_THREADS
+ : public gc
+#endif
+{
 	virtual ~Node(void);
 	virtual void str(FILE* destination) const;
 };
