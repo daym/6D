@@ -6,6 +6,7 @@
 #include "Values/Values"
 #include "Scanners/Lang5D"
 #include "Scanners/ShuntingYardParser"
+#include "Formatters/TExpression"
 #undef GETC
 #undef UNGETC
 #define GETC fgetc(file)
@@ -315,7 +316,11 @@ Values::NodeT Lang5D::openingParenOf(Values::NodeT node) const {
 		   node;
 }
 bool Lang5D::operatorLE(Values::NodeT a, Values::NodeT b) const {
-	return levels[a] < levels[b] || (levels[a] == levels[b] && operatorArgcount(b) > 0); // latter: leave right-associative operators on stack if in doubt.
+	if(a == b) { /* speed optimization */
+		return operatorArgcount(b) > 0;
+	} else {
+		return levels[a] < levels[b] || (levels[a] == levels[b] && operatorArgcount(b) > 0); // latter: leave right-associative operators on stack if in doubt.
+	}
 }
 Values::NodeT Lang5D::collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const {
 	int c;
@@ -544,16 +549,26 @@ void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR
 	if(argcount < 0)
 		argcount = -argcount;
 	if(operator_ == SLF) { /* ignore for now */
+		printf("LF NONE\n");
 		return;
 	}
 	assert(argcount == 2);
-	if(values.size() < 2)
+	if(values.size() < 2) {
+		printf("NOT ENOUGH\n");
 		values.push_back(error("<2-arguments>", "<too-little>"));
-	else {
+	} else {
+		printf("TWO ARGS ");
+		Formatters::TExpression::print(stdout, operator_);
 		NodeT b = values.back();
 		values.pop_back();
 		NodeT a = values.back();
 		values.pop_back();
+		Formatters::TExpression::print(stdout, a);
+		//str(a, stdout);
+		printf("!");
+		Formatters::TExpression::print(stdout, b);
+		//str(b, stdout);
+		printf("\n");
 		values.push_back(operation(operator_, a, b));
 	}
 }

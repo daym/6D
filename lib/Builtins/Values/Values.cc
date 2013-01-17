@@ -37,6 +37,8 @@ struct Call : Node {
 	{
 		this->callable = callable;
 		this->argument = argument;
+		this->result = NULL;
+		this->resultGeneration = -1;
 	}
 	virtual ~Call() {
 	}

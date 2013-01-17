@@ -1,1 +1,3 @@
-(+ 2 5)
+NOT ENOUGH
+TWO ARGS +(<error> "<2-arguments>" "<too-little>")!5
+(<error> "<nothing>" "<junk>")
