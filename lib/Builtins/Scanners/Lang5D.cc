@@ -549,26 +549,26 @@ void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR
 	if(argcount < 0)
 		argcount = -argcount;
 	if(operator_ == SLF) { /* ignore for now */
-		printf("LF NONE\n");
+		fprintf(stderr, "LF NONE\n");
 		return;
 	}
 	assert(argcount == 2);
 	if(values.size() < 2) {
-		printf("NOT ENOUGH\n");
+		fprintf(stderr, "NOT ENOUGH\n");
 		values.push_back(error("<2-arguments>", "<too-little>"));
 	} else {
-		printf("TWO ARGS ");
-		Formatters::TExpression::print(stdout, operator_);
+		fprintf(stderr, "TWO ARGS ");
+		Formatters::TExpression::print(stderr, operator_);
 		NodeT b = values.back();
 		values.pop_back();
 		NodeT a = values.back();
 		values.pop_back();
-		Formatters::TExpression::print(stdout, a);
+		Formatters::TExpression::print(stderr, a);
 		//str(a, stdout);
-		printf("!");
-		Formatters::TExpression::print(stdout, b);
+		fprintf(stderr, "!");
+		Formatters::TExpression::print(stderr, b);
 		//str(b, stdout);
-		printf("\n");
+		fprintf(stderr, "\n");
 		values.push_back(operation(operator_, a, b));
 	}
 }

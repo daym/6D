@@ -66,7 +66,7 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env) {
 					operators.push(input);
 				argcount = env.operatorArgcount(input);
 			} else {
-				if (env.operatorP(prevInput) && !env.openingParenP(prevInput))
+				if (env.operatorP(prevInput)) // && !env.openingParenP(prevInput))
 					result.push_back( /*yield */ input);
 				else { // call, keep in sync with above.
 					NodeT o = input;
