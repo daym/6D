@@ -87,6 +87,7 @@ public:
 	Values::NodeT parse0(Scanner<Lang5D>& scanner, Values::NodeT endToken) const;
 	Values::NodeT parse1(FILE* f, const char* name) const;
 	Values::NodeT startMacro(Values::NodeT node, Scanner<Lang5D>& tokenizer) const;
+	Values::NodeT macroStandin(Values::NodeT operator_, Values::NodeT operand) const;
 };
 
 }

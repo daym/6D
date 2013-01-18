@@ -1,6 +1,7 @@
 #ifndef __SCANNERS_SHUNTING_YARD_PARSER_H
 #define __SCANNERS_SHUNTING_YARD_PARSER_H
 #include <stack>
+#include <assert.h>
 #include <vector>
 #include "Values/Values"
 namespace Scanners {
@@ -24,7 +25,7 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 	std::vector<NodeT ALLOCATOR_VECTOR> result;
 	std::stack<NodeT ALLOCATOR_STACK> operators; /* of Symbols */
 	NodeT SEOF = env.SEOF;
-	while((input = tokenizer.getToken()), !env.errorP(input) && input != SEOF && (input != endToken || !operators.empty()) /* TODO understand escaping */) {
+	while((input = tokenizer.getToken()), !env.errorP(input) && input != SEOF && (input != endToken || !operators.empty()) ) {
 		tokenizer.consume();
 		if (env.openingParenP(input)) { /* special case of the stuff below in order to declutter the stuff below */
 			operators.push(input);
@@ -32,10 +33,12 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 				result.push_back( /*yield */ env.startMacro(input, tokenizer));
 				input = nil; /* for the purposes of operator detection, the value was not an operator. Note that we cannot write result.back() or similar here since otherwise macro standins could be misdetected. */
 			}
-		} else if (env.operatorP(input)) {
+		} else if(prevInput == env.Sleftparen && tokenizer.getToken() == env.Srightparen && env.operatorP(input)) { /* (+) */
+			result.push_back(input);
+		} else if(env.operatorP(input)) {
 			bool bUnary = false;
 			argcount = env.operatorArgcount(input);
-			if (env.operatorP(prevInput)) { /* either prefix operator or binary operator that has been abused as an unary operator (f.e. -3) */
+			if (env.operatorP(prevInput) && !env.closingParenP(input)) { /* either prefix operator or binary operator that has been abused as an unary operator (f.e. -3). Parens are not unary. */
 				bUnary = true;
 				if (argcount > 1) { /* binary operator has been abused as an unary operator */
 					Values::NodeT neutral = env.operatorPrefixNeutral(input);
@@ -43,15 +46,15 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 					if (env.errorP(neutral)) { /* binary operator is not allowed to be abused as an unary operator */
 						return result;
 					}
-				};
+				}
 			} else if (argcount == -1) { /* unary suffix operator */
 				bUnary = true;
 			}
+			/* Note: there is no case for binary suffix operators abused as unary operator. */
 			bool bClosingParen = env.closingParenP(input);
 			// !openingParenP(o) && (!bUnary || unaryP(env, o))
 			NodeT pendingOperator;
 			while (!operators.empty() && (pendingOperator = operators.top(), (!env.openingParenP(pendingOperator) && (!bUnary || unaryP(env, pendingOperator))))) { // keep in sync with below.
-				//pendingOperator = operators.top();
 				if (env.operatorLE(input, pendingOperator)) {
 					env.callRpnOperator(pendingOperator, result);
 					operators.pop();
@@ -65,21 +68,15 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 					result.push_back( /*yield */ env.error(getSymbol1Name(env.openingParenOf(input)), (!operators.empty()) ? (getSymbol1Name(operators.top())) : ("<value>")));
 					return result;
 				}
-			} else {
-				if(argcount == -1) { /* suffix */
-					env.callRpnOperator(input, result);
-					input = prevInput; /* make sure we don't see the suffix operator there on its own */
-				} else 
-					operators.push(input);
-			}
-			argcount = env.operatorArgcount(input);
-			if (env.macroStarterP(input)) {
+			} else if(argcount == -1) { /* suffix */
+				env.callRpnOperator(input, result);
+				input = prevInput; /* make sure we don't see the suffix operator there on its own */
+			} else 
+				operators.push(input);
+			if (env.macroStarterP(input))
 				result.push_back( /*yield */ env.startMacro(input, tokenizer));
-				//prevInput = input; /* fake */
-				//continue;
-			}
 		} else { /* current token not an operator: might be either a value or a function call */
-			if (env.operatorP(prevInput)) { /* previous token was operator: this is certainly a value */ /* implicit "&& !env.openingParenP(prevInput))" */
+			if (env.operatorP(prevInput)) { /* previous token was operator: current token is certainly a value */ /* implicit "&& !env.openingParenP(prevInput))" */
 				result.push_back( /*yield */ input);
 			} else { // call, keep in sync with above.
 				result.push_back( /*yield */ input);
@@ -95,7 +92,6 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 					}
 				}
 				/* operators.push(input); since we have all the information we need, we can just proceed to do it instead of doing stack acrobatics */
-				argcount = env.operatorArgcount(input);
 				env.callRpnOperator(input, result);
 			}
 		}
