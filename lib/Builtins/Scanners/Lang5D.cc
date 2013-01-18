@@ -645,7 +645,6 @@ Values::NodeT Lang5D::replaceIN(Values::NodeT equation, Values::NodeT body) cons
 	if(!operationP(equation)) {
 		NodeT fr, c2;
 		if(macroStandinP(equation) && macroStandinOperator(equation) == Simport && (fr = macroStandinOperand(equation)) && (c2 = getCallCallable(fr))) {
-			fprintf(stderr, "OK\n");
 			//consP(tl) && (tl2 = getConsTail(tl)) && consP(tl2)) {
 			return replaceIMPORT(body, getCallArgument(fr), getCallArgument(c2));
 		} else
