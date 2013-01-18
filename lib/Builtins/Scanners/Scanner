@@ -108,7 +108,7 @@ public:
 	/*Values::NodeT consume1(Values::NodeT expectedToken) {
 		using namespace Values;
 		if(this->value != expectedToken)
-			return env.error(expectedToken, this->value);
+			return env.error(getSymbol1Name(expectedToken), getSymbol1Name(this->value));
 		else
 			return consume(expectedToken);
 	}*/

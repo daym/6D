@@ -212,7 +212,7 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr("{")] = -1, // pseudo-operators
 		levels[symbolFromStr("[")] = -1,
 		levels[symbolFromStr("<indent>")] = -1,
-		levels[SLF] = 40,
+		levels[SLF] = 41,
 		levels[symbolFromStr("#exports")] = 40,
 		levels[symbolFromStr(".")] = 33,
 		levels[symbolFromStr("_")] = 32,
@@ -274,7 +274,7 @@ Lang5D::Lang5D(void) {
 }
 Values::NodeT Lang5D::error(std::string expectedPart, std::string gotPart) const {
 	// FIXME nicer
-	return cons(Serror, cons(strCXX(expectedPart), strCXX(gotPart)));
+	return cons(Serror, cons(strCXX(expectedPart), cons(strCXX(gotPart), NULL)));
 }
 bool Lang5D::errorP(Values::NodeT node) const {
 	return consP(node) && getConsHead(node) == Serror;
@@ -298,16 +298,16 @@ int Lang5D::operatorArgcount(Values::NodeT node) const {
 	       (node == Selif) ? R : 
 	       (node == Selse) ? R : 
 	       (node == Ssemicolon) ? R : 
-		   (node == Sbackslash) ? R :
-		   (node == Slet) ? P :
-		   (node == Sin) ? R :
-		   (node == Sfrom) ? R :
-		   (node == Sletexclam) ? R :
-		   (node == Simport) ? P :
-		   macroStarterP(node) ? P :
-		   (node == SLF) ? S : 
-		   (node == Shashexports) ? P : 
-		   2;
+	       (node == Sbackslash) ? R :
+	       (node == Slet) ? P :
+	       (node == Sin) ? R :
+	       (node == Sfrom) ? R :
+	       (node == Sletexclam) ? R :
+	       (node == Simport) ? P :
+	       macroStarterP(node) ? P :
+	       (node == SLF) ? S : 
+	       (node == Shashexports) ? P : 
+	       2;
 }
 //bool Lang5D::operatorPrefixNeutralP(Values::NodeT node) const {
 Values::NodeT Lang5D::operatorPrefixNeutral(Values::NodeT node) const {
@@ -333,7 +333,12 @@ Values::NodeT Lang5D::parseListLiteral(Values::NodeT endToken, Scanner<Lang5D>& 
 		return nil;
 	else {
 		NodeT hd = parseValue(tokenizer);
-		return cons(hd, parseListLiteral(endToken, tokenizer));
+		if(errorP(hd))
+			return hd;
+		NodeT tl = parseListLiteral(endToken, tokenizer);
+		if(errorP(tl))
+			return tl;
+		return cons(hd, tl);
 	}
 }
 Values::NodeT Lang5D::startMacro(Values::NodeT node, Scanner<Lang5D>& tokenizer) const {

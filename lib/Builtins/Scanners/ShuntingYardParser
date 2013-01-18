@@ -26,70 +26,77 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 	NodeT SEOF = env.SEOF;
 	while((input = tokenizer.getToken()), !env.errorP(input) && input != SEOF && (input != endToken || !operators.empty()) /* TODO understand escaping */) {
 		tokenizer.consume();
-		if (env.openingParenP(input)) {
+		if (env.openingParenP(input)) { /* special case of the stuff below in order to declutter the stuff below */
 			operators.push(input);
 			if (env.macroStarterP(input)) {
 				result.push_back( /*yield */ env.startMacro(input, tokenizer));
-				input = nil; /* for the purposes of operator detection, the value was not an operator. Note that you cannot write result.back() or something here since otherwise macro standins could be misdetected. */
+				input = nil; /* for the purposes of operator detection, the value was not an operator. Note that we cannot write result.back() or similar here since otherwise macro standins could be misdetected. */
 			}
-		} else {
-			if (env.operatorP(input)) {
-				bool bUnary = false;
-				argcount = env.operatorArgcount(input);
-				if (env.operatorP(prevInput)) {
-					bUnary = true;
-					if (argcount > 1) {
-						Values::NodeT neutral = env.operatorPrefixNeutral(input);
-						result.push_back( /*yield */ neutral);
-						if (env.errorP(neutral))
-							return result;
-					};
-				} else if (argcount == -1)
-					bUnary = true;
-				bool bClosingParen = env.closingParenP(input);
-				// !openingParenP(o) && (!bUnary || unaryP(env, o))
-				NodeT pendingOperator;
-				while (!operators.empty() && (pendingOperator = operators.top(), (!env.openingParenP(pendingOperator) && (!bUnary || unaryP(env, pendingOperator))))) { // keep in sync with below.
-					//pendingOperator = operators.top();
-					if (env.operatorLE(input, pendingOperator)) {
-						env.callRpnOperator(pendingOperator, result);
-						operators.pop();
-					} else
-						break;
-				}
-				if (bClosingParen) {
-					if ((!operators.empty() && operators.top() == env.openingParenOf(input)))
-						operators.pop();
-					else {
-						result.push_back( /*yield */ env.error(getSymbol1Name(env.openingParenOf(input)), (!operators.empty()) ? (getSymbol1Name(operators.top())) : ("<value>")));
+		} else if (env.operatorP(input)) {
+			bool bUnary = false;
+			argcount = env.operatorArgcount(input);
+			if (env.operatorP(prevInput)) { /* either prefix operator or binary operator that has been abused as an unary operator (f.e. -3) */
+				bUnary = true;
+				if (argcount > 1) { /* binary operator has been abused as an unary operator */
+					Values::NodeT neutral = env.operatorPrefixNeutral(input);
+					result.push_back( /*yield */ neutral);
+					if (env.errorP(neutral)) { /* binary operator is not allowed to be abused as an unary operator */
 						return result;
 					}
+				};
+			} else if (argcount == -1) { /* unary suffix operator */
+				bUnary = true;
+			}
+			bool bClosingParen = env.closingParenP(input);
+			// !openingParenP(o) && (!bUnary || unaryP(env, o))
+			NodeT pendingOperator;
+			while (!operators.empty() && (pendingOperator = operators.top(), (!env.openingParenP(pendingOperator) && (!bUnary || unaryP(env, pendingOperator))))) { // keep in sync with below.
+				//pendingOperator = operators.top();
+				if (env.operatorLE(input, pendingOperator)) {
+					env.callRpnOperator(pendingOperator, result);
+					operators.pop();
 				} else
-					operators.push(input);
-				argcount = env.operatorArgcount(input);
-				if (env.macroStarterP(input)) {
-					result.push_back( /*yield */ env.startMacro(input, tokenizer));
-					//prevInput = input; /* fake */
-					//continue;
+					break;
+			}
+			if (bClosingParen) {
+				if ((!operators.empty() && operators.top() == env.openingParenOf(input)))
+					operators.pop();
+				else {
+					result.push_back( /*yield */ env.error(getSymbol1Name(env.openingParenOf(input)), (!operators.empty()) ? (getSymbol1Name(operators.top())) : ("<value>")));
+					return result;
 				}
 			} else {
-				if (env.operatorP(prevInput)) { // && !env.openingParenP(prevInput))
-					result.push_back( /*yield */ input);
-				} else { // call, keep in sync with above.
-					result.push_back( /*yield */ input);
-					NodeT input;
-					input = env.Sapply; // intern(" ");
-					while (!operators.empty() /* always inside for binary */) {
-						Values::NodeT pendingOperator = operators.top();
-						if (env.operatorLE(input, pendingOperator)) {
-							env.callRpnOperator(pendingOperator, result);
-							operators.pop();
-						} else
-							break;
-					}
+				if(argcount == -1) { /* suffix */
+					env.callRpnOperator(input, result);
+					input = prevInput; /* make sure we don't see the suffix operator there on its own */
+				} else 
 					operators.push(input);
-					argcount = env.operatorArgcount(input);
+			}
+			argcount = env.operatorArgcount(input);
+			if (env.macroStarterP(input)) {
+				result.push_back( /*yield */ env.startMacro(input, tokenizer));
+				//prevInput = input; /* fake */
+				//continue;
+			}
+		} else { /* current token not an operator: might be either a value or a function call */
+			if (env.operatorP(prevInput)) { /* previous token was operator: this is certainly a value */ /* implicit "&& !env.openingParenP(prevInput))" */
+				result.push_back( /*yield */ input);
+			} else { // call, keep in sync with above.
+				result.push_back( /*yield */ input);
+				NodeT input;
+				input = env.Sapply; /* this is the operator for function application. Note that actual languages can remove this. */ /* intern(" "); */
+				while (!operators.empty() /* always inside for binary */) {
+					Values::NodeT pendingOperator = operators.top();
+					if (env.operatorLE(input, pendingOperator)) { /* first do the more important operations that were lined up so far */
+						env.callRpnOperator(pendingOperator, result);
+						operators.pop();
+					} else { /* we only have to ensure ascending order of the operators stack - and not necessarily clear it all out */
+						break;
+					}
 				}
+				/* operators.push(input); since we have all the information we need, we can just proceed to do it instead of doing stack acrobatics */
+				argcount = env.operatorArgcount(input);
+				env.callRpnOperator(input, result);
 			}
 		}
 		prevInput = (!env.closingParenP(input)) ? (input) : nil;
