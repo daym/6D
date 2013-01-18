@@ -35,6 +35,7 @@ protected:
 				this->bBeginningOfLine = true;
 				this->indent = 0;
 				this->value = env.SLF;
+				++this->linenumber;
 				return true;
 			} else if(this->bBeginningOfLine) { /* actual text for the first time on the line */
 				UNGETC(c); /* make sure the user will see the actual text */
@@ -114,6 +115,9 @@ public:
 	}*/
 	Values::NodeT getToken(void) const {
 		return this->value;
+	}
+	int getLinenumber(void) const {
+		return this->linenumber;
 	}
 };
 #endif /* ndef __SCANNERS_SCANNER_H */
