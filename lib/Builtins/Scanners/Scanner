@@ -21,10 +21,12 @@ private: /* ugh */
 	std::stack<int> indents;
 	int indent; /* of current line */
 	Values::NodeT SEOF;
+	bool bEOF;
 protected:
 	/** \return whether we already injected a token or not. */
 	bool skipWhitespace(void) {
 		int c;
+		if(!bEOF)
 		while((c = GETC) != EOF && c != 26/*EOF*/) {
 			if(c == ' ' || c == '\t') {
 				if(this->bBeginningOfLine)
@@ -63,6 +65,8 @@ protected:
 				return false;
 			}
 		}
+		bEOF = true;
+		fprintf(stderr, "EOF!!!\n");
 		return false;
 	}
 public:
@@ -75,6 +79,7 @@ public:
 		indent(0) {
 		this->indents.push(indent);
 		SEOF = env.SEOF;
+		bEOF = false;
 	}
 	void push(FILE* file, int linenumber, const char* name) {
 		/* TODO support "include" files? */
@@ -86,11 +91,17 @@ public:
 	}
 	Values::NodeT consume(void) {
 		Values::NodeT previousValue = this->value;
-		if(this->value == env.SEOF) { /* cannot recover from that */
-			return previousValue;
+		if(!this->skipWhitespace()) {
+			if(bEOF) { /* TODO unlikely */
+				if(!this->indents.size() > 1) {
+					fprintf(stderr, "faking dedent\n");
+					this->indents.pop();
+					this->value = env.Sdedent;
+				} else
+					this->value = SEOF;
+			} else
+				this->value = env.readToken(this->file, /*ref*/this->linenumber);
 		}
-		if(!this->skipWhitespace())
-			this->value = env.readToken(this->file, /*ref*/this->linenumber);
 		return previousValue;
 	}
 	Values::NodeT consume1(Values::NodeT expectedToken) {
