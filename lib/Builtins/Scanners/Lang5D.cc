@@ -722,10 +722,14 @@ Values::NodeT Lang5D::parse(Scanner<Lang5D>& scanner) const {
 	return parse0(scanner, SEOF);
 }
 Values::NodeT Lang5D::parse1(FILE* f, const char* name) const {
+	Values::NodeT result;
 	Scanner<Lang5D> scanner(*this);
 	scanner.push(f, 1, name);
 	scanner.consume();
-	return parse(scanner);
+	result = parse(scanner);
+	if(errorP(result))
+		fprintf(stderr, "Info: the following occured near line %d\n", scanner.getLinenumber());
+	return result;
 }
 Values::NodeT Lang5D::error(Values::NodeT expectedPart, Values::NodeT gotPart) const {
 	/* FIXME */

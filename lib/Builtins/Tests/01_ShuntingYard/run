@@ -6,6 +6,6 @@ for s in *.5D
 do
 	er="${s%.5D}.expectedResult"
 	gr="${s%.5D}.gotResult" 
-	./testShuntingYard "${s}" >"${gr}"
+	./testShuntingYard "${s}" >"${gr}" || echo "failed: $s">&2
 	diff -upr "${gr}" "${er}"
 done
