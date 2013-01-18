@@ -34,18 +34,26 @@ void print(FILE* destination, Values::NodeT node) {
 			print(destination, body);
 		fprintf(destination, ")");
 	} else if(consP(node)) {
-		fprintf(destination, "(");
+		fprintf(destination, "[");
 		print(destination, getConsHead(node));
-		fprintf(destination, " ");
 		Values::NodeT tail = getConsTail(node);
 		if(consP(tail)) {
-			print(destination, getConsHead(tail));
+			for(; consP(tail); tail = getConsTail(tail)) {
+				fprintf(destination, " ");
+				print(destination, getConsHead(tail));
+			}
+			if(tail) {
+				fprintf(destination, ",");
+				print(destination, tail);
+			}
+		} else {
 			fprintf(destination, " ");
-			print(destination, getConsTail(tail));
-		} else
 			print(destination, getConsTail(node));
-		fprintf(destination, ")");
-	} else {
+		}
+		fprintf(destination, "]");
+	} else if(nilP(node))
+		fprintf(destination, "[]");
+	else {
 		Values::str(node, destination);
 	}
 }

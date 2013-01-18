@@ -185,6 +185,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Scanners\LangForth.cc"
+				>
+			</File>
+			<File
 				RelativePath="..\Formatters\Math.cc"
 				>
 			</File>
@@ -239,6 +243,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Scanners\LangForth"
+				>
+			</File>
+			<File
 				RelativePath="..\Formatters\Math"
 				>
 			</File>
@@ -272,6 +280,10 @@
 			</File>
 			<File
 				RelativePath="..\Values\Values"
+				>
+			</File>
+			<File
+				RelativePath="..\include\6D\Values"
 				>
 			</File>
 		</Filter>

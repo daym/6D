@@ -1,5 +1,5 @@
-#ifndef __LANG5_D_H
-#define __LANG5_D_H
+#ifndef __LANG_FORTH_H
+#define __LANG_FORTH_H
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -8,7 +8,7 @@
 #include "Allocators/Allocators"
 namespace Scanners {
 
-class Lang5D {
+class LangForth {
 protected:
 	Values::NodeT collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const;
 	Values::NodeT collect1(FILE* file, int& linenumber, bool (*continueP)(int input)) const;
@@ -23,14 +23,8 @@ protected:
 	Values::NodeT readSpecialCoding(FILE* file, int& linenumber, int c) const;
 	Values::NodeT readString(FILE* file, int& linenumber, int c) const;
 	Values::NodeT readKeyword(FILE* file, int& linenumber, int c) const;
-	Values::NodeT mcall(Values::NodeT a, Values::NodeT b) const;
-	Values::NodeT moperation(Values::NodeT operator_, Values::NodeT a, Values::NodeT b) const;
-	Values::NodeT replaceIN(Values::NodeT equation, Values::NodeT body) const;
-	Values::NodeT readHashExports(FILE* file, int& linenumber, int c) const;
-	Values::NodeT parseValue(Scanner<Lang5D>& scanner) const;
-	Values::NodeT parseListLiteral(Values::NodeT endToken, Scanner<Lang5D>& tokenizer) const;
 public:
-	Lang5D(void);
+	LangForth(void);
 	static Values::NodeT SLF;
 	static Values::NodeT Sindent;
 	static Values::NodeT Sdedent;
@@ -59,12 +53,8 @@ public:
 	static Values::NodeT Srightparen;
 	static Values::NodeT Srightcurly;
 	static Values::NodeT Srightbracket;
-	static Values::NodeT Sequal;
-	static Values::NodeT Sin;
-	static Values::NodeT Sfrom;
 	static Values::NodeT SEOF;
 	static Values::NodeT Serror;
-	static Values::NodeT Shashexports;
 	Values::NodeT readToken(FILE* f, int& linenumber) const;
 	Values::NodeT error(std::string expectedPart, std::string gotPart) const;
 	Values::NodeT error(Values::NodeT expectedPart, Values::NodeT gotPart) const;
@@ -75,18 +65,16 @@ public:
 	//bool operatorPrefixNeutralP(Values::NodeT node) const;
 	Values::NodeT operatorPrefixNeutral(Values::NodeT node) const;
 	bool macroStarterP(Values::NodeT node) const;
-	void startMacro(Values::NodeT node, std::vector<Values::NodeT ALLOCATOR_VECTOR>& /*ref*/values) const;
+	Values::NodeT startMacro(Values::NodeT node, Scanner<LangForth>& tokenizer) const;
 	bool closingParenP(Values::NodeT node) const;
 	Values::NodeT openingParenOf(Values::NodeT node) const;
 	bool operatorLE(Values::NodeT a, Values::NodeT b) const;
 	Values::NodeT readShebang(FILE* file, int& linenumber, int c) const;
 	Values::NodeT astFromRpn(const std::vector<Values::NodeT ALLOCATOR_VECTOR>& list) const;
 	void callRpnOperator(Values::NodeT operator_, std::vector<Values::NodeT ALLOCATOR_VECTOR>& /*ref*/values) const;
-	Values::NodeT parse(Scanner<Lang5D>& scanner) const;
-	Values::NodeT parse0(Scanner<Lang5D>& scanner, Values::NodeT endToken) const;
+	Values::NodeT parse(Scanner<LangForth>& scanner) const;
 	Values::NodeT parse1(FILE* f, const char* name) const;
-	Values::NodeT startMacro(Values::NodeT node, Scanner<Lang5D>& tokenizer) const;
 };
 
 }
-#endif /* ndef __LANG5_D_H */
+#endif /* ndef __LANG_FORTH_H */

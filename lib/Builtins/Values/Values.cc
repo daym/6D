@@ -20,12 +20,28 @@ void Node::str(FILE* destination) const {
 }
 void str(NodeT node, FILE* destination) {
 	//fmemopen();
-	node->str(destination);
+	if(!node)
+		fprintf(destination, "[]");
+	else
+		node->str(destination);
 }
 NodeT operation(NodeT callable, NodeT argument1, NodeT argument2) {
 	return call(call(callable, argument1), argument2);
 }
-
+NodeT getOperationArgument1(NodeT o) {
+	NodeT o2 = getCallCallable(o);
+	return getCallArgument(o2);
+}
+NodeT getOperationArgument2(NodeT o) {
+	return getCallArgument(o);
+}
+NodeT getOperationOperator(NodeT o) {
+	NodeT o2 = getCallCallable(o);
+	return getCallCallable(o2);
+}
+bool operationP(NodeT o) {
+	return callP(o) && callP(getCallCallable(o));
+}
 struct Call : Node {
 	NodeT callable;
 	NodeT argument;

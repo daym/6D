@@ -4,7 +4,7 @@
 #include <stack>
 #include <sstream>
 #include "Values/Values"
-#include "Scanners/Lang5D"
+#include "Scanners/LangForth"
 #include "Scanners/ShuntingYardParser"
 #include "Formatters/TExpression"
 #undef GETC
@@ -14,40 +14,36 @@
 namespace Scanners {
 using namespace Values;
 
-Values::NodeT Lang5D::SLF;
-Values::NodeT Lang5D::Sindent;
-Values::NodeT Lang5D::Sdedent;
-Values::NodeT Lang5D::SopeningParen;
-Values::NodeT Lang5D::Sapply;
-Values::NodeT Lang5D::Sdash;
-Values::NodeT Lang5D::Szero;
-Values::NodeT Lang5D::Sunderscore;
-Values::NodeT Lang5D::Scircumflex;
-Values::NodeT Lang5D::Sstarstar;
-Values::NodeT Lang5D::Scross;
-Values::NodeT Lang5D::Scolon;
-Values::NodeT Lang5D::Squote;
-Values::NodeT Lang5D::Scomma;
-Values::NodeT Lang5D::Sdollar;
-Values::NodeT Lang5D::Selif;
-Values::NodeT Lang5D::Selse;
-Values::NodeT Lang5D::Ssemicolon;
-Values::NodeT Lang5D::Sbackslash;
-Values::NodeT Lang5D::Slet;
-Values::NodeT Lang5D::Sletexclam;
-Values::NodeT Lang5D::Simport;
-Values::NodeT Lang5D::Sleftparen;
-Values::NodeT Lang5D::Sleftcurly;
-Values::NodeT Lang5D::Sleftbracket;
-Values::NodeT Lang5D::Srightparen;
-Values::NodeT Lang5D::Srightcurly;
-Values::NodeT Lang5D::Srightbracket = NULL;
-Values::NodeT Lang5D::SEOF;
-Values::NodeT Lang5D::Serror;
-Values::NodeT Lang5D::Sequal;
-Values::NodeT Lang5D::Sin;
-Values::NodeT Lang5D::Sfrom;
-Values::NodeT Lang5D::Shashexports;
+Values::NodeT LangForth::SLF;
+Values::NodeT LangForth::Sindent;
+Values::NodeT LangForth::Sdedent;
+Values::NodeT LangForth::SopeningParen;
+Values::NodeT LangForth::Sapply;
+Values::NodeT LangForth::Sdash;
+Values::NodeT LangForth::Szero;
+Values::NodeT LangForth::Sunderscore;
+Values::NodeT LangForth::Scircumflex;
+Values::NodeT LangForth::Sstarstar;
+Values::NodeT LangForth::Scross;
+Values::NodeT LangForth::Scolon;
+Values::NodeT LangForth::Squote;
+Values::NodeT LangForth::Scomma;
+Values::NodeT LangForth::Sdollar;
+Values::NodeT LangForth::Selif;
+Values::NodeT LangForth::Selse;
+Values::NodeT LangForth::Ssemicolon;
+Values::NodeT LangForth::Sbackslash;
+Values::NodeT LangForth::Slet;
+Values::NodeT LangForth::Sletexclam;
+Values::NodeT LangForth::Simport;
+Values::NodeT LangForth::Sleftparen;
+Values::NodeT LangForth::Sleftcurly;
+Values::NodeT LangForth::Sleftbracket;
+Values::NodeT LangForth::Srightparen;
+Values::NodeT LangForth::Srightcurly;
+Values::NodeT LangForth::Srightbracket = NULL;
+Values::NodeT LangForth::SEOF;
+Values::NodeT LangForth::Serror;
 
 /* TODO just use a function */
 static std::map<NodeT, int> levels;
@@ -172,7 +168,7 @@ static bool stringBodyCharP(int input) {
 static bool raryBodyCharP(int input) {
 	return (input >= '0' && input <= '9') || (input >= 'a' && input <= 'z') || (input >= 'A' && input <= 'Z');
 }
-Lang5D::Lang5D(void) {
+LangForth::LangForth(void) {
 	SLF = symbolFromStr("<LF>");
 	Sindent = symbolFromStr("<indent>");
 	Sdedent = symbolFromStr("<dedent>");
@@ -193,8 +189,6 @@ Lang5D::Lang5D(void) {
 	Ssemicolon = symbolFromStr(";");
 	Sbackslash = symbolFromStr("\\");
 	Slet = symbolFromStr("let");
-	Sin = symbolFromStr("in");
-	Sfrom = symbolFromStr("from");
 	Sletexclam = symbolFromStr("let!");
 	Simport = symbolFromStr("import");
 	Sleftparen = symbolFromStr("(");
@@ -204,16 +198,13 @@ Lang5D::Lang5D(void) {
 	Srightcurly = symbolFromStr("}");
 	SEOF = symbolFromStr("\32"); // EOF
 	Serror = symbolFromStr("<error>");
-	Sequal = symbolFromStr("=");
-	Shashexports = symbolFromStr("#exports");
 	if(Srightbracket == NULL) {
 		Srightbracket = symbolFromStr("]");
 		levels[symbolFromStr("(")] = -1,
-		levels[symbolFromStr("{")] = -1, // pseudo-operators
+		levels[symbolFromStr("{")] = -1,
 		levels[symbolFromStr("[")] = -1,
 		levels[symbolFromStr("<indent>")] = -1,
 		levels[SLF] = 40,
-		levels[symbolFromStr("#exports")] = 40,
 		levels[symbolFromStr(".")] = 33,
 		levels[symbolFromStr("_")] = 32,
 		levels[symbolFromStr("^")] = 32,
@@ -238,32 +229,30 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr("⊃")] = 14,
 		levels[symbolFromStr("⊆")] = 14,
 		levels[symbolFromStr("⊇")] = 14,
-		levels[symbolFromStr("=")] = 11,
-		levels[symbolFromStr("≟")] = 11,
-		levels[symbolFromStr("/=")] = 11,
-		levels[symbolFromStr("<")] = 10,
-		levels[symbolFromStr("<=")] = 10,
-		levels[symbolFromStr(">")] = 10,
-		levels[symbolFromStr(">=")] = 10,
-		levels[symbolFromStr("≤")] = 10,
-		levels[symbolFromStr("≥")] = 10,
-		levels[symbolFromStr("&&")] = 9,
-		levels[symbolFromStr("∧")] = 9,
-		levels[symbolFromStr("||")] = 8,
-		levels[symbolFromStr("∨")] = 8,
-		levels[symbolFromStr(",")] = 7,
-		levels[symbolFromStr("$")] = 6,
+		levels[symbolFromStr("=")] = 10,
+		levels[symbolFromStr("≟")] = 10,
+		levels[symbolFromStr("/=")] = 10,
+		levels[symbolFromStr("<")] = 9,
+		levels[symbolFromStr("<=")] = 9,
+		levels[symbolFromStr(">")] = 9,
+		levels[symbolFromStr(">=")] = 9,
+		levels[symbolFromStr("≤")] = 9,
+		levels[symbolFromStr("≥")] = 9,
+		levels[symbolFromStr("&&")] = 8,
+		levels[symbolFromStr("∧")] = 8,
+		levels[symbolFromStr("||")] = 7,
+		levels[symbolFromStr("∨")] = 7,
+		levels[symbolFromStr(",")] = 6,
+		levels[symbolFromStr("$")] = 5,
 		//#intern("if")] = 4,
-		levels[symbolFromStr("elif")] = 5,
-		levels[symbolFromStr("else")] = 5,
-		levels[symbolFromStr("|")] = 4,
-		levels[symbolFromStr("=>")] = 3,
-		levels[symbolFromStr(";")] = 3,
-		levels[symbolFromStr("?;")] = 3,
-		levels[symbolFromStr("\\")] = 2,
+		levels[symbolFromStr("elif")] = 4,
+		levels[symbolFromStr("else")] = 4,
+		levels[symbolFromStr("|")] = 3,
+		levels[symbolFromStr("=>")] = 2,
+		levels[symbolFromStr(";")] = 2,
+		levels[symbolFromStr("?;")] = 2,
+		levels[symbolFromStr("\\")] = 1,
 		levels[symbolFromStr("let")] = 0,
-		levels[symbolFromStr("in")] = 1,
-		levels[symbolFromStr("from")] = 1,
 		levels[symbolFromStr("let!")] = 0,
 		levels[symbolFromStr("import")] = 0,
 		levels[symbolFromStr(")")] = -1,
@@ -272,19 +261,19 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr("<dedent>")] = -1;
 	}
 }
-Values::NodeT Lang5D::error(std::string expectedPart, std::string gotPart) const {
+Values::NodeT LangForth::error(std::string expectedPart, std::string gotPart) const {
 	// FIXME nicer
 	return cons(Serror, cons(strCXX(expectedPart), strCXX(gotPart)));
 }
-bool Lang5D::errorP(Values::NodeT node) const {
+bool LangForth::errorP(Values::NodeT node) const {
 	return consP(node) && getConsHead(node) == Serror;
 }
-bool Lang5D::operatorP(Values::NodeT node) const {
+bool LangForth::operatorP(Values::NodeT node) const {
 	return levels.find(node) != levels.end();
 }
-int Lang5D::operatorArgcount(Values::NodeT node) const {
+int LangForth::operatorArgcount(Values::NodeT node) const {
 	int R = -2;
-	//int N = -2; // TODO?
+	//int N = 2; // FIXME
 	int P = 1;
 	int S = -1;
 	return (node == Sunderscore) ? R :
@@ -299,74 +288,44 @@ int Lang5D::operatorArgcount(Values::NodeT node) const {
 	       (node == Selse) ? R : 
 	       (node == Ssemicolon) ? R : 
 		   (node == Sbackslash) ? R :
-		   (node == Slet) ? P :
-		   (node == Sin) ? R :
-		   (node == Sfrom) ? R :
+		   (node == Slet) ? R :
 		   (node == Sletexclam) ? R :
-		   (node == Simport) ? P :
-		   macroStarterP(node) ? P :
+		   (node == Simport) ? R :
+		   macroStarterP(node) ? R :
 		   (node == SLF) ? S : 
-		   (node == Shashexports) ? P : 
 		   2;
 }
-//bool Lang5D::operatorPrefixNeutralP(Values::NodeT node) const {
-Values::NodeT Lang5D::operatorPrefixNeutral(Values::NodeT node) const {
+//bool LangForth::operatorPrefixNeutralP(Values::NodeT node) const {
+Values::NodeT LangForth::operatorPrefixNeutral(Values::NodeT node) const {
 	return (node == Sdash) ? Szero : error("<prefix-operator>", getSymbol1Name(node));
 }
-bool Lang5D::macroStarterP(Values::NodeT node) const {
-	return /*(node == Slet) || (node == Simport) ||*/ (node == Sbackslash) || (node == Sleftbracket) || (node == Sleftcurly);
+bool LangForth::macroStarterP(Values::NodeT node) const {
+	return (node == Slet) || (node == Simport) || (node == Sbackslash);
 }
-static Values::NodeT macroStandinOperator(NodeT c) {
-	return getConsHead(c);
+Values::NodeT LangForth::startMacro(Values::NodeT node, Scanner<LangForth>& tokenizer) const {
+	return nil;
 }
-static Values::NodeT macroStandinOperand(NodeT c) {
-	return getConsHead(getConsTail(c));
-}
-static Values::NodeT macroStandin(NodeT operator_, NodeT operand) {
-	return cons(operator_, cons(operand, nil));
-}
-static bool macroStandinP(NodeT c) {
-	return(consP(c));
-}
-Values::NodeT Lang5D::parseListLiteral(Values::NodeT endToken, Scanner<Lang5D>& tokenizer) const {
-	if(tokenizer.getToken() == endToken)
-		return nil;
-	else {
-		NodeT hd = parseValue(tokenizer);
-		return cons(hd, parseListLiteral(endToken, tokenizer));
-	}
-}
-Values::NodeT Lang5D::startMacro(Values::NodeT node, Scanner<Lang5D>& tokenizer) const {
-	if(node == Sbackslash) {
-		return macroStandin(node, tokenizer.consume());
-	} else if(node == Sleftbracket) {
-		return parseListLiteral(Srightbracket, tokenizer);
-		// tokenizer.consume(); // right bracket will be consumed by the Shunting Yard Parser (it has '[' on its 'operators stack)
-		//std::vector<NodeT ALLOCATOR_VECTOR> items = Scanners::parse(tokenizer, *this, Srightbracket);
-	}
-	return node;
-}
-bool Lang5D::openingParenP(Values::NodeT node) const {
+bool LangForth::openingParenP(Values::NodeT node) const {
 	return (node == Sleftparen) || (node == Sleftcurly) || (node == Sleftbracket) || (node == Sindent);
 }
-bool Lang5D::closingParenP(Values::NodeT node) const {
+bool LangForth::closingParenP(Values::NodeT node) const {
 	return (node == Srightparen) || (node == Srightcurly) || (node == Srightbracket) || (node == Sdedent);
 }
-Values::NodeT Lang5D::openingParenOf(Values::NodeT node) const {
+Values::NodeT LangForth::openingParenOf(Values::NodeT node) const {
 	return (node == Srightparen) ? Sleftparen : 
 	       (node == Srightcurly) ? Sleftcurly : 
 		   (node == Srightbracket) ? Sleftbracket : 
 		   (node == Sdedent) ? Sindent : 
 		   node;
 }
-bool Lang5D::operatorLE(Values::NodeT a, Values::NodeT b) const {
+bool LangForth::operatorLE(Values::NodeT a, Values::NodeT b) const {
 	if(a == b) { /* speed optimization */
 		return operatorArgcount(b) > 0;
 	} else {
 		return levels[a] < levels[b] || (levels[a] == levels[b] && operatorArgcount(b) > 0); // latter: leave right-associative operators on stack if in doubt.
 	}
 }
-Values::NodeT Lang5D::collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const {
+Values::NodeT LangForth::collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const {
 	int c;
 	std::stringstream sst;
 	sst << (char) prefix;
@@ -380,7 +339,7 @@ Values::NodeT Lang5D::collect(FILE* file, int& linenumber, int prefix, bool (*co
 	} else
 		return error("<value>", "<nothing>");
 }
-Values::NodeT Lang5D::collect1(FILE* file, int& linenumber, bool (*continueP)(int input)) const {
+Values::NodeT LangForth::collect1(FILE* file, int& linenumber, bool (*continueP)(int input)) const {
 	int prefix;
 	prefix = GETC;
 	if(prefix == EOF)
@@ -388,7 +347,7 @@ Values::NodeT Lang5D::collect1(FILE* file, int& linenumber, bool (*continueP)(in
 	else
 		return collect(file, linenumber, prefix, continueP);
 }
-Values::NodeT Lang5D::collectC(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const {
+Values::NodeT LangForth::collectC(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const {
 	int c;
 	std::stringstream sst;
 	sst << (char) prefix;
@@ -455,7 +414,7 @@ Values::NodeT Lang5D::collectC(FILE* file, int& linenumber, int prefix, bool (*c
 	} else
 		return error("<value>", "<nothing>");
 }
-Values::NodeT Lang5D::collect1C(FILE* file, int& linenumber, bool (*continueP)(int input)) const {
+Values::NodeT LangForth::collect1C(FILE* file, int& linenumber, bool (*continueP)(int input)) const {
 	int prefix;
 	prefix = GETC;
 	if(prefix == EOF)
@@ -463,7 +422,7 @@ Values::NodeT Lang5D::collect1C(FILE* file, int& linenumber, bool (*continueP)(i
 	else
 		return collect(file, linenumber, prefix, continueP);
 }
-Values::NodeT Lang5D::collectUnicodeID(FILE* file, int& linenumber, int prefix, const std::string& prev) const {
+Values::NodeT LangForth::collectUnicodeID(FILE* file, int& linenumber, int prefix, const std::string& prev) const {
 	int c;
 	std::stringstream sst;
 	sst << (char) prefix << prev;
@@ -477,7 +436,7 @@ Values::NodeT Lang5D::collectUnicodeID(FILE* file, int& linenumber, int prefix, 
 	else
 		return error("<value>", "<nothing>");
 }
-Values::NodeT Lang5D::readUnicodeOperator3(FILE* file, int& linenumber, int c) const {
+Values::NodeT LangForth::readUnicodeOperator3(FILE* file, int& linenumber, int c) const {
 	char buf[5] = {0};
 	assert(c == 0xE2);
 	buf[0] = c;
@@ -494,54 +453,27 @@ Values::NodeT Lang5D::readUnicodeOperator3(FILE* file, int& linenumber, int c) c
 	} else
 		return collectUnicodeID(file, linenumber, buf[0], &buf[1]);
 }
-Values::NodeT Lang5D::readOperator(FILE* file, int& linenumber, int c) const {
+Values::NodeT LangForth::readOperator(FILE* file, int& linenumber, int c) const {
 	return collect(file, linenumber, c, operatorCharP);
 }
-Values::NodeT Lang5D::readDigits(FILE* file, int& linenumber, int c) const {
+Values::NodeT LangForth::readDigits(FILE* file, int& linenumber, int c) const {
 	return collect(file, linenumber, c, digitRestCharP);
 }
-int Lang5D::collectNumeric3(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const {
+int LangForth::collectNumeric3(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const {
 	abort();
 	return(2);
 }
-Values::NodeT Lang5D::collectNumeric2(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const {
+Values::NodeT LangForth::collectNumeric2(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const {
 	abort(); // FIXME
 	return(nil);
 }
-Values::NodeT Lang5D::readShebang(FILE* file, int& linenumber, int c) const {
+Values::NodeT LangForth::readShebang(FILE* file, int& linenumber, int c) const {
 	return collect(file, linenumber, c, shebangBodyCharP);
 }
-Values::NodeT Lang5D::readHashExports(FILE* file, int& linenumber, int c) const {
-	assert(c == 'e');
-	char c0 = GETC;
-	if(c0 == 'x') {
-		char c0 = GETC;
-		if(c0 == 'p') {
-			char c0 = GETC;
-			if(c0 == 'o') {
-				char c0 = GETC;
-				if(c0 == 'r') {
-					char c0 = GETC;
-					if(c0 == 't') {
-						char c0 = GETC;
-						if(c0 == 's') {
-							char c0 = GETC;
-							if(c0 == '[') {
-								UNGETC(c0);
-								return Shashexports;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return error("<special-coding>", "<junk>");
-}
-Values::NodeT Lang5D::readKeyword(FILE* file, int& linenumber, int c) const {
+Values::NodeT LangForth::readKeyword(FILE* file, int& linenumber, int c) const {
 	return collect(file, linenumber, c, keywordBodyCharP);
 }
-Values::NodeT Lang5D::readSpecialCoding(FILE* file, int& linenumber, int c2) const {
+Values::NodeT LangForth::readSpecialCoding(FILE* file, int& linenumber, int c2) const {
 	int c = GETC;
 	switch(c) {
 	case 'o':
@@ -554,8 +486,6 @@ Values::NodeT Lang5D::readSpecialCoding(FILE* file, int& linenumber, int c2) con
 		return collectNumeric2(file, linenumber, 2, binaryBodyCharP);
 	case '!':
 		return readShebang(file, linenumber, c);
-	case 'e':
-		return readHashExports(file, linenumber, c);
 	default:
 		if(digitCharP(c)) {
 			int basis = collectNumeric3(file, linenumber, 10, digitCharP);
@@ -568,9 +498,9 @@ Values::NodeT Lang5D::readSpecialCoding(FILE* file, int& linenumber, int c2) con
 				return error("<special-coding>", "<junk>");
 	}
 }
-Values::NodeT Lang5D::readString(FILE* file, int& linenumber, int c) const {
+Values::NodeT LangForth::readString(FILE* file, int& linenumber, int c) const {
 	if(c == '"') { /* FIXME error handling */
-		Values::NodeT n = collect1C(file, linenumber, stringBodyCharP);
+		Values::NodeT n = collect1(file, linenumber, stringBodyCharP);
 		int c2 = GETC;
 		if(c2 != '"') {
 			char buf[2] = {0,0};
@@ -586,7 +516,7 @@ Values::NodeT Lang5D::readString(FILE* file, int& linenumber, int c) const {
 	} else
 		return error("<string>", "<junk>");
 }
-Values::NodeT Lang5D::readToken(FILE* file, int& linenumber) const {
+Values::NodeT LangForth::readToken(FILE* file, int& linenumber) const {
 	int c;
 	c = GETC;
 	if(c == EOF) 
@@ -617,91 +547,30 @@ Values::NodeT Lang5D::readToken(FILE* file, int& linenumber) const {
 		return error("<token>", std::string(buf));
 	}
 }
-Values::NodeT Lang5D::mcall(Values::NodeT a, Values::NodeT b) const {
-	return call(a,b);
+/**
+  For now, lambdas are special-cased like this:
+
+ */
+void LangForth::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>& values) const {
+	return;
 }
-Values::NodeT Lang5D::replaceIN(Values::NodeT equation, Values::NodeT body) const {
-	/* x = 5 => ((= x) 5) */
-	if(!operationP(equation))
-		return error("<equation>", "<junk>");
-	if(getOperationOperator(equation) != Sequal)
-		return error("<equation>", "<inequation>");
-	NodeT formalParameter = getOperationArgument1(equation);
-	NodeT value = getOperationArgument2(equation);
-	return call(fn(formalParameter, body), value);
-}
-Values::NodeT Lang5D::moperation(Values::NodeT operator_, Values::NodeT a, Values::NodeT b) const {
-	return operator_ == Sbackslash ? fn(macroStandinOperand(a),b) : 
-	       operator_ == Sin ? replaceIN(a ,b) :
-		   operation(operator_, a, b);
-}
-void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>& values) const {
-	int argcount = operatorArgcount(operator_);
-	if(argcount < 0)
-		argcount = -argcount;
-	if(operator_ == SLF || operator_ == Slet || operator_ == Simport) { /* ignore for now */
-		//fprintf(stderr, "LF NONE\n");
-		return;
-	}
-	if(argcount == 1) {
-		NodeT a = values.back();
-		values.pop_back();
-		values.push_back(mcall(operator_,a));
-		return;
-	}
-	assert(argcount == 2);
-	if(values.size() < 2) {
-		fprintf(stderr, "NOT ENOUGH\n");
-		values.push_back(error("<2-arguments>", "<too-little>"));
-	} else {
-		fprintf(stderr, "TWO ARGS \"");
-		Formatters::TExpression::print(stderr, operator_);
-		fprintf(stderr, "\" ");
-		NodeT b = values.back();
-		values.pop_back();
-		NodeT a = values.back();
-		values.pop_back();
-		Formatters::TExpression::print(stderr, a);
-		//str(a, stdout);
-		fprintf(stderr, "!");
-		Formatters::TExpression::print(stderr, b);
-		//str(b, stdout);
-		fprintf(stderr, "\n");
-		values.push_back(operator_ == Sapply ? mcall(a,b) : moperation(operator_, a, b));
-	}
-}
-Values::NodeT Lang5D::parseValue(Scanner<Lang5D>& scanner) const {
-	NodeT token = scanner.getToken();
-	if(token == Sleftparen) {
-		return parse0(scanner, Srightparen);
-	} else
-		return scanner.consume();
-}
-Values::NodeT Lang5D::parse0(Scanner<Lang5D>& scanner, NodeT endToken) const {
-	Values::NodeT result;
+Values::NodeT LangForth::parse(Scanner<LangForth>& scanner) const {
 	std::vector<NodeT ALLOCATOR_VECTOR> prog;
-	prog = Scanners::parse(scanner, *this, endToken);
-	std::vector<NodeT ALLOCATOR_VECTOR>::const_iterator iter = prog.begin(); 
-	if(iter != prog.end()) {
-		result = *iter;
-		++iter;
-		if(iter == prog.end())
-			return result;
-		else
-			return error("<nothing>", "<junk>");
-	} else
-		return error("<something>", "<nothing>");
+	prog = Scanners::parse(scanner, *this, SEOF);
+	for(std::vector<NodeT ALLOCATOR_VECTOR>::const_iterator iter = prog.begin(); iter != prog.end(); ++iter) {
+		NodeT item = *iter;
+		Formatters::TExpression::print(stdout, item);
+		printf(" ");
+	}
+	return error("<nothing>", "<not implemented>");
 }
-Values::NodeT Lang5D::parse(Scanner<Lang5D>& scanner) const {
-	return parse0(scanner, SEOF);
-}
-Values::NodeT Lang5D::parse1(FILE* f, const char* name) const {
-	Scanner<Lang5D> scanner(*this);
+Values::NodeT LangForth::parse1(FILE* f, const char* name) const {
+	Scanner<LangForth> scanner(*this);
 	scanner.push(f, 1, name);
 	scanner.consume();
 	return parse(scanner);
 }
-Values::NodeT Lang5D::error(Values::NodeT expectedPart, Values::NodeT gotPart) const {
+Values::NodeT LangForth::error(Values::NodeT expectedPart, Values::NodeT gotPart) const {
 	/* FIXME */
 	return error("???", "???");
 }

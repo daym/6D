@@ -66,6 +66,10 @@ bool callP(NodeT);
 bool consP(NodeT);
 bool nilP(NodeT);
 NodeT operation(NodeT callable, NodeT argument1, NodeT argument2);
+NodeT getOperationArgument1(NodeT o);
+NodeT getOperationArgument2(NodeT o);
+NodeT getOperationOperator(NodeT o);
+bool operationP(NodeT o);
 /*extern NodeT nil;*/
 #define nil NULL
 
