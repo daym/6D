@@ -48,6 +48,7 @@ Values::NodeT Lang5D::Sequal;
 Values::NodeT Lang5D::Sin;
 Values::NodeT Lang5D::Sfrom;
 Values::NodeT Lang5D::Shashexports;
+//Values::NodeT Lang5D::Sdot;
 
 /* TODO just use a function */
 static std::map<NodeT, int> levels;
@@ -231,41 +232,41 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr("‒")] = 22,
 		levels[symbolFromStr("-")] = 22,
 		levels[symbolFromStr("%")] = 21,
+		levels[symbolFromStr("∪")] = 17,
 		levels[symbolFromStr("∩")] = 16,
-		levels[symbolFromStr("∪")] = 15,
-		levels[symbolFromStr("∈")] = 14,
-		levels[symbolFromStr("⊂")] = 14,
-		levels[symbolFromStr("⊃")] = 14,
-		levels[symbolFromStr("⊆")] = 14,
-		levels[symbolFromStr("⊇")] = 14,
-		levels[symbolFromStr("=")] = 11,
-		levels[symbolFromStr("≟")] = 11,
-		levels[symbolFromStr("/=")] = 11,
-		levels[symbolFromStr("<")] = 10,
-		levels[symbolFromStr("<=")] = 10,
-		levels[symbolFromStr(">")] = 10,
-		levels[symbolFromStr(">=")] = 10,
-		levels[symbolFromStr("≤")] = 10,
-		levels[symbolFromStr("≥")] = 10,
-		levels[symbolFromStr("&&")] = 9,
-		levels[symbolFromStr("∧")] = 9,
-		levels[symbolFromStr("||")] = 8,
-		levels[symbolFromStr("∨")] = 8,
-		levels[symbolFromStr(",")] = 7,
-		levels[symbolFromStr("$")] = 6,
-		//#intern("if")] = 4,
-		levels[symbolFromStr("elif")] = 5,
-		levels[symbolFromStr("else")] = 5,
-		levels[symbolFromStr("|")] = 4,
-		levels[symbolFromStr("=>")] = 3,
-		levels[symbolFromStr(";")] = 3,
-		levels[symbolFromStr("?;")] = 3,
-		levels[symbolFromStr("\\")] = 2,
-		levels[symbolFromStr("let")] = 0,
+		levels[symbolFromStr("∈")] = 16,
+		levels[symbolFromStr("⊂")] = 16,
+		levels[symbolFromStr("⊃")] = 16,
+		levels[symbolFromStr("⊆")] = 16,
+		levels[symbolFromStr("⊇")] = 16,
+		levels[symbolFromStr("=")] = 13,
+		levels[symbolFromStr("≟")] = 13,
+		levels[symbolFromStr("/=")] = 13,
+		levels[symbolFromStr("<")] = 12,
+		levels[symbolFromStr("<=")] = 12,
+		levels[symbolFromStr(">")] = 12,
+		levels[symbolFromStr(">=")] = 12,
+		levels[symbolFromStr("≤")] = 12,
+		levels[symbolFromStr("≥")] = 12,
+		levels[symbolFromStr("&&")] = 11,
+		levels[symbolFromStr("∧")] = 11,
+		levels[symbolFromStr("||")] = 10,
+		levels[symbolFromStr("∨")] = 10,
+		levels[symbolFromStr(",")] = 9,
+		levels[symbolFromStr("$")] = 8,
+		//#intern("if")] = 6,
+		levels[symbolFromStr("elif")] = 7,
+		levels[symbolFromStr("else")] = 7,
+		levels[symbolFromStr("|")] = 6,
+		levels[symbolFromStr("=>")] = 5,
+		levels[symbolFromStr(";")] = 5,
+		levels[symbolFromStr("?;")] = 5,
+		levels[symbolFromStr("\\")] = 4,
+		levels[symbolFromStr("import")] = 2,
+		levels[symbolFromStr("from")] = 3,
+		levels[symbolFromStr("let")] = 1,
 		levels[symbolFromStr("in")] = 1,
-		levels[symbolFromStr("from")] = 1,
 		levels[symbolFromStr("let!")] = 0,
-		levels[symbolFromStr("import")] = 0,
 		levels[symbolFromStr(")")] = -1,
 		levels[symbolFromStr("}")] = -1,
 		levels[symbolFromStr("]")] = -1,
@@ -623,12 +624,33 @@ Values::NodeT Lang5D::readToken(FILE* file, int& linenumber) const {
 	}
 }
 Values::NodeT Lang5D::mcall(Values::NodeT a, Values::NodeT b) const {
-	return call(a,b);
+	if(a == Simport)
+		return macroStandin(a, b);
+	else
+		return call(a,b);
+}
+Values::NodeT Lang5D::replaceIMPORT(Values::NodeT body, Values::NodeT source, Values::NodeT symlist) const {
+	if(symlist) {
+		//Values::NodeT close(Values::NodeT /* symbol */ parameter, Values::NodeT argument, Values::NodeT body) {
+		//NodeT accessor = operation(Sdot, source, quote(getConsHead(symlist))); /* technically this is bad since it captures the (.) that is in scope. */
+		NodeT accessor = call(source, call(Squote, getConsHead(symlist))); /* better? */
+		return Values::close(getConsHead(symlist), accessor, replaceIMPORT(body, source, getConsTail(symlist)));
+	} else
+		return body;
 }
 Values::NodeT Lang5D::replaceIN(Values::NodeT equation, Values::NodeT body) const {
-	/* x = 5 => ((= x) 5) */
-	if(!operationP(equation))
-		return error("<equation>", "<junk>");
+	/* two possibilities: */
+	/* importExpr <=> [import <source> [...]] */
+	/* x = 5 <=> ((= x) 5) */
+	if(!operationP(equation)) {
+		NodeT fr, c2;
+		if(macroStandinP(equation) && macroStandinOperator(equation) == Simport && (fr = macroStandinOperand(equation)) && (c2 = getCallCallable(fr))) {
+			fprintf(stderr, "OK\n");
+			//consP(tl) && (tl2 = getConsTail(tl)) && consP(tl2)) {
+			return replaceIMPORT(body, getCallArgument(fr), getCallArgument(c2));
+		} else
+			return error("<equation>", "<junk>");
+	}
 	if(getOperationOperator(equation) != Sequal)
 		return error("<equation>", "<inequation>");
 	NodeT formalParameter = getOperationArgument1(equation);
@@ -644,7 +666,7 @@ void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR
 	int argcount = operatorArgcount(operator_);
 	if(argcount < 0)
 		argcount = -argcount;
-	if(operator_ == SLF || operator_ == Slet || operator_ == Simport) { /* ignore for now */
+	if(operator_ == SLF || operator_ == Slet) { /* ignore for now */
 		//fprintf(stderr, "LF NONE\n");
 		return;
 	}

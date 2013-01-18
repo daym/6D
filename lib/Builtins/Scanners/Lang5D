@@ -29,6 +29,7 @@ protected:
 	Values::NodeT readHashExports(FILE* file, int& linenumber, int c) const;
 	Values::NodeT parseValue(Scanner<Lang5D>& scanner) const;
 	Values::NodeT parseListLiteral(Values::NodeT endToken, Scanner<Lang5D>& tokenizer) const;
+	Values::NodeT replaceIMPORT(Values::NodeT body, Values::NodeT source, Values::NodeT symlist) const;
 public:
 	Lang5D(void);
 	static Values::NodeT SLF;
