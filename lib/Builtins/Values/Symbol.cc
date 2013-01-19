@@ -8,7 +8,6 @@ namespace Values {
 bool symbolP(NodeT node) {
 	return tagFromNode(node) == TAG_SYMBOL;
 }
-// TODO use Values::Hashtable
 static Hashtable symbols;
 NodeT symbolFromStr(const char* name) {
 	Hashtable::const_iterator iter = symbols.find(name);

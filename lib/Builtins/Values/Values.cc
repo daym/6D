@@ -3,6 +3,7 @@
 #include "Values/Symbol"
 #include "Values/Keyword"
 #include "Allocators/Allocators"
+#include "Formatters/TExpression"
 namespace Values {
 
 struct Symbol;
