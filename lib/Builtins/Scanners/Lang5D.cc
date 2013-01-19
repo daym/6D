@@ -3,6 +3,7 @@
 #include <map>
 #include <stack>
 #include <sstream>
+#include <6D/Allocators>
 #include "Values/Values"
 #include "Scanners/Lang5D"
 #include "Scanners/ShuntingYardParser"
@@ -382,7 +383,7 @@ NodeT Lang5D::collect(FILE* file, int& linenumber, int prefix, bool (*continueP)
 	std::string s = sst.str();
 	UNGETC(c);
 	if(s.length() > 0) {
-		return symbolFromStr(s.c_str());
+		return symbolFromStr(GCx_strdup(s.c_str()));
 	} else
 		return error("<value>", "<nothing>");
 }
@@ -457,7 +458,7 @@ NodeT Lang5D::collectC(FILE* file, int& linenumber, int prefix, bool (*continueP
 	std::string s = sst.str();
 	UNGETC(c);
 	if(s.length() > 0) {
-		return symbolFromStr(s.c_str());
+		return symbolFromStr(GCx_strdup(s.c_str()));
 	} else
 		return error("<value>", "<nothing>");
 }
@@ -479,7 +480,7 @@ NodeT Lang5D::collectUnicodeID(FILE* file, int& linenumber, int prefix, const st
 	std::string s = sst.str();
 	UNGETC(c);
 	if(s.length() > 0)
-		return symbolFromStr(s.c_str());
+		return symbolFromStr(GCx_strdup(s.c_str()));
 	else
 		return error("<value>", "<nothing>");
 }
@@ -496,7 +497,7 @@ NodeT Lang5D::readUnicodeOperator3(FILE* file, int& linenumber, int c) const {
 	// TODO unicode decode buf
 	int codepoint = buf[0]; // FIXME!!!
 	if(mathUnicodeOperatorInRangeP(codepoint)) { /* standalone */
-		return symbolFromStr(buf);
+		return symbolFromStr(GCx_strdup(buf));
 	} else
 		return collectUnicodeID(file, linenumber, buf[0], &buf[1]);
 }
@@ -610,7 +611,7 @@ NodeT Lang5D::readToken(FILE* file, int& linenumber) const {
 	else if(braceCharP(c)) {
 		char buf[2] = {0, 0};
 		buf[0] = c;
-		return symbolFromStr(buf);
+		return symbolFromStr(GCx_strdup(buf));
 	} else if(c == '@')
 		return readKeyword(file, linenumber, c);
 	else if(c == '"')
@@ -657,11 +658,12 @@ NodeT Lang5D::replaceIN(NodeT equation, NodeT body) const {
 	return call(fn(formalParameter, body), value);
 }
 NodeT Lang5D::moperation(NodeT operator_, NodeT a, NodeT b) const {
-	return operator_ == Sbackslash ? fn(macroStandinOperand(a),b) : 
+	return operator_ == Sbackslash ? fn(macroStandinOperand(a),b) :  /* CRASH HERE */
 	       operator_ == Sin ? replaceIN(a ,b) :
 		   operation(operator_, a, b);
 }
 void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>& values) const {
+	/* note that 2-operand macro operators leave their own result on #values */
 	int argcount = operatorArgcount(operator_);
 	if(argcount < 0)
 		argcount = -argcount;
@@ -670,9 +672,14 @@ void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR
 		return;
 	}
 	if(argcount == 1) {
-		NodeT a = values.back();
-		values.pop_back();
-		values.push_back(mcall(operator_,a));
+		if(values.size() < 1) {
+			fprintf(stderr, "NOT ENOUGH 1\n");
+			values.push_back(error("<1-arguments>", "<too-little>"));
+		} else {
+			NodeT a = values.back();
+			values.pop_back();
+			values.push_back(mcall(operator_,a));
+		}
 		return;
 	}
 	assert(argcount == 2);

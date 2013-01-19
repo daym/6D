@@ -30,7 +30,7 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 		if (env.openingParenP(input)) { /* special case of the stuff below in order to declutter the stuff below */
 			operators.push(input);
 			if (env.macroStarterP(input)) {
-				result.push_back( /*yield */ env.startMacro(input, tokenizer));
+				result.push_back( /*yield */ env.startMacro(input, tokenizer)); /* this is the final result for the macro, probably */
 				input = nil; /* for the purposes of operator detection, the value was not an operator. Note that we cannot write result.back() or similar here since otherwise macro standins could be misdetected. */
 			}
 		} else if(prevInput == env.Sleftparen && tokenizer.getToken() == env.Srightparen && env.operatorP(input)) { /* (+) */
@@ -70,12 +70,14 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 				}
 			} else if(argcount == -1) { /* suffix */
 				env.callRpnOperator(input, result);
-				input = prevInput; /* make sure we don't see the suffix operator there on its own */
+				input = prevInput; /* make sure we don't see the suffix operator there on its own (since it was already applied) */
 			} else 
 				operators.push(input);
-			if (env.macroStarterP(input))
+			if (env.macroStarterP(input)) { /* assumes macros all start at prefix loc */
 				result.push_back( /*yield */ env.startMacro(input, tokenizer));
-		} else { /* current token not an operator: might be either a value or a function call */
+				//input = nil; /* for the purposes of operator detection, the value was not an operator. Note that we cannot write result.back() or similar here since otherwise macro standins could be misdetected. */
+			}
+		} else { /* current token not an operator: might be either a value or a function call argument */
 			if (env.operatorP(prevInput)) { /* previous token was operator: current token is certainly a value */ /* implicit "&& !env.openingParenP(prevInput))" */
 				result.push_back( /*yield */ input);
 			} else { // call, keep in sync with above.
