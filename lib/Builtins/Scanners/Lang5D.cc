@@ -389,6 +389,7 @@ NodeT Lang5D::collect(FILE* file, int& linenumber, int prefix, bool (*continueP)
 }
 NodeT Lang5D::collect1(FILE* file, int& linenumber, bool (*continueP)(int input)) const {
 	int prefix;
+	assert(!continueP('\n'));
 	prefix = GETC;
 	if(prefix == EOF)
 		return error("<value>", "<EOF>");
@@ -452,7 +453,8 @@ NodeT Lang5D::collectC(FILE* file, int& linenumber, int prefix, bool (*continueP
 				return error("<escapedValue>", "<junk>");
 			}
 			continue;
-		}
+		} else if(c == '\n')
+			++linenumber;
 		sst << (char) c;
 	}
 	std::string s = sst.str();
