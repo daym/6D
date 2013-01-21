@@ -1,2 +1,2 @@
-2*
-	3 + 5
+3*
+	5 + 2Index: lib/Builtins/WIN32/testShuntingYard.cpp

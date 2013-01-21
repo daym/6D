@@ -8,6 +8,7 @@
 #include "Scanners/Lang5D"
 #include "Scanners/ShuntingYardParser"
 #include "Formatters/TExpression"
+#include "SpecialForms/SpecialForms"
 #undef GETC
 #undef UNGETC
 #define GETC fgetc(file)

@@ -19,39 +19,36 @@ static double log2(double n) {
 
 namespace Values {
 
-struct hashstr {
-	uint32_t jenkins_one_at_a_time_hash(const char *key, size_t len) const {
-		uint32_t hash, i;
-		for(hash = i = 0; i < len; ++i) {
-			hash += key[i];
-			hash += (hash << 10);
-			hash ^= (hash >> 6);
-		}
-		hash += (hash << 3);
-		hash ^= (hash >> 11);
-		hash += (hash << 15);
-		return hash;
+static inline uint32_t jenkinsOneAtATimeHash(const char* key, size_t len) {
+	uint32_t hash, i;
+	for(hash = i = 0; i < len; ++i) {
+		hash += key[i];
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
 	}
-
-	unsigned long operator()(const char* str) const {
-		return(jenkins_one_at_a_time_hash(str, strlen(str)));
+	hash += (hash << 3);
+	hash ^= (hash >> 11);
+	hash += (hash << 15);
+	return hash;
+}
+struct hashstr {
+	unsigned long operator()(NodeT sym) const {
+		const char* str = getSymbol1Name(sym);
+		return(jenkinsOneAtATimeHash(str, strlen(str)));
 	}
 };
 struct eqstr {
-	bool operator()(const char* s1, const char* s2) const {
-		return strcmp(s1, s2) == 0;
+	bool operator()(NodeT s1, NodeT s2) const {
+		return s1 == s2;
 	}
 };
 struct ltstr {
-	bool operator()(const char* s1, const char* s2) const {
+	bool operator()(NodeT sy1, NodeT sy2) const {
+		const char* s1 = getSymbol1Name(sy1);
+		const char* s2 = getSymbol1Name(sy2);
 		return strcmp(s1, s2) < 0;
 	}
 };
-
-////typedef std::unordered_map<const char*, NodeT, __gnu_cxx::hash<const char*>, eqstr, gc_allocator<std::pair<const char*, NodeT> > > RawHashtable;
-////typedef __gnu_cxx::hash_map<const char*, NodeT, __gnu_cxx::hash<const char*>, eqstr, gc_allocator<std::pair<const char*, NodeT> > > RawHashtable;
-//typedef std::map<const char*, NodeT, ltstr, gc_allocator<std::pair<const char*, NodeT> > > RawHashtable;
-//// has no allocator: typedef khmap_t<const char*, NodeT, khashf_t, khasheq_t, gc_allocator<std::pair<const char*, NodeT> > > RawHashtable;
 typedef enum {
 	HS_FREE,
 	HS_OCCUPIED,
@@ -240,7 +237,7 @@ public:
 		//  TODO shrink
 	}
 };
-typedef RawHashtable<const char*, Values::NodeT, hashstr, eqstr> Hashtable;
+typedef RawHashtable<NodeT, Values::NodeT, hashstr, eqstr> Hashtable;
 
 #ifdef CX11xx
 class Hashtable : public RawHashtable, public Values::Node {

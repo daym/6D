@@ -18,12 +18,32 @@ struct Node
 
 /* semi-private */
 enum {
-	TAG_SYMBOL,
+	TAG_SYMBOLREFERENCE,
 	TAG_KEYWORD,
+	TAG_SYMBOL,
+	TAG_FFI_FN,
 	TAG_OPAQUE,
 };
 int tagFromNode(NodeT node);
 //typedef std::map<std::string, NodeT> Hashtable;
+
+struct Call : Node {
+	NodeT callable;
+	NodeT argument;
+	NodeT result;
+	int resultGeneration;
+	Call(NodeT aCallable, NodeT aArgument) :
+		callable(aCallable),
+		argument(aArgument)
+	{
+		this->callable = callable;
+		this->argument = argument;
+		this->result = NULL;
+		this->resultGeneration = -1;
+	}
+	virtual ~Call() {
+	}
+};
 
 }
 #endif /* ndef __VALUES_H */

@@ -5,80 +5,91 @@
 #include <stdlib.h>
 #include <map>
 #ifdef __GNUC__
-#define G_5D_GNUC_PURE __attribute__ ((pure))
+#define G_5D_PURE __attribute__ ((pure))
 #else
-#define G_5D_GNUC_PURE
+#define G_5D_PURE
 #endif
 namespace Values {
 
 /* this is used as the "result" of the parser (one of it is the result) */
 typedef const struct Node* NodeT;
 /* given a string, returns a node that can be quickly checked for identicalness */
-NodeT symbolFromStr(const char* name);
+NodeT symbolFromStr(const char* name) G_5D_PURE;
 
 /* given two nodes, constructs a "Cons" with a head and tail and return it */
-NodeT cons(NodeT head, NodeT tail);
+NodeT cons(NodeT head, NodeT tail) G_5D_PURE;
 
 /* given a std::string, somehow puts it into something resembling a NodeT */
-NodeT strCXX(const std::string& value);
+NodeT strCXX(const std::string& value) G_5D_PURE;
 
 /* given a string, returns a node that can be quickly checked for identicalness (and is not a symbol). */
-NodeT keywordFromStr(const char* name);
+NodeT keywordFromStr(const char* name) G_5D_PURE;
 
 /* given a formal parameter and a body, returns a node that represents a function with that formal parameter and body */
-NodeT fn(NodeT formalParameter, NodeT body);
+NodeT fn(NodeT formalParameter, NodeT body) G_5D_PURE;
 
 /* given a callable and argument, returns a node that represents a Call */
-NodeT call(NodeT callable, NodeT argument);
+NodeT call(NodeT callable, NodeT argument) G_5D_PURE;
 
 /* given a symbol, returns its text. If not a symbol, returns NULL */
-const char* getSymbol1Name(NodeT node);
+const char* getSymbol1Name(NodeT node) G_5D_PURE;
 
 /* given a keyword, returns its text. If not a keyword, returns NULL */
-const char* getKeyword1Name(NodeT node);
+const char* getKeyword1Name(NodeT node) G_5D_PURE;
 
 /* given a Cons, returns its head */
-NodeT getConsHead(NodeT);
+NodeT getConsHead(NodeT) G_5D_PURE;
 
 /* given a Cons, returns its tail. Tail is USUALLY nil or a(nother) Cons */
-NodeT getConsTail(NodeT);
+NodeT getConsTail(NodeT) G_5D_PURE;
 
 /* given a Call, returns its callable. */
-NodeT getCallCallable(NodeT);
+NodeT getCallCallable(NodeT) G_5D_PURE;
 
 /* given a Call, returns its argument. */
-NodeT getCallArgument(NodeT);
+NodeT getCallArgument(NodeT) G_5D_PURE;
 
 /* given a Fn, returns its formal parameter. */
-NodeT getFnParameter(NodeT);
+NodeT getFnParameter(NodeT) G_5D_PURE;
 
 /* given a Fn, returns its body. */
-NodeT getFnBody(NodeT);
+NodeT getFnBody(NodeT) G_5D_PURE;
 
 /* finds out whether node is a Symbol */
-bool symbolP(NodeT node);
+bool symbolP(NodeT node) G_5D_PURE;
 
 /* finds out whether node is a Keyword */
-bool keywordP(NodeT node);
+bool keywordP(NodeT node) G_5D_PURE;
 
-bool fnP(NodeT);
-bool callP(NodeT);
-bool consP(NodeT);
-bool nilP(NodeT);
-NodeT operation(NodeT callable, NodeT argument1, NodeT argument2);
-NodeT getOperationArgument1(NodeT o);
-NodeT getOperationArgument2(NodeT o);
-NodeT getOperationOperator(NodeT o);
-bool operationP(NodeT o);
+bool fnP(NodeT) G_5D_PURE;
+bool callP(NodeT) G_5D_PURE;
+bool consP(NodeT) G_5D_PURE;
+bool nilP(NodeT) G_5D_PURE;
+NodeT operation(NodeT callable, NodeT argument1, NodeT argument2) G_5D_PURE;
+NodeT getOperationArgument1(NodeT o) G_5D_PURE;
+NodeT getOperationArgument2(NodeT o) G_5D_PURE;
+NodeT getOperationOperator(NodeT o) G_5D_PURE;
+bool operationP(NodeT o) G_5D_PURE;
 /*extern NodeT nil;*/
 #define nil NULL
 
 void str(NodeT, FILE*);
 
-NodeT pair(NodeT a, NodeT b);
+NodeT pair(NodeT a, NodeT b) G_5D_PURE;
 static inline Values::NodeT close(Values::NodeT /* symbol */ parameter, Values::NodeT argument, Values::NodeT body) {
 	return call(fn(parameter, body), argument);
 }
+int getSymbolreferenceIndex(Values::NodeT n) G_5D_PURE;
+Values::NodeT symbolreference(int index) G_5D_PURE;
+
+typedef NodeT (*FFIFnCallbackT)(NodeT, void* data);
+NodeT FFIFn(FFIFnCallbackT callback, void* aData, const char* name) G_5D_PURE;
+bool FFIFnP(NodeT node) G_5D_PURE;
+NodeT execFFIFn(NodeT node, NodeT argument) /*impure*/;
+
+/* conversions */
+NodeT internNative(NodeT value); /* neutral */
+NodeT internNative(bool value);
 
 }
 #endif /* ndef __6D_VALUES_H */

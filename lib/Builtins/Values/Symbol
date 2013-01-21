@@ -16,5 +16,13 @@ public:
 	virtual void str(FILE* destination) const;
 };
 
+struct Symbolreference : Node { /* for (substitution) speed reasons, a Symbolreference is NOT a Symbol */
+	const int index;
+	Symbolreference(int aIndex) :
+		index(aIndex)
+	{
+	}
+};
+
 }
 #endif /* ndef __VALUES_SYMBOL_H */

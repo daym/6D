@@ -33,9 +33,11 @@ void efree(void* beginning);
 #ifdef GC_THREADS
 #define ALLOCATOR_STACK , std::deque<NodeT, gc_allocator<Values::NodeT> > 
 #define ALLOCATOR_VECTOR , gc_allocator<Values::NodeT>
+#define ALLOCATOR_VECTOR2(t) , gc_allocator<t>
 #else
 #define ALLOCATOR_STACK
 #define ALLOCATOR_VECTOR
+#define ALLOCATOR_VECTOR2(t) 
 #endif
 
 #endif /* ndef __6D_ALLOCATORS_H */

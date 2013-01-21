@@ -8,9 +8,20 @@ namespace Values {
 bool keywordP(NodeT node) {
 	return tagFromNode(node) == TAG_SYMBOL;
 }
-static Hashtable keywords;
+struct hashstr2 {
+	unsigned long operator()(const char* str) const {
+		return(jenkinsOneAtATimeHash(str, strlen(str)));
+	}
+};
+struct eqstr2 {
+	bool operator()(const char* s1, const char* s2) const {
+		return strcmp(s1, s2) == 0;
+	}
+};
+typedef RawHashtable<const char*, Values::NodeT, hashstr2, eqstr2> Hashtable2;
+static Hashtable2 keywords;
 NodeT keywordFromStr(const char* name) {
-	Hashtable::const_iterator iter = keywords.find(name);
+	Hashtable2::const_iterator iter = keywords.find(name);
 	if(iter != keywords.end())
 		return iter->second;
 	keywords[name] = new Keyword(name);

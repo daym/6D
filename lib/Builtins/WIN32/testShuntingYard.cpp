@@ -18,7 +18,7 @@ int _tmain(int argc, _TCHAR* argv[]) {
 	Formatters::TExpression::print(stdout, value);
 	fflush(stdout);
 	//NodeT value = 
-	//Formatters::SExpression::print(value);
+	//Formatters::SExpression::p1rint(value);
 	
 	return 0;
 }

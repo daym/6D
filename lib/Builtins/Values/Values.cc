@@ -1,4 +1,5 @@
 #include <string>
+#include "6D/Values"
 #include "Values/Values"
 #include "Values/Symbol"
 #include "Values/Keyword"
@@ -8,12 +9,7 @@ namespace Values {
 
 struct Symbol;
 struct Keyword;
-int tagFromNode(NodeT node) {
-	return dynamic_cast<const Symbol*>(node) ? TAG_SYMBOL : 
-	       dynamic_cast<const Keyword*>(node) ? TAG_KEYWORD :
-		   TAG_OPAQUE;
-
-}
+struct CFFIFn;
 Node::~Node(void) {
 }
 void Node::str(FILE* destination) const {
@@ -43,23 +39,6 @@ NodeT getOperationOperator(NodeT o) {
 bool operationP(NodeT o) {
 	return callP(o) && callP(getCallCallable(o));
 }
-struct Call : Node {
-	NodeT callable;
-	NodeT argument;
-	NodeT result;
-	int resultGeneration;
-	Call(NodeT aCallable, NodeT aArgument) :
-		callable(aCallable),
-		argument(aArgument)
-	{
-		this->callable = callable;
-		this->argument = argument;
-		this->result = NULL;
-		this->resultGeneration = -1;
-	}
-	virtual ~Call() {
-	}
-};
 struct Fn : Node {
 	NodeT parameter;
 	NodeT body;
@@ -153,18 +132,17 @@ struct Str : Box {
 };
 
 NodeT strCXX(const std::string& value) {
+	/* TODO not necessarily new. Pool strings? (see Symbols for where it's already done) */
 	return new Str(value);
 }
 /* given a Cons, returns its head */
 NodeT getConsHead(NodeT node) {
 	return static_cast<const Cons*>(node)->head;
 }
-
 /* given a Cons, returns its tail. Tail is USUALLY nil or a(nother) Cons */
 NodeT getConsTail(NodeT node) {
 	return static_cast<const Cons*>(node)->tail;
 }
-
 void Str::str(FILE* destination) const {
 	const char* s = (const char*) nativePointer;
 	fputc('"', destination);
@@ -206,6 +184,49 @@ void Str::str(FILE* destination) const {
 }
 NodeT pair(NodeT a, NodeT b) {
 	return cons(a, b);
+}
+struct CFFIFn : Box {
+	void* data;
+	CFFIFn(void* aData, FFIFnCallbackT aCallback) : 
+		Box((void*) aCallback),
+		data(aData)
+	{
+	}
+};
+
+NodeT FFIFn(FFIFnCallbackT callback, void* aData, const char* name) {
+	/* TODO put name => this into some reflection hideout */
+	// TODO not necessarily new
+	return new CFFIFn(aData, callback);
+}
+bool FFIFnP(NodeT node) {
+	return tagFromNode(node) == TAG_FFI_FN;
+}
+NodeT execFFIFn(NodeT node, NodeT argument) {
+	CFFIFn* f = (CFFIFn*) node;
+	FFIFnCallbackT callback = (FFIFnCallbackT) f->nativePointer;
+	return (*callback)(argument, f->data);
+}
+int tagFromNode(NodeT node) {
+	return dynamic_cast<const Symbol*>(node) ? TAG_SYMBOL : 
+	       dynamic_cast<const Keyword*>(node) ? TAG_KEYWORD :
+		   dynamic_cast<const Symbolreference*>(node) ? TAG_SYMBOLREFERENCE : 
+		   dynamic_cast<const CFFIFn*>(node) ? TAG_FFI_FN : 
+		   TAG_OPAQUE;
+}
+static NodeT symbolreferences[200];
+Values::NodeT symbolreference(int index) {
+	if(index >= 0 && index < 200) {
+		if(!symbolreferences[index])
+			symbolreferences[index] = new Symbolreference(index);
+		return symbolreferences[index];
+	} else
+		return new Symbolreference(index);
+}
+/* returns the jump index of n if it is a Symbolreference, otherwise (-1) */
+int getSymbolreferenceIndex(Values::NodeT n) {
+	const Symbolreference* sr = dynamic_cast<const Symbolreference*>(n); // dynamic on purpose
+	return sr  ? sr->index : -1;
 }
 
 };
