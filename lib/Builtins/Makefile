@@ -5,6 +5,7 @@ LIBGC_LD_WRAP_CFLAGS = -D_REENTRANT -DGC_THREADS -DUSE_LD_WRAP
 #LIBGC_LD_WRAP_LDFLAGS = -Wl,--wrap -Wl,read -Wl,--wrap -Wl,dlopen -Wl,--wrap -Wl,pthread_create -Wl,--wrap -Wl,pthread_join -Wl,--wrap -Wl,pthread_detach -Wl,--wrap -Wl,pthread_sigmask -Wl,--wrap -Wl,sleep
 CXXFLAGS += -Wall -fPIC -O0 -g3 -Wall -Istrict -I. -Iinclude -fno-strict-overflow -Wno-deprecated -Wno-div-by-zero `pkg-config --cflags glib-2.0 gthread-2.0 libxml-2.0 libffi` $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include
 LDFLAGS += -ldl -lgc -lpthread `pkg-config --libs glib-2.0 gthread-2.0 libxml-2.0 libffi` $(LIBGC_LD_WRAP_LDFLAGS)
+STRICT_OBJECTS = strict/SpecialForms/Quoter.o
 OBJECTS = Formatters/Math.o \
 Formatters/SExpression.o \
 Formatters/TExpression.o \
@@ -17,7 +18,8 @@ Values/Symbol.o \
 Allocators/Allocators.o \
 Values/wstrings.o \
 Values/Hashtable.o \
-Evaluators/Evaluators.o
+Evaluators/Evaluators.o \
+$(STRICT_OBJECTS)
 LIB = lib6dbuiltins.so.1
 STATIC_LIB = lib6dbuiltins1.a  
 
@@ -44,6 +46,7 @@ Allocators/Allocators.o: Allocators/Allocators.cc Allocators/Allocators include/
 Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Scanners/Lang5D Formatters/TExpression
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
+strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.cc strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations
 test: Tests/01_ShuntingYard/testShuntingYard
 	Tests/01_ShuntingYard/run
 
