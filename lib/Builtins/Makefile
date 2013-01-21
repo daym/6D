@@ -16,7 +16,8 @@ Values/Keyword.o \
 Values/Symbol.o \
 Allocators/Allocators.o \
 Values/wstrings.o \
-Values/Hashtable.o
+Values/Hashtable.o \
+Evaluators/Evaluators.o
 LIB = lib6dbuiltins.so.1
 STATIC_LIB = lib6dbuiltins1.a  
 
@@ -42,6 +43,7 @@ Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
 Allocators/Allocators.o: Allocators/Allocators.cc Allocators/Allocators include/6D/Allocators
 Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Scanners/Lang5D Formatters/TExpression
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
+Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
 test: Tests/01_ShuntingYard/testShuntingYard
 	Tests/01_ShuntingYard/run
 

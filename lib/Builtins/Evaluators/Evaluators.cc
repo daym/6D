@@ -23,7 +23,7 @@ Values::NodeT callBuiltin(Values::NodeT fn, Values::NodeT argument);
 
 /* END Binary Operations */
 
-static void getFreeVariablesImpl(Hashtable& boundNames, Hashtable& freeNames, NodeT root) G_5D_PURE {
+static void getFreeVariablesImpl(Hashtable& boundNames, Hashtable& freeNames, NodeT root) {
 	if(fnP(root)) {
 		NodeT parameterNode = getFnParameter(root);
 		NodeT body = getFnBody(root);
@@ -41,7 +41,7 @@ static void getFreeVariablesImpl(Hashtable& boundNames, Hashtable& freeNames, No
 			freeNames[root] = NULL;
 	} // else other stuff.
 }
-void getFreeVariables(Hashtable& freeNames, NodeT root) G_5D_PURE {
+void getFreeVariables(Hashtable& freeNames, NodeT root) {
 	Hashtable boundNames;
 	getFreeVariablesImpl(boundNames, freeNames, root);
 }
@@ -54,7 +54,7 @@ static inline bool errorP(NodeT term) {
 	return false;
 }
 // TODO GC-proof deque
-static NodeT annotateImpl(std::deque<NodeT>& boundNames, Hashtable& boundNamesSet, NodeT root) G_5D_PURE {
+static NodeT annotateImpl(std::deque<NodeT>& boundNames, Hashtable& boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.
 	NodeT result;
 	if(fnP(root)) {
@@ -95,15 +95,15 @@ static NodeT annotateImpl(std::deque<NodeT>& boundNames, Hashtable& boundNamesSe
 	} // else other stuff.
 	return(root);
 }
-NodeT annotate(NodeT root) G_5D_PURE {
+NodeT annotate(NodeT root) {
 	std::deque<NodeT> boundNames;
 	Hashtable boundNamesSet;
 	return(annotateImpl(boundNames, boundNamesSet, root));
 }
-static inline NodeT ensureCall(NodeT term, NodeT fn, NodeT argument) G_5D_PURE {
+static inline NodeT ensureCall(NodeT term, NodeT fn, NodeT argument) {
 	return (getCallCallable(term) == fn && getCallArgument(term) == argument) ? term : call(fn, argument);
 }
-static NodeT shift(NodeT argument, int index, NodeT term) G_5D_PURE {
+static NodeT shift(NodeT argument, int index, NodeT term) {
 	int x_index = getSymbolreferenceIndex(term);
 	if(x_index != -1) {
 		if(x_index == index)
