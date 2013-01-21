@@ -1,0 +1,8 @@
+#ifndef __6D_EVALUATORS_H
+#define __6D_EVALUATORS_H
+#include "6D/Values"
+namespace Evaluators {
+Values::NodeT eval(Values::NodeT environment, Values::NodeT node);
+Values::NodeT execute(Values::NodeT environment, Values::NodeT term);
+}
+#endif /* ndef __6D_EVALUATORS_H */
