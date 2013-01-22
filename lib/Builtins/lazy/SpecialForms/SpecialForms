@@ -1,0 +1,14 @@
+#ifndef __6D_SPECIAL_FORMS_H
+#define __6D_SPECIAL_FORMS_H
+#include "SpecialForms/Quoter"
+namespace SpecialForms {
+
+static inline bool fnSpecialFormP(Values::NodeT fn) G_5D_PURE {
+	return true;
+}
+static inline bool fnWantsItsArgumentReducedP(Values::NodeT fn) G_5D_PURE {
+	return !fnSpecialFormP(fn);
+}
+
+}
+#endif /* #ifndef __6D_SPECIAL_FORMS_H */

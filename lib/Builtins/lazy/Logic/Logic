@@ -1,0 +1,14 @@
+#ifndef __6D_LAZY_LOGIC_H
+#define __6D_LAZY_LOGIC_H
+#include "6D/Values"
+#include "6D/Operations"
+
+namespace Logic {
+extern Values::NodeT trueN;
+extern Values::NodeT falseN;
+extern Values::NodeT Disjunction;
+extern Values::NodeT Conjunction;
+extern Values::NodeT Negation;
+void initLogic(void);
+}
+#endif /* ndef __6D_LAZY_LOGIC_H */

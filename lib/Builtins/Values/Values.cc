@@ -207,6 +207,7 @@ NodeT execFFIFn(NodeT node, NodeT argument) {
 	FFIFnCallbackT callback = (FFIFnCallbackT) f->nativePointer;
 	return (*callback)(argument, f->data);
 }
+/* FIXME Numbers (especially Int, Float) */
 int tagFromNode(NodeT node) {
 	return dynamic_cast<const Symbol*>(node) ? TAG_SYMBOL : 
 	       dynamic_cast<const Keyword*>(node) ? TAG_KEYWORD :

@@ -1,0 +1,15 @@
+#ifndef __6D_SPECIAL_FORMS_H
+#define __6D_SPECIAL_FORMS_H
+#include "SpecialForms/Quoter"
+#include "SpecialForms/Constanter"
+namespace SpecialForms {
+
+static inline bool fnSpecialFormP(Values::NodeT fn) {
+	return fn == SpecialForms::Quoter || fn == SpecialForms::Constanter; 
+}
+static inline bool fnWantsItsArgumentReducedP(Values::NodeT fn) {
+	return !fnSpecialFormP(fn);
+}
+
+}
+#endif /* #ifndef __6D_SPECIAL_FORMS_H */

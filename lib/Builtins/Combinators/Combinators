@@ -1,0 +1,15 @@
+#ifndef __6D_COMBINATORS_COMBINATORS_H
+#define __6D_COMBINATORS_COMBINATORS_H
+#include "6D/Operations"
+#include "6D/Values"
+
+namespace Combinators {
+extern Values::NodeT Identity;
+extern Values::NodeT Konstant;
+static inline Values::NodeT constanter(Values::NodeT argument) {
+	return call(Konstant, argument);
+}
+void initCombinators(void);
+}
+
+#endif /* ndef __6D_COMBINATORS_COMBINATORS_H */
