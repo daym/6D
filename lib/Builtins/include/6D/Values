@@ -31,6 +31,11 @@ NodeT fn(NodeT formalParameter, NodeT body) G_5D_PURE;
 /* given a callable and argument, returns a node that represents a Call */
 NodeT call(NodeT callable, NodeT argument) G_5D_PURE;
 
+/* shorthand for call(call */
+static inline NodeT call2(NodeT callable, NodeT argument, NodeT argument2) {
+	return call(call(callable, argument), argument2);
+}
+
 /* given a symbol, returns its text. If not a symbol, returns NULL */
 const char* getSymbol1Name(NodeT node) G_5D_PURE;
 

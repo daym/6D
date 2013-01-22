@@ -1,0 +1,9 @@
+#ifndef __6D_EVALUATORS_H
+#define __6D_EVALUATORS_H
+#include "6D/Values"
+
+namespace Evaluators {
+Values::NodeT annotate(Values::NodeT);
+}
+
+#endif /* ndef __6D_EVALUATORS_H */
