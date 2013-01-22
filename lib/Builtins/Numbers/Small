@@ -1,0 +1,12 @@
+#ifndef __NUMBERS_SMALL_H
+#define __NUMBERS_SMALL_H
+
+#define DECLARE_SMALL_VALUE(P, T) \
+/* use internNative to create. */ \
+struct P : Values::Node { \
+	T value; \
+	P(T aValue) : value(aValue) { \
+	} \
+};
+
+#endif /* ndef __NUMBERS_SMALL_H */

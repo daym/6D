@@ -1,0 +1,39 @@
+#ifndef __NUMBERS_REAL_H
+#define __NUMBERS_REAL_H
+#include <sstream>
+#include "Numbers/Small"
+#include "Values/Values"
+#include <6D/Operations>
+
+namespace Numbers {
+
+#if defined(__VFP_FP__) || defined(__ARM_EABI__)
+/* ARM doesn't have extended-precision floating point */
+typedef double NativeFloat;
+//#define NATIVEFLOAT_PRECISION 15
+#else
+typedef long double NativeFloat;
+//#define NATIVEFLOAT_PRECISION 19
+#endif
+
+
+DECLARE_SMALL_VALUE(Float, NativeFloat)   
+DECLARE_FFI_FN(FloatP)
+
+Values::NodeT operator+(const Float& a, const Float& b);
+Values::NodeT operator-(const Float& a, const Float& b);
+Values::NodeT operator*(const Float& a, const Float& b);
+Values::NodeT operator/(const Float& a, const Float& b);
+Values::NodeT operator<=(const Float& a, const Float& b);
+
+bool toNativeFloat(Values::NodeT node, NativeFloat& result);
+bool float_P(Values::NodeT node);
+Values::NodeT nan(void);
+Values::NodeT infinity(void);
+
+};
+namespace FFIs {
+Values::NodeT internNative(Numbers::NativeFloat value);
+};
+
+#endif /* ndef __NUMBERS_REAL_H */

@@ -1,0 +1,243 @@
+#ifndef BIGINTEGER_H
+#define BIGINTEGER_H
+#include <string>
+#include <sstream>
+#include "Values/Values"
+#include "Numbers/Small"
+#include "Numbers/BigUnsigned"
+#include "6D/Operations"
+#include "6D/FFIs"
+
+namespace Numbers {
+
+/* A Integer object represents a signed integer of size limited only by
+ * available memory.  BigUnsigneds support most mathematical operators and can
+ * be converted to and from most primitive integer types.
+ *
+ * A Integer is just an aggregate of a BigUnsigned and a sign.  (It is no
+ * longer derived from BigUnsigned because that led to harmful implicit
+ * conversions.) */
+class Integer : public Values::Node {
+
+public:
+	typedef BigUnsigned::Blk Blk;
+	typedef BigUnsigned::Index Index;
+	typedef BigUnsigned::CmpRes CmpRes;
+	static const CmpRes
+		less    = BigUnsigned::less   ,
+		equal   = BigUnsigned::equal  ,
+		greater = BigUnsigned::greater;
+	// Enumeration for the sign of a Integer.
+	enum Sign { negative = -1, zero = 0, positive = 1 };
+
+protected:
+	Sign sign;
+	BigUnsigned mag;
+
+public:
+	// Constructs zero.
+	Integer() : sign(zero), mag() {}
+
+	// Copy constructor
+	Integer(const Integer &x) : sign(x.sign), mag(x.mag) {};
+
+	// Assignment operator
+	void operator=(const Integer &x);
+
+	// Constructor that copies from a given array of blocks with a sign.
+	Integer(const Blk *b, Index blen, Sign s);
+
+	// Nonnegative constructor that copies from a given array of blocks.
+	/*Integer(const Blk *b, Index blen) : mag(b, blen) {
+		sign = mag.isZero() ? zero : positive;
+	}*/
+
+	// Constructor from a BigUnsigned and a sign
+	Integer(const BigUnsigned &x, Sign s);
+
+	// Nonnegative constructor from a BigUnsigned
+	Integer(const BigUnsigned &x) : mag(x) {
+		sign = mag.isZero() ? zero : positive;
+	}
+
+	// Constructors from primitive integer types
+	Integer(unsigned long  x);
+	Integer(         long  x);
+	Integer(unsigned int   x);
+	Integer(         int   x);
+	Integer(unsigned short x);
+	Integer(         short x);
+	Integer(long long x);
+	Integer(unsigned long long x);
+	/* Converters to primitive integer types
+	 * The implicit conversion operators caused trouble, so these are now
+	 * named. */
+	//unsigned long  toUnsignedLong () const;
+	//long           toLong         () const;
+	//unsigned int   toUnsignedInt  () const;
+	//int            toInt          () const;
+	//unsigned short toUnsignedShort() const;
+	//short          toShort        () const;
+	NativeInt        toNativeInt() const;
+	NativeUInt        toNativeUInt() const;
+protected:
+	// Helper
+	template <class X> X convertToUnsignedPrimitive() const;
+	template <class X, class UX> X convertToSignedPrimitive() const;
+public:
+
+	// ACCESSORS
+	Sign getSign() const { return sign; }
+	/* The client can't do any harm by holding a read-only reference to the
+	 * magnitude. */
+	const BigUnsigned &getMagnitude() const { return mag; }
+
+	// Some accessors that go through to the magnitude
+	Index size() const { return mag.size(); }
+	Index capacity() const { return mag.capacity(); }
+	Blk getBlock(Index i) const { return mag.getBlock(i); }
+	bool isZero() const { return sign == zero; } // A bit special
+
+	// COMPARISONS
+
+	// Compares this to x like Perl's <=>
+	CmpRes compareTo(const Integer &x) const;
+
+	// Ordinary comparison operators
+	bool operator ==(const Integer &x) const {
+		return sign == x.sign && mag == x.mag;
+	}
+	bool operator !=(const Integer &x) const { return !operator ==(x); };
+	bool operator < (const Integer &x) const { return compareTo(x) == less   ; }
+	bool operator <=(const Integer &x) const { return compareTo(x) != greater; }
+	bool operator >=(const Integer &x) const { return compareTo(x) != less   ; }
+	bool operator > (const Integer &x) const { return compareTo(x) == greater; }
+
+	// OPERATORS -- See the discussion in BigUnsigned.hh.
+	void add     (const Integer &a, const Integer &b);
+	void subtract(const Integer &a, const Integer &b);
+	void multiply(const Integer &a, const Integer &b);
+	/* See the comment on BigUnsigned::divideWithRemainder.  Semantics
+	 * differ from those of primitive integers when negatives and/or zeros
+	 * are involved. */
+	void divideWithRemainder(const Integer &b, Integer &q);
+	void negate(const Integer &a);
+	
+	/* Bitwise operators are not provided for Integers.  Use
+	 * getMagnitude to get the magnitude and operate on that instead. */
+
+	Integer operator +(const Integer &x) const;
+	Integer operator -(const Integer &x) const;
+	Integer operator *(const Integer &x) const;
+	//Integer operator /(const Integer &x) const;
+	Integer operator %(const Integer &x) const;
+	Integer operator -() const;
+
+	void operator +=(const Integer &x);
+	void operator -=(const Integer &x);
+	void operator *=(const Integer &x);
+	void operator /=(const Integer &x);
+	void operator %=(const Integer &x);
+	void flipSign();
+
+	// INCREMENT/DECREMENT OPERATORS
+	void operator ++(   );
+	void operator ++(int);
+	void operator --(   );
+	void operator --(int);
+};
+
+// NORMAL OPERATORS
+/* These create an object to hold the result and invoke
+ * the appropriate put-here operation on it, passing
+ * this and x.  The new object is then returned. */
+inline Integer Integer::operator +(const Integer &x) const {
+	Integer ans;
+	ans.add(*this, x);
+	return ans;
+}
+inline Integer Integer::operator -(const Integer &x) const {
+	Integer ans;
+	ans.subtract(*this, x);
+	return ans;
+}
+inline Integer Integer::operator *(const Integer &x) const {
+	Integer ans;
+	ans.multiply(*this, x);
+	return ans;
+}
+inline Integer Integer::operator %(const Integer &x) const {
+	if (x.isZero()) throw std::invalid_argument("tried to divide by zero");
+	Integer q, r;
+	r = *this;
+	r.divideWithRemainder(x, q);
+	return r;
+}
+inline Integer Integer::operator -() const {
+	Integer ans;
+	ans.negate(*this);
+	return ans;
+}
+
+/*
+ * ASSIGNMENT OPERATORS
+ * 
+ * Now the responsibility for making a temporary copy if necessary
+ * belongs to the put-here operations.  See Assignment Operators in
+ * BigUnsigned.hh.
+ */
+inline void Integer::operator +=(const Integer &x) {
+	add(*this, x);
+}
+inline void Integer::operator -=(const Integer &x) {
+	subtract(*this, x);
+}
+inline void Integer::operator *=(const Integer &x) {
+	multiply(*this, x);
+}
+inline void Integer::operator /=(const Integer &x) {
+	if (x.isZero()) throw std::invalid_argument("tried to divide by zero");
+	/* The following technique is slightly faster than copying *this first
+	 * when x is large. */
+	Integer q;
+	divideWithRemainder(x, q);
+	// *this contains the remainder, but we overwrite it with the quotient.
+	*this = q;
+}
+inline void Integer::operator %=(const Integer &x) {
+	if (x.isZero()) throw std::invalid_argument("tried to divide by zero");
+	Integer q;
+	// Mods *this by x.  Don't care about quotient left in q.
+	divideWithRemainder(x, q);
+}
+// This one is trivial
+inline void Integer::flipSign() {
+	sign = Sign(-sign);
+}
+
+
+DECLARE_SMALL_VALUE(Int, Numbers::NativeInt)
+DECLARE_FFI_FN(IntP)
+DECLARE_FFI_FN(IntegerP)
+Values::NodeT internNative(NativeInt value);
+Values::NodeT internNativeU(NativeUInt value);
+DECLARE_FFI_FN(IntSucc)
+DECLARE_FFI_FN(IntegerSucc)
+
+Values::NodeT operator+(const Int& a, const Int& b);
+Values::NodeT operator-(const Int& a, const Int& b);
+Values::NodeT operator*(const Int& a, const Int& b);
+/*
+Integer* operator+(const Integer& a, const Integer& b);
+Integer* operator-(const Integer& a, const Integer& b);
+Integer* operator*(const Integer& a, const Integer& b);
+Integer* operator/(const Integer& a, const Integer& b);
+Values::NodeT operator<=(const Integer& a, const Integer& b);
+*/
+bool operator<=(const Int& a, const Int& b);
+
+bool toNativeInt(Values::NodeT node, NativeInt& result);
+bool toNearestNativeInt(Values::NodeT node, NativeInt& result);
+
+}; /* namespace Numbers */
+#endif
