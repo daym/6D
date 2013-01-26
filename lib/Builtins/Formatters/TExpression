@@ -1,5 +1,7 @@
 #ifndef __FORMATTERS_TEXPRESSION_H
 #define __FORMATTERS_TEXPRESSION_H
+#include <stdio.h>
+#include "6D/Values"
 namespace Formatters {
 namespace TExpression {
 void print(FILE* destination, Values::NodeT node);

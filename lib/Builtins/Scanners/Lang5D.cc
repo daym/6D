@@ -6,8 +6,8 @@
 #include <6D/Allocators>
 #include "Values/Values"
 #include "Scanners/Lang5D"
-#include "Scanners/ShuntingYardParser"
 #include "Formatters/TExpression"
+#include "Scanners/ShuntingYardParser"
 #include "SpecialForms/SpecialForms"
 #undef GETC
 #undef UNGETC
@@ -230,6 +230,7 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr("⨯")] = 28,
 		levels[symbolFromStr(":")] = 27,
 		levels[symbolFromStr("'")] = 26,
+		levels[symbolFromStr("if")] = 25,
 		levels[symbolFromStr(" ")] = 24,
 		levels[symbolFromStr("++")] = 23,
 		levels[symbolFromStr("+")] = 22,
@@ -260,7 +261,6 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr("$")] = 9,
 		levels[symbolFromStr("elif")] = 8,
 		levels[symbolFromStr("else")] = 8,
-		levels[symbolFromStr("if")] = 7,
 		levels[symbolFromStr("|")] = 6,
 		levels[symbolFromStr("=>")] = 5,
 		levels[symbolFromStr(";")] = 5,
@@ -678,11 +678,16 @@ void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR
 		return;
 	}
 	if(argcount == 1) {
+		fprintf(stderr, "ONE ARG \"");
+		Formatters::TExpression::print(stderr, operator_);
+		fprintf(stderr, "\" ");
 		if(values.size() < 1) {
 			fprintf(stderr, "NOT ENOUGH 1\n");
 			values.push_back(error("<1-arguments>", "<too-little>"));
 		} else {
 			NodeT a = values.back();
+			Formatters::TExpression::print(stderr, a);
+			fprintf(stderr, "\n");
 			values.pop_back();
 			values.push_back(mcall(operator_,a));
 		}
@@ -693,19 +698,17 @@ void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR
 		//fprintf(stderr, "NOT ENOUGH\n");
 		values.push_back(error("<2-arguments>", "<too-little>"));
 	} else {
-		//fprintf(stderr, "TWO ARGS \"");
-		//Formatters::TExpression::print(stderr, operator_);
-		//fprintf(stderr, "\" ");
+		fprintf(stderr, "TWO ARGS \"");
+		Formatters::TExpression::print(stderr, operator_);
+		fprintf(stderr, "\" ");
 		NodeT b = values.back();
 		values.pop_back();
 		NodeT a = values.back();
 		values.pop_back();
-		//Formatters::TExpression::print(stderr, a);
-		//str(a, stdout);
-		//fprintf(stderr, "!");
-		//Formatters::TExpression::print(stderr, b);
-		//str(b, stdout);
-		//fprintf(stderr, "\n");
+		Formatters::TExpression::print(stderr, a);
+		fprintf(stderr, "!");
+		Formatters::TExpression::print(stderr, b);
+		fprintf(stderr, "\n");
 		values.push_back(operator_ == Sapply ? mcall(a,b) : moperation(operator_, a, b));
 	}
 }
@@ -726,8 +729,12 @@ NodeT Lang5D::parse0(Scanner<Lang5D>& scanner, NodeT endToken) const {
 		++iter;
 		if(iter == prog.end())
 			return result;
-		else
+		else {
+			fprintf(stderr, "junk was: ");
+			Formatters::TExpression::print(stderr, *iter);
+			fprintf(stderr, "\n");
 			return error("<nothing>", "<junk>");
+		}
 	} else
 		return error("<something>", "<nothing>");
 }

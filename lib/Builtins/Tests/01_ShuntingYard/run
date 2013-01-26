@@ -4,6 +4,7 @@ set -e
 cd Tests/01_ShuntingYard
 for s in *.5D
 do
+	echo "====="
 	er="${s%.5D}.expectedResult"
 	gr="${s%.5D}.gotResult" 
 	./testShuntingYard "${s}" >"${gr}" || echo "failed: $s">&2
