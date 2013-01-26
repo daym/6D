@@ -64,7 +64,7 @@ static NodeT annotateImpl(Values::NodeT dynEnv, std::deque<NodeT>& boundNames, H
 		assert(parameterSymbolNode);
 		boundNames.push_front(parameterSymbolNode);
 		if(boundNamesSet.find(parameterSymbolNode) == boundNamesSet.end()) { // not bound yet
-			boundNamesSet[parameterSymbolNode] = NULL;
+			boundNamesSet[parameterSymbolNode] = root; // nice for debugging. Faster would be: NULL;
 			result = annotateImpl(dynEnv, boundNames, boundNamesSet, body);
 			boundNamesSet.removeByKey(parameterSymbolNode);
 		} else // already bound to something else: make sure not to get rid of it.
