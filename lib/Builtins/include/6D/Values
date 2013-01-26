@@ -70,6 +70,7 @@ bool fnP(NodeT) G_5D_PURE;
 bool callP(NodeT) G_5D_PURE;
 bool consP(NodeT) G_5D_PURE;
 bool nilP(NodeT) G_5D_PURE;
+bool boxP(NodeT) G_5D_PURE;
 NodeT operation(NodeT callable, NodeT argument1, NodeT argument2) G_5D_PURE;
 NodeT getOperationArgument1(NodeT o) G_5D_PURE;
 NodeT getOperationArgument2(NodeT o) G_5D_PURE;
@@ -87,14 +88,15 @@ static inline Values::NodeT close(Values::NodeT /* symbol */ parameter, Values::
 int getSymbolreferenceIndex(Values::NodeT n) G_5D_PURE;
 Values::NodeT symbolreference(int index) G_5D_PURE;
 
-typedef NodeT (*FFIFnCallbackT)(NodeT, void* data);
-NodeT FFIFn(FFIFnCallbackT callback, void* aData, const char* name) G_5D_PURE;
+typedef NodeT (*FFIFnCallbackT)(NodeT, NodeT data);
+NodeT FFIFn(FFIFnCallbackT callback, NodeT aData, const char* name) G_5D_PURE;
 bool FFIFnP(NodeT node) G_5D_PURE;
 NodeT execFFIFn(NodeT node, NodeT argument) /*impure*/;
+bool FFIFnWithCallbackP(NodeT n, FFIFnCallbackT callback) G_5D_PURE; /* used "internally" only */
 
 /* conversions */
-NodeT internNative(NodeT value); /* neutral */
-NodeT internNative(bool value);
+NodeT internNative(NodeT value) G_5D_PURE; /* neutral */
+NodeT internNative(bool value) G_5D_PURE;
 
 }
 #endif /* ndef __6D_VALUES_H */

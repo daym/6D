@@ -17,8 +17,8 @@ static NodeT b;
 static NodeT wrapL(NodeT n) {
 	return n;
 }
-DEFINE_STRICT_FN(Conjunction, argument == f ? SpecialForms::constanter(f) : Identity)
-DEFINE_STRICT_FN(Disjunction, argument != f ? SpecialForms::constanter(argument/* TODO maybe get the unevaluated argument somehow? */) : Identity)
+DEFINE_STRICT_FN(Conjunction, argument == f ? SpecialForms::constanter2(f) : Identity)
+DEFINE_STRICT_FN(Disjunction, argument != f ? SpecialForms::constanter2(uargument) : Identity)
 DEFINE_STRICT_FN(Negation, argument == f ? t : f)
 void initLogic(void) {
 	t = symbolFromStr("t");

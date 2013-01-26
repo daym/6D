@@ -114,6 +114,9 @@ struct Box : Node {
 	virtual ~Box(void) {
 	}
 };
+bool boxP(NodeT node) {
+	return dynamic_cast<const Box*>(node) != NULL;
+}
 struct Str : Box {
 	size_t size;
 	Str(const char* aNativePointer, size_t aSize) : 
@@ -186,18 +189,18 @@ NodeT pair(NodeT a, NodeT b) {
 	return cons(a, b);
 }
 struct CFFIFn : Box {
-	void* data;
-	CFFIFn(void* aData, FFIFnCallbackT aCallback) : 
+	NodeT env;
+	CFFIFn(NodeT aEnv, FFIFnCallbackT aCallback) : 
 		Box((void*) aCallback),
-		data(aData)
+		env(aEnv)
 	{
 	}
 };
 
-NodeT FFIFn(FFIFnCallbackT callback, void* aData, const char* name) {
+NodeT FFIFn(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	/* TODO put name => this into some reflection hideout */
 	// TODO not necessarily new
-	return new CFFIFn(aData, callback);
+	return new CFFIFn(aEnv, callback);
 }
 bool FFIFnP(NodeT node) {
 	return tagFromNode(node) == TAG_FFI_FN;
@@ -205,7 +208,7 @@ bool FFIFnP(NodeT node) {
 NodeT execFFIFn(NodeT node, NodeT argument) {
 	CFFIFn* f = (CFFIFn*) node;
 	FFIFnCallbackT callback = (FFIFnCallbackT) f->nativePointer;
-	return (*callback)(argument, f->data);
+	return (*callback)(argument, f->env);
 }
 /* FIXME Numbers (especially Int, Float) */
 int tagFromNode(NodeT node) {
@@ -229,5 +232,7 @@ int getSymbolreferenceIndex(Values::NodeT n) {
 	const Symbolreference* sr = dynamic_cast<const Symbolreference*>(n); // dynamic on purpose
 	return sr  ? sr->index : -1;
 }
-
+bool FFIFnWithCallbackP(NodeT n, FFIFnCallbackT callback) { /* used "internally" only */
+	return ((const Box*) n)->nativePointer == callback;
+}
 };

@@ -3,9 +3,10 @@
 #include "SpecialForms/Quoter"
 #include "SpecialForms/Constanter"
 namespace SpecialForms {
-
+DECLARE_ENV_SPECIAL_FORM(Constanter)
+DECLARE_ENV_SPECIAL_FORM(Constanter2)
 static inline bool fnSpecialFormP(Values::NodeT fn) {
-	return fn == SpecialForms::Quoter || fn == SpecialForms::Constanter; 
+	return (SPECIAL_FORM_EQUAL_P(fn, Quoter) || SPECIAL_FORM_EQUAL_P(fn, Constanter) || SPECIAL_FORM_EQUAL_P(fn, Constanter2));
 }
 static inline bool fnWantsItsArgumentReducedP(Values::NodeT fn) {
 	return !fnSpecialFormP(fn);
