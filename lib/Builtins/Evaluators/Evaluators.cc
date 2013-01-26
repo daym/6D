@@ -54,7 +54,7 @@ static inline bool errorP(NodeT term) {
 	return false;
 }
 // TODO GC-proof deque
-static NodeT annotateImpl(std::deque<NodeT>& boundNames, Hashtable& boundNamesSet, NodeT root) {
+static NodeT annotateImpl(Values::NodeT dynEnv, std::deque<NodeT>& boundNames, Hashtable& boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.
 	NodeT result;
 	if(fnP(root)) {
@@ -65,10 +65,10 @@ static NodeT annotateImpl(std::deque<NodeT>& boundNames, Hashtable& boundNamesSe
 		boundNames.push_front(parameterSymbolNode);
 		if(boundNamesSet.find(parameterSymbolNode) == boundNamesSet.end()) { // not bound yet
 			boundNamesSet[parameterSymbolNode] = NULL;
-			result = annotateImpl(boundNames, boundNamesSet, body);
+			result = annotateImpl(dynEnv, boundNames, boundNamesSet, body);
 			boundNamesSet.removeByKey(parameterSymbolNode);
 		} else // already bound to something else: make sure not to get rid of it.
-			result = annotateImpl(boundNames, boundNamesSet, body);
+			result = annotateImpl(dynEnv, boundNames, boundNamesSet, body);
 		assert(!boundNames.empty() && boundNames.front() == parameterSymbolNode);
 		boundNames.pop_front();
 		return (result == body) ? root : fn(parameterNode, result);
@@ -78,8 +78,8 @@ static NodeT annotateImpl(std::deque<NodeT>& boundNames, Hashtable& boundNamesSe
 		/*if(operator_ == &Reducer || operator_ == Symbols::Sinline) { // ideally this would be auto-detected, but it isn't right now.
 			return(annotateImpl(boundNames, boundNamesSet, reduce1(operand)));
 		}*/
-		NodeT newOperatorNode = annotateImpl(boundNames, boundNamesSet, operator_);
-		NodeT newOperandNode = SpecialForms::quoteP(newOperatorNode) ? operand : annotateImpl(boundNames, boundNamesSet, operand);
+		NodeT newOperatorNode = annotateImpl(dynEnv, boundNames, boundNamesSet, operator_);
+		NodeT newOperandNode = SpecialForms::quoteP(newOperatorNode) ? operand : annotateImpl(dynEnv, boundNames, boundNamesSet, operand);
 		return (operator_ == newOperatorNode && operand == newOperandNode) ? root : call(newOperatorNode, newOperandNode);
 	} else if(symbolP(root)) {
 		int size = boundNames.size();
@@ -90,15 +90,18 @@ static NodeT annotateImpl(std::deque<NodeT>& boundNames, Hashtable& boundNamesSe
 		if(i < size) { /* found */
 			//std::distance(boundNames.begin(), std::find(boundNames.begin(), boundNames.end(), symbolNode));
 			return symbolreference(i + 1); /* root */
-		} else
-			return error(root, "<bound-identifier>", getSymbol1Name(root));
+		} else {
+			//return eval(call(dynEnv, quote(root)));
+			return call(dynEnv, SpecialForms::quote(root)); // make very VERY sure that is not annotated again.
+			//return error(root, "<bound-identifier>", getSymbol1Name(root));
+		}
 	} // else other stuff.
 	return(root);
 }
-NodeT annotate(NodeT root) {
+NodeT annotate(NodeT dynEnv, NodeT root) {
 	std::deque<NodeT> boundNames;
 	Hashtable boundNamesSet;
-	return(annotateImpl(boundNames, boundNamesSet, root));
+	return(annotateImpl(dynEnv, boundNames, boundNamesSet, root));
 }
 static inline NodeT ensureCall(NodeT term, NodeT fn, NodeT argument) {
 	return (getCallCallable(term) == fn && getCallArgument(term) == argument) ? term : call(fn, argument);
@@ -165,7 +168,7 @@ NodeT eval1(NodeT term) {
 }
 
 /* public interface */
-Values::NodeT eval(Values::NodeT environment, Values::NodeT node) {
+Values::NodeT eval(Values::NodeT node) {
 	try {
 		return(remember(node, eval1(node)));
 	} catch(std::exception& exception) {
@@ -175,8 +178,8 @@ Values::NodeT eval(Values::NodeT environment, Values::NodeT node) {
 
 /* only here for speed. Think of it as FFI. */
 #define WORLD nil
-Values::NodeT execute(NodeT environment, NodeT term) {
-	Values::NodeT r = eval(environment, call(term, WORLD));
+Values::NodeT execute(NodeT term) {
+	Values::NodeT r = eval(call(term, WORLD));
 	return(getConsHead(r));
 }
 

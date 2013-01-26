@@ -3,9 +3,9 @@
 #include "6D/Values"
 
 namespace Evaluators {
-Values::NodeT annotate(Values::NodeT);
-Values::NodeT eval(Values::NodeT environment, Values::NodeT node);
-Values::NodeT execute(Values::NodeT environment, Values::NodeT term);
+Values::NodeT annotate(Values::NodeT environment, Values::NodeT node);
+Values::NodeT eval(Values::NodeT node);
+Values::NodeT execute(Values::NodeT term);
 }
 
 #endif /* ndef __6D_EVALUATORS_H */
