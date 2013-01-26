@@ -6,7 +6,7 @@ LIBGC_LD_WRAP_CFLAGS = -D_REENTRANT -DGC_THREADS -DUSE_LD_WRAP
 CXXFLAGS += -Wall -fPIC -O0 -g3 -Wall -Istrict -I. -Iinclude -fno-strict-overflow -Wno-deprecated -Wno-div-by-zero `pkg-config --cflags glib-2.0 gthread-2.0 libxml-2.0 libffi` $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include -DSTRICT_EVAL
 LDFLAGS += -ldl -lgc -lpthread `pkg-config --libs glib-2.0 gthread-2.0 libxml-2.0 libffi` $(LIBGC_LD_WRAP_LDFLAGS)
 STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/SpecialForms/Constanter.o
-EVAL_OBJECTS = Evaluators/Evaluators.o
+EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o
 NUMBERS = Numbers/Integer.o \
 Numbers/Real.o \
 Numbers/BigUnsigned.o \
@@ -53,6 +53,7 @@ Values/Keyword.o: Values/Keyword.cc Values/Keyword Values/Hashtable
 Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
 Allocators/Allocators.o: Allocators/Allocators.cc Allocators/Allocators include/6D/Allocators
 Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Scanners/Lang5D Formatters/TExpression
+Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Evaluators
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
 Numbers/Integer.o: Numbers/Integer.cc Numbers/Integer Numbers/Small

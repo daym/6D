@@ -10,8 +10,9 @@ Values::NodeT Konstant;
 /* TODO Substitution */
 void initCombinators(void) {
 	Values::NodeT a = symbolFromStr("a");
-	Identity = annotate(fn(a, a));
-	Konstant = annotate(fn(a, fn(b, a)));
+	Values::NodeT b = symbolFromStr("b");
+	Identity = annotate(NULL, fn(a, a));
+	Konstant = annotate(NULL, fn(a, fn(b, a)));
 }
 
 }

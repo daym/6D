@@ -53,14 +53,6 @@ static inline bool errorP(NodeT term) {
 	// FIXME
 	return false;
 }
-static int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundNames) {
-	if(boundNames == nil)
-		return(-1);
-	else if(getConsHead(boundNames) == needle)
-		return(startingIndex);
-	else
-		return(indexOfSymbol(needle, startingIndex + 1, getConsTail(boundNames)));
-}
 // TODO GC-proof deque
 static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashtable& boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.

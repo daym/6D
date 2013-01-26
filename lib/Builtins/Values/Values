@@ -44,6 +44,14 @@ struct Call : Node {
 	virtual ~Call() {
 	}
 };
+static inline int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundNames) {
+	if(boundNames == nil)
+		return(-1);
+	else if(getConsHead(boundNames) == needle)
+		return(startingIndex);
+	else
+		return(indexOfSymbol(needle, startingIndex + 1, getConsTail(boundNames)));
+}
 
 }
 #endif /* ndef __VALUES_H */
