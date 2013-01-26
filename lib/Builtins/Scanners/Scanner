@@ -95,7 +95,7 @@ public:
 		if(!this->skipWhitespace()) {
 			if(bEOF) { /* TODO unlikely */
 				if(this->indents.size() > 1) {
-					fprintf(stderr, "faking dedent\n");
+					//fprintf(stderr, "faking dedent\n");
 					this->indents.pop();
 					this->value = env.Sdedent;
 				} else
