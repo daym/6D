@@ -170,7 +170,7 @@ NodeT eval1(NodeT term) {
 /* public interface */
 Values::NodeT eval(Values::NodeT node) {
 	try {
-		return(remember(node, eval1(node)));
+		return(eval1(node));
 	} catch(std::exception& exception) {
 		return(error(node, "<valid-expr>", exception.what()));
 	}
