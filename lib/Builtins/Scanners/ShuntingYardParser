@@ -34,11 +34,12 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 				input = nil; /* for the purposes of operator detection, the value was not an operator. Note that we cannot write result.back() or similar here since otherwise macro standins could be misdetected. */
 			}
 		} else if(prevInput == env.Sleftparen && tokenizer.getToken() == env.Srightparen && env.operatorP(input)) { /* (+) */
+			/* TODO don't match just "+)" at the beginning of a line? */
 			result.push_back(input);
 		} else if(env.operatorP(input)) {
 			bool bUnary = false;
 			argcount = env.operatorArgcount(input);
-			if (env.operatorP(prevInput) && !env.closingParenP(input)) { /* either prefix operator or binary operator that has been abused as an unary operator (f.e. -3). Parens are not unary. */
+			if (env.operatorP(prevInput) && !env.closingParenP(prevInput) && !env.closingParenP(input)) { /* either prefix operator or binary operator that has been abused as an unary operator (f.e. -3). Parens are not unary. */
 				bUnary = true;
 				if (argcount > 1) { /* binary operator has been abused as an unary operator */
 					Values::NodeT neutral = env.operatorPrefixNeutral(input);
@@ -97,7 +98,7 @@ static std::vector<NodeT ALLOCATOR_VECTOR> parse(S tokenizer, T env, Values::Nod
 				env.callRpnOperator(input, result);
 			}
 		}
-		prevInput = (!env.closingParenP(input)) ? (input) : nil;
+		prevInput = input; // (!env.closingParenP(input)) ? (input) : nil;
 	}
 	while (!operators.empty()) {
 		env.callRpnOperator(operators.top(), result);
