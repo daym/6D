@@ -23,27 +23,33 @@ Values::NodeT callBuiltin(Values::NodeT fn, Values::NodeT argument);
 
 /* END Binary Operations */
 
-static void getFreeVariablesImpl(Hashtable& boundNames, Hashtable& freeNames, NodeT root) {
+static void getFreeVariablesImpl(Hashtable& boundNames, int boundNamesCount/*includes shadowed*/, Hashtable& freeNames, NodeT root) {
+	int i;
 	if(fnP(root)) {
 		NodeT parameterNode = getFnParameter(root);
 		NodeT body = getFnBody(root);
 		if(!boundNames.containsKeyP(parameterNode)) { // not bound yet
 			boundNames[parameterNode] = NULL;
-			getFreeVariablesImpl(boundNames, freeNames, body);
+			getFreeVariablesImpl(boundNames, boundNamesCount + 1, freeNames, body);
 			boundNames.removeByKey(parameterNode);
 		} else // already bound to something else: make sure not to get rid of it.
-			getFreeVariablesImpl(boundNames, freeNames, body);
+			getFreeVariablesImpl(boundNames, boundNamesCount + 1, freeNames, body);
 	} else if(callP(root)) {
-		getFreeVariablesImpl(boundNames, freeNames, getCallCallable(root));
-		getFreeVariablesImpl(boundNames, freeNames, getCallArgument(root));
+		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, getCallCallable(root));
+		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, getCallArgument(root));
 	} else if(symbolP(root)) {
 		if(!boundNames.containsKeyP(root))
 			freeNames[root] = NULL;
-	} // else other stuff.
+	} else if((i = getSymbolreferenceIndex(root)) != -1) {
+		if(i >= boundNamesCount) {
+			// FIXME whoops? what if we know there are free variables but not what they are called?
+		}
+	}
+	// else other stuff.
 }
 void getFreeVariables(Hashtable& freeNames, NodeT root) {
 	Hashtable boundNames;
-	getFreeVariablesImpl(boundNames, freeNames, root);
+	getFreeVariablesImpl(boundNames, 0, freeNames, root);
 }
 static inline NodeT error(NodeT context, const char* expectedText, const char* gotText) {
 	// FIXME

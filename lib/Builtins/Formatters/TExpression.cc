@@ -4,7 +4,9 @@ namespace Formatters {
 	namespace TExpression {
 using namespace Values;
 static NodeT getSymbolByIndex(int index, NodeT names) {
-	if(index == 0)
+	if(names == nil)
+		return nil;
+	else if(index == 0)
 		return getConsHead(names);
 	else
 		return getSymbolByIndex(index - 1, getConsTail(names));
@@ -14,6 +16,7 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 	int i;
 	if((i = getSymbolreferenceIndex(node)) != -1) {
 		NodeT node = getSymbolByIndex(i, names);
+		/* FIXME what if node is nil? Just make names up maybe (putting them at the end of #names would be safe, too - and mimic how it should have looked if they were there) */
 		fprintf(destination, "%s", getSymbol1Name(node));
 	} else if(symbolP(node)) {
 		fprintf(destination, "%s", getSymbol1Name(node));
