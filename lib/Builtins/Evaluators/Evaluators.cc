@@ -23,20 +23,20 @@ Values::NodeT callBuiltin(Values::NodeT fn, Values::NodeT argument);
 
 /* END Binary Operations */
 
-static void getFreeVariablesImpl(Hashtable& boundNames, int boundNamesCount/*includes shadowed*/, Hashtable& freeNames, NodeT root) {
+static void getFreeVariablesImpl(Hashtable& boundNames, int boundNamesCount/*includes shadowed*/, Hashtable& freeNames, int& freeNamesCount/*includes name unknown*/, NodeT root) {
 	int i;
 	if(fnP(root)) {
 		NodeT parameterNode = getFnParameter(root);
 		NodeT body = getFnBody(root);
 		if(!boundNames.containsKeyP(parameterNode)) { // not bound yet
 			boundNames[parameterNode] = NULL;
-			getFreeVariablesImpl(boundNames, boundNamesCount + 1, freeNames, body);
+			getFreeVariablesImpl(boundNames, boundNamesCount + 1, freeNames, freeNamesCount, body);
 			boundNames.removeByKey(parameterNode);
 		} else // already bound to something else: make sure not to get rid of it.
-			getFreeVariablesImpl(boundNames, boundNamesCount + 1, freeNames, body);
+			getFreeVariablesImpl(boundNames, boundNamesCount + 1, freeNames, freeNamesCount, body);
 	} else if(callP(root)) {
-		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, getCallCallable(root));
-		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, getCallArgument(root));
+		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, freeNamesCount, getCallCallable(root));
+		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, freeNamesCount, getCallArgument(root));
 	} else if(symbolP(root)) {
 		if(!boundNames.containsKeyP(root))
 			freeNames[root] = NULL;
@@ -47,9 +47,11 @@ static void getFreeVariablesImpl(Hashtable& boundNames, int boundNamesCount/*inc
 	}
 	// else other stuff.
 }
-void getFreeVariables(Hashtable& freeNames, NodeT root) {
+int getFreeVariables(Hashtable& freeNames, NodeT root) {
 	Hashtable boundNames;
-	getFreeVariablesImpl(boundNames, 0, freeNames, root);
+	int freeNamesCount;
+	getFreeVariablesImpl(boundNames, 0, freeNames, freeNamesCount, root);
+	return freeNamesCount;
 }
 static inline NodeT error(NodeT context, const char* expectedText, const char* gotText) {
 	// FIXME
