@@ -50,6 +50,7 @@ NodeT Lang5D::Sequal;
 NodeT Lang5D::Sin;
 NodeT Lang5D::Sfrom;
 NodeT Lang5D::Shashexports;
+NodeT Lang5D::Sif;
 //NodeT Lang5D::Sdot;
 
 /* TODO just use a function */
@@ -209,6 +210,7 @@ Lang5D::Lang5D(void) {
 	Serror = symbolFromStr("<error>");
 	Sequal = symbolFromStr("=");
 	Shashexports = symbolFromStr("#exports");
+	Sif = symbolFromStr("if");
 	if(Srightbracket == NULL) {
 		Srightbracket = symbolFromStr("]");
 		levels[symbolFromStr("(")] = -1,
@@ -241,24 +243,24 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr("⊃")] = 16,
 		levels[symbolFromStr("⊆")] = 16,
 		levels[symbolFromStr("⊇")] = 16,
-		levels[symbolFromStr("=")] = 13,
-		levels[symbolFromStr("≟")] = 13,
-		levels[symbolFromStr("/=")] = 13,
-		levels[symbolFromStr("<")] = 12,
-		levels[symbolFromStr("<=")] = 12,
-		levels[symbolFromStr(">")] = 12,
-		levels[symbolFromStr(">=")] = 12,
-		levels[symbolFromStr("≤")] = 12,
-		levels[symbolFromStr("≥")] = 12,
-		levels[symbolFromStr("&&")] = 11,
-		levels[symbolFromStr("∧")] = 11,
-		levels[symbolFromStr("||")] = 10,
-		levels[symbolFromStr("∨")] = 10,
-		levels[symbolFromStr(",")] = 9,
-		levels[symbolFromStr("$")] = 8,
-		//#intern("if")] = 6,
-		levels[symbolFromStr("elif")] = 7,
-		levels[symbolFromStr("else")] = 7,
+		levels[symbolFromStr("=")] = 14,
+		levels[symbolFromStr("≟")] = 14,
+		levels[symbolFromStr("/=")] = 14,
+		levels[symbolFromStr("<")] = 13,
+		levels[symbolFromStr("<=")] = 13,
+		levels[symbolFromStr(">")] = 13,
+		levels[symbolFromStr(">=")] = 13,
+		levels[symbolFromStr("≤")] = 13,
+		levels[symbolFromStr("≥")] = 13,
+		levels[symbolFromStr("&&")] = 12,
+		levels[symbolFromStr("∧")] = 12,
+		levels[symbolFromStr("||")] = 11,
+		levels[symbolFromStr("∨")] = 11,
+		levels[symbolFromStr(",")] = 10,
+		levels[symbolFromStr("$")] = 9,
+		levels[symbolFromStr("elif")] = 8,
+		levels[symbolFromStr("else")] = 8,
+		levels[symbolFromStr("if")] = 7,
 		levels[symbolFromStr("|")] = 6,
 		levels[symbolFromStr("=>")] = 5,
 		levels[symbolFromStr(";")] = 5,
@@ -303,6 +305,7 @@ int Lang5D::operatorArgcount(NodeT node) const {
 	       (node == Ssemicolon) ? R : 
 	       (node == Sbackslash) ? R :
 	       (node == Slet) ? P :
+	       (node == Sif) ? P :
 	       (node == Sin) ? R :
 	       (node == Sfrom) ? R :
 	       (node == Sletexclam) ? R :

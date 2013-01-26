@@ -66,6 +66,7 @@ public:
 	static Values::NodeT SEOF;
 	static Values::NodeT Serror;
 	static Values::NodeT Shashexports;
+	static Values::NodeT Sif;
 	Values::NodeT readToken(FILE* f, int& linenumber) const;
 	Values::NodeT error(std::string expectedPart, std::string gotPart) const;
 	Values::NodeT error(Values::NodeT expectedPart, Values::NodeT gotPart) const;
