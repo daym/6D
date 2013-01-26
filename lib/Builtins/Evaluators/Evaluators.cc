@@ -53,8 +53,16 @@ static inline bool errorP(NodeT term) {
 	// FIXME
 	return false;
 }
+static int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundNames) {
+	if(boundNames == nil)
+		return(-1);
+	else if(getConsHead(boundNames) == needle)
+		return(startingIndex);
+	else
+		return(indexOfSymbol(needle, startingIndex + 1, getConsTail(boundNames)));
+}
 // TODO GC-proof deque
-static NodeT annotateImpl(Values::NodeT dynEnv, std::deque<NodeT>& boundNames, Hashtable& boundNamesSet, NodeT root) {
+static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashtable& boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.
 	NodeT result;
 	if(fnP(root)) {
@@ -62,15 +70,12 @@ static NodeT annotateImpl(Values::NodeT dynEnv, std::deque<NodeT>& boundNames, H
 		NodeT body = getFnBody(root);
 		NodeT parameterSymbolNode = parameterNode;
 		assert(parameterSymbolNode);
-		boundNames.push_front(parameterSymbolNode);
 		if(boundNamesSet.find(parameterSymbolNode) == boundNamesSet.end()) { // not bound yet
 			boundNamesSet[parameterSymbolNode] = root; // nice for debugging. Faster would be: NULL;
-			result = annotateImpl(dynEnv, boundNames, boundNamesSet, body);
+			result = annotateImpl(dynEnv, cons(parameterSymbolNode, boundNames), boundNamesSet, body);
 			boundNamesSet.removeByKey(parameterSymbolNode);
 		} else // already bound to something else: make sure not to get rid of it.
-			result = annotateImpl(dynEnv, boundNames, boundNamesSet, body);
-		assert(!boundNames.empty() && boundNames.front() == parameterSymbolNode);
-		boundNames.pop_front();
+			result = annotateImpl(dynEnv, cons(parameterSymbolNode, boundNames), boundNamesSet, body);
 		return (result == body) ? root : fn(parameterNode, result);
 	} else if(callP(root)) {
 		NodeT operator_ = getCallCallable(root);
@@ -82,12 +87,8 @@ static NodeT annotateImpl(Values::NodeT dynEnv, std::deque<NodeT>& boundNames, H
 		NodeT newOperandNode = SpecialForms::quoteP(newOperatorNode) ? operand : annotateImpl(dynEnv, boundNames, boundNamesSet, operand);
 		return (operator_ == newOperatorNode && operand == newOperandNode) ? root : call(newOperatorNode, newOperandNode);
 	} else if(symbolP(root)) {
-		int size = boundNames.size();
-		int i;
-		for(i = 0; i < size; ++i)
-			if(boundNames[i] == root)
-				break;
-		if(i < size) { /* found */
+		int i = indexOfSymbol(root, 0, boundNames);
+		if(i != -1) { /* found */
 			//std::distance(boundNames.begin(), std::find(boundNames.begin(), boundNames.end(), symbolNode));
 			return symbolreference(i + 1); /* root */
 		} else {
@@ -99,9 +100,8 @@ static NodeT annotateImpl(Values::NodeT dynEnv, std::deque<NodeT>& boundNames, H
 	return(root);
 }
 NodeT annotate(NodeT dynEnv, NodeT root) {
-	std::deque<NodeT> boundNames;
 	Hashtable boundNamesSet;
-	return(annotateImpl(dynEnv, boundNames, boundNamesSet, root));
+	return(annotateImpl(dynEnv, nil, boundNamesSet, root));
 }
 static inline NodeT ensureCall(NodeT term, NodeT fn, NodeT argument) {
 	return (getCallCallable(term) == fn && getCallArgument(term) == argument) ? term : call(fn, argument);
