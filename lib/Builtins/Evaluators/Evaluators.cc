@@ -90,7 +90,7 @@ static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashta
 		int i = indexOfSymbol(root, 0, boundNames);
 		if(i != -1) { /* found */
 			//std::distance(boundNames.begin(), std::find(boundNames.begin(), boundNames.end(), symbolNode));
-			return symbolreference(i + 1); /* root */
+			return symbolreference(i); /* root */
 		} else {
 			//return eval(call(dynEnv, quote(root)));
 			return call(dynEnv, SpecialForms::quote(root)); // make very VERY sure that is not annotated again.
@@ -152,7 +152,7 @@ NodeT eval1(NodeT term) {
 		return x_argument;
 	if(fnP(x_fn)) {
 		NodeT body = getFnBody(fn);
-		body = shift(x_argument, 1, body);
+		body = shift(x_argument, 0, body);
 		++recursionLevel;
 		body = eval1(body);
 		--recursionLevel;
