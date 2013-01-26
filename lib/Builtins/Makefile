@@ -31,12 +31,15 @@ STATIC_LIB = lib6dbuiltins1.a
 .SUFFIXES:            # Delete the default suffixes
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
-all: $(LIB) $(STATIC_LIB) Tests/01_ShuntingYard/testShuntingYard
+all: $(LIB) $(STATIC_LIB) 
+#Tests/01_ShuntingYard/testShuntingYard
 $(LIB): $(OBJECTS)
 	$(CXX) -shared -o $(LIB) $(OBJECTS) $(LDFLAGS)
 $(STATIC_LIB): $(OBJECTS)
 	$(AR) rcs $(STATIC_LIB) $(OBJECTS)
 Tests/01_ShuntingYard/testShuntingYard: Tests/01_ShuntingYard/main.o Formatters/Math.o Formatters/SExpression.o Formatters/TExpression.o Scanners/Lang5D.o Scanners/Scanner.o Scanners/ShuntingYardParser.o Values/Values.o Values/Keyword.o Values/Symbol.o Allocators/Allocators.o
+	$(CXX) -o $@ $^ $(LDFLAGS)
+Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o Formatters/Math.o Formatters/SExpression.o Formatters/TExpression.o Scanners/Lang5D.o Scanners/Scanner.o Scanners/ShuntingYardParser.o Values/Values.o Values/Keyword.o Values/Symbol.o Allocators/Allocators.o
 	$(CXX) -o $@ $^ $(LDFLAGS)
 Formatters/Math.o: Formatters/Math.cc Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
 Formatters/SExpression.o: Formatters/SExpression.cc Formatters/SExpression Values/Values include/6D/Values 
@@ -60,8 +63,9 @@ strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.cc strict/Speci
 lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators
 strict/Logic/Logic.o: strict/Logic/Logic.cc strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators include/6D/Operations include/6D/Evaluators
-test: Tests/01_ShuntingYard/testShuntingYard
+test: Tests/01_ShuntingYard/testShuntingYard Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
+	Tests/02_Evaluator/run
 
 clean:
 	rm -f $(OBJECTS)
