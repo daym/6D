@@ -20,7 +20,7 @@
 namespace Scanners {
 using namespace Values;
 using namespace FFIs;
-
+using namespace Allocators;
 NodeT Lang5D::SLF;
 NodeT Lang5D::Sindent;
 NodeT Lang5D::Sdedent;
@@ -59,6 +59,7 @@ NodeT Lang5D::Sif;
 NodeT Lang5D::defaultDynEnv;
 NodeT Lang5D::Sexports;
 NodeT Lang5D::Snil;
+using namespace SpecialForms;
 //NodeT Lang5D::Sdot;
 static inline NodeT merror(const std::string& expectedPart, const std::string& gotPart) {
 	// FIXME nicer
@@ -680,7 +681,9 @@ NodeT Lang5D::blowHashExportsUp(NodeT tl, NodeT entries) const {
 	}
 }
 NodeT Lang5D::mcall(NodeT a, NodeT b) const {
-	if(a == Simport)
+	if(a == Squote) { // the usual masking doesn't work since it would get an De Bruijn index anyway and be replaced.
+		return mquote(b);
+	} else if(a == Simport)
 		return macroStandin(a, b);
 	else if(a == Shashexports) {
 		// tl = ('exports, 'exports:b)
@@ -725,7 +728,8 @@ Values::NodeT Lang5D::mgetConsTail(Values::NodeT c) const {
 	return a1;
 }
 Values::NodeT Lang5D::mquote(Values::NodeT a) const {
-	return call(Squote, a);
+	return quote(a);
+	// NOT return call(Squote, a);
 }
 NodeT Lang5D::replaceIN(NodeT equation, NodeT body) const {
 	/* two possibilities: */

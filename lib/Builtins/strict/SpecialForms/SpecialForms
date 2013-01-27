@@ -12,9 +12,6 @@ static inline bool fnSpecialFormP(Values::NodeT fn) {
 static inline bool fnWantsItsArgumentReducedP(Values::NodeT fn) {
 	return !fnSpecialFormP(fn);
 }
-/*Values::NodeT closeOverSpecialForms(Values::NodeT body) {
-        return Values::close(Squote, SpecialForms::Quoter, body);
-}*/
 
 }
 #endif /* #ifndef __6D_SPECIAL_FORMS_H */

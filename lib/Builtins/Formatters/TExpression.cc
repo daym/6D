@@ -1,5 +1,6 @@
 #include "Values/Values"
 #include "Formatters/TExpression"
+#include "SpecialForms/SpecialForms"
 namespace Formatters {
 	namespace TExpression {
 using namespace Values;
@@ -16,6 +17,7 @@ static NodeT getSymbolByIndex(int index, NodeT names) {
 */
 void print0(FILE* destination, NodeT names, NodeT node) {
 	using namespace Values;
+	using namespace SpecialForms;
 	int i;
 	if((i = getSymbolreferenceIndex(node)) != -1) {
 		NodeT node = getSymbolByIndex(i, names);
@@ -74,6 +76,8 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 		fprintf(destination, "[]");
 	else if(ratioP(node)) {
 		print(destination, call2(symbolFromStr("/"), getRatioA(node), getRatioB(node)));
+	} else if(SPECIAL_FORM_EQUAL_P(node, Quoter)) {
+		fprintf(destination, "'");
 	} else {
 		str(node, destination);
 	}
