@@ -15,6 +15,7 @@ struct Node
 	virtual ~Node(void);
 	virtual void str(FILE* destination) const;
 };
+#define OVERRIDE_STR_6D virtual void str(FILE* destination) const;
 
 /* semi-private */
 enum {

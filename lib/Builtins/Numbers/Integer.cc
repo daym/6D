@@ -525,15 +525,16 @@ static inline NodeT integerASucc(NodeT argument) {
 }
 DEFINE_STRICT_FN(IntegerSucc, integerASucc(argument))
 REGISTER_STR(Int, {
-        std::stringstream sst;
+	std::stringstream sst;
 	if(node->value < 0)
 		sst << '(' << node->value << ')';
 	else
 	        sst << node->value;
-        return(sst.str());
+	std::string v = sst.str();
+	fprintf(destination, "%s", v.c_str());
 })
-static std::string strInteger(Integer* node) {
-	Integer& v = *node;
+static void strInteger(const Integer* node, FILE* destination) {
+	const Integer& v = *node;
 	std::stringstream sst;
 	BigUnsigned q(v.getMagnitude());
 	BigUnsigned divisor(10);
@@ -554,10 +555,10 @@ static std::string strInteger(Integer* node) {
 		sst << "-(";
 	std::string result = sst.str();
 	std::reverse(result.begin(), result.end());
-	return(result);
+	fprintf(destination, "%s", result.c_str());
 }
 REGISTER_STR(Integer, {
-	return(strInteger(node));
+	return(strInteger(node, destination));
 })
 
 DEFINE_STRICT_FN(IntP, (dynamic_cast<const Int*>(argument) != NULL))

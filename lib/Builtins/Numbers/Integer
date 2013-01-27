@@ -29,6 +29,7 @@ public:
 		greater = BigUnsigned::greater;
 	// Enumeration for the sign of a Integer.
 	enum Sign { negative = -1, zero = 0, positive = 1 };
+	OVERRIDE_STR_6D
 
 protected:
 	Sign sign;

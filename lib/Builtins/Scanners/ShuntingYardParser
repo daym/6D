@@ -84,7 +84,7 @@ public:
 				applyAndPush(0, false, tokenizer.consume());
 				if(env.errorP(input))
 					return result;
-				input = nil; // not an operator and not a ) with a prefix operator
+				input = nil; // not an operator and not first a ) and then a prefix operator
 			} else if(env.operatorP(input)) {
 				bool bUnary = false;
 				argcount = env.operatorArgcount(input);

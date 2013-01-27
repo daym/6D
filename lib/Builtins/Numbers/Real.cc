@@ -5,13 +5,14 @@
 #include "Numbers/Integer"
 #include "Values/Values"
 
-
+namespace FFIs {
+Values::NodeT internNative(NativeFloat value) {
+	return(new Numbers::Float(value));
+}
+}
 namespace Numbers {
 using namespace FFIs;
 using namespace Values;
-Values::NodeT internNative(Numbers::NativeFloat value) {
-	return(new Numbers::Float(value));
-}
 REGISTER_STR(Float, {
 	std::stringstream sst;
 	sst.precision(std::numeric_limits<NativeFloat>::digits10 + 1);
@@ -24,11 +25,8 @@ REGISTER_STR(Float, {
 		sst << ".0";
 		v = sst.str();
 	}
-	return(v);
+	fprintf(destination, "%s", v.c_str());
 })
-
-REGISTER_STR(Real, return("FIXME");)
-
 
 bool floatP(NodeT node) {
 	return(dynamic_cast<const Float*>(node) != NULL);

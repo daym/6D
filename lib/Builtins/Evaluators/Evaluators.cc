@@ -96,7 +96,8 @@ static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashta
 		} else {
 			//return eval(call(dynEnv, quote(root)));
 			// can be error.
-			return eval(annotate(nil, call(dynEnv, SpecialForms::quote(root)))); // make very VERY sure that is not annotated again.
+			NodeT v = annotate(nil, call(dynEnv, SpecialForms::quote(root)));
+			return eval(v); // make very VERY sure that that is not annotated again.
 			//return error(root, "<bound-identifier>", getSymbol1Name(root));
 		}
 	} // else other stuff.
@@ -141,7 +142,7 @@ static inline NodeT remember(NodeT app, NodeT result) {
 }
 NodeT eval1(NodeT term) {
 	if(!callP(term))
-		return error(term, "<call>", "<noncall>"); // term;
+		return term; //return error(term, "<call>", "<noncall>"); // term;
 	Call* call = (Call*)(term);
 	if(call->resultGeneration == fGeneration)
 		return call->result;

@@ -72,7 +72,9 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 		fprintf(destination, "]");
 	} else if(nilP(node))
 		fprintf(destination, "[]");
-	else {
+	else if(ratioP(node)) {
+		print(destination, call2(symbolFromStr("/"), getRatioA(node), getRatioB(node)));
+	} else {
 		str(node, destination);
 	}
 }

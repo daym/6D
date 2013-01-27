@@ -4,7 +4,7 @@
 #include "Values/Values"
 #include "Numbers/Ratio"
 #include "6D/FFIs"
-namespace Numbers {
+namespace Values {
 using namespace Values;
 using namespace FFIs;
 Ratio* ratio(NodeT aa, NodeT bb) {
@@ -13,28 +13,24 @@ Ratio* ratio(NodeT aa, NodeT bb) {
 	result->b = bb;
 	return(result);
 }
-bool ratio_P(NodeT n) {
+bool ratioP(NodeT n) {
 	return(dynamic_cast<const Ratio*>(n) != NULL);
 }
-/*
-static NodeT makeRatioB(NodeT options, NodeT argument) {
-	CXXArguments arguments = Evaluators::CXXfromArguments(options, argument);
-	CXXArguments::const_iterator iter = arguments.begin();
-	NodeT a = iter->second;
-	++iter;
-	NodeT b = iter->second;
-	//++iter;
-	return(ratio(a, b));
-} FIXME make ratio */
 static inline NodeT ensureRatio(NodeT node) {
-	if(!ratio_P(node))
+	if(!ratioP(node))
 		throw std::invalid_argument("argument is not a Ratio");
 	return(node);
 }
+Values::NodeT getRatioA(Values::NodeT n) {
+	return(((Ratio*)n)->a);
+}
+Values::NodeT getRatioB(Values::NodeT n) {
+	return(((Ratio*)n)->b);
+}
 
 DEFINE_STRICT_FN(RatioP, (dynamic_cast<const Ratio*>(argument) !=NULL||dynamic_cast<const Ratio*>(argument) != NULL))
-DEFINE_STRICT_FN(RatioNumeratorGetter, Ratio_getA(ensureRatio(argument)))
-DEFINE_STRICT_FN(RatioDenominatorGetter, Ratio_getB(ensureRatio(argument)))
+DEFINE_STRICT_FN(RatioNumeratorGetter, getRatioA(ensureRatio(argument)))
+DEFINE_STRICT_FN(RatioDenominatorGetter, getRatioB(ensureRatio(argument)))
 
 /*
 a/b + c/d = (a*d + c*b)/(b*d)
@@ -42,11 +38,6 @@ a/b - c/d = (a*d - c*b)/(b*d)
 a/b ⋅ c/d = a*c/(b*d)       
 a/b / c/d = a/b ⋅ d/c = a*d/(b*c)
 */
-REGISTER_STR(Ratio, {
-	std::stringstream result;
-	result << '(' << Evaluators::str(node->a) << "/" << Evaluators::str(node->b) << ')';
-	return(result.str());
-})
 REGISTER_BUILTIN(RatioMaker, 2, 0, symbolFromStr("makeRatio"))
 REGISTER_BUILTIN(RatioP, 1, 0, symbolFromStr("ratio?"))
 REGISTER_BUILTIN(RatioNumeratorGetter, 1, 0, symbolFromStr("ratioNum"))

@@ -4,6 +4,7 @@
 #include <stack>
 #include <sstream>
 #include <6D/Allocators>
+#include <errno.h>
 #include "Values/Values"
 #include "Scanners/Lang5D"
 #include "Formatters/TExpression"
@@ -67,6 +68,21 @@ static inline std::string nvl(const char* a, const char* b) {
 	return a ? a : b;
 }
 static inline NodeT getDynEnvEntry(NodeT sym) {
+	const char* name = getSymbol1Name(sym);
+	if(name) {
+		if(isdigit(name[0])) { /* since there is an infinite number of numbers, make sure not to precreate all of them :-) */
+			errno = 0;
+			if(strchr(name, '.')) {
+				FFIs::NativeFloat value = strtod(name, NULL);
+				if(errno == 0)
+					return internNative(value);
+			} else {
+				FFIs::NativeInt value = strtol(name, NULL, 10);
+				if(errno == 0)
+					return internNative(value);
+			}
+		}
+	}
 	return merror("<dynamic-variable>", nvl(getSymbol1Name(sym), "???"));
 }
 DEFINE_STRICT_FN(DynEnv, getDynEnvEntry(argument))
