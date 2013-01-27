@@ -43,6 +43,8 @@ Tests/01_ShuntingYard/testShuntingYard: Tests/01_ShuntingYard/main.o $(OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
 Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
+Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS)
+	$(CXX) -o $@ $^ $(LDFLAGS)
 Formatters/Math.o: Formatters/Math.cc Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
 Formatters/SExpression.o: Formatters/SExpression.cc Formatters/SExpression Values/Values include/6D/Values 
 Formatters/TExpression.o: Formatters/TExpression.cc Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms
@@ -55,6 +57,7 @@ Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
 Allocators/Allocators.o: Allocators/Allocators.cc Allocators/Allocators include/6D/Allocators
 Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Values include/6D/Allocators
 Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
+Tests/03_Numbers/main.o: Tests/03_Numbers/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
 Numbers/Integer.o: Numbers/Integer.cc Numbers/Integer Numbers/Small include/6D/FFIs include/6D/Values
@@ -67,8 +70,9 @@ lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values inclu
 strict/Logic/Logic.o: strict/Logic/Logic.cc strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators include/6D/Operations include/6D/Evaluators
 ModuleSystem/Memoizer.o: ModuleSystem/Memoizer.cc ModuleSystem/Memoizer Values/Values Values/Hashtable
-test: Tests/01_ShuntingYard/testShuntingYard Tests/02_Evaluator/testEvaluator
+test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
+	Tests/03_Numbers/run
 	Tests/02_Evaluator/run
 
 clean:

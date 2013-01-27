@@ -847,9 +847,9 @@ NodeT Lang5D::error(NodeT expectedPart, NodeT gotPart) const {
 }
 NodeT Lang5D::withDefaultEnv(NodeT body) const {
 	using namespace Values;
-        return close(Squote, SpecialForms::Quoter, 
+        return //close(Squote, SpecialForms::Quoter, 
 	       close(Shashexports, Combinators::Identity, 
-	       body));
+	       body);
 }
 
 }
