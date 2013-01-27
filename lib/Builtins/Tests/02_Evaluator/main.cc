@@ -16,5 +16,7 @@ int main(int argc, char* argv[]) {
 	prog = Evaluators::eval(prog);
 	Formatters::TExpression::print(stdout, prog);
 	fflush(stdout);
+	if(lang5D.errorP(prog))
+		return 1;
 	return 0;
 }

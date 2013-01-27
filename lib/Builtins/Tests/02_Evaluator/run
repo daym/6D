@@ -4,8 +4,9 @@ set -e
 cd Tests/02_Evaluator
 for s in *.5D
 do
+	echo "= $s"
 	er="${s%.5D}.expectedResult"
 	gr="${s%.5D}.gotResult" 
-	./testEvaluator "${s}" >"${gr}" || echo "failed: $s">&2
+	./testEvaluator "${s}" >"${gr}" || (echo "failed: $s">&2 ; false)
 	diff -upr "${gr}" "${er}"
 done
