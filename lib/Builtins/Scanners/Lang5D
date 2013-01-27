@@ -80,6 +80,7 @@ public:
 	static Values::NodeT defaultDynEnv;
 	static Values::NodeT Sexports;
 	static Values::NodeT Snil;
+	static Values::NodeT Sdot;
 	Values::NodeT readToken(FILE* f, int& linenumber) const;
 	Values::NodeT error(std::string expectedPart, std::string gotPart) const;
 	Values::NodeT error(Values::NodeT expectedPart, Values::NodeT gotPart) const;

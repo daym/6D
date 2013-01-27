@@ -61,6 +61,7 @@ NodeT Lang5D::defaultDynEnv;
 NodeT Lang5D::Sexports;
 NodeT Lang5D::Snil;
 NodeT Lang5D::Scolonequal;
+NodeT Lang5D::Sdot;
 using namespace SpecialForms;
 //NodeT Lang5D::Sdot;
 static inline NodeT merror(const std::string& expectedPart, const std::string& gotPart) {
@@ -268,6 +269,7 @@ Lang5D::Lang5D(void) {
 		Srightbracket = symbolFromStr("]");
 		Sexports = symbolFromStr("exports");
 		Snil = symbolFromStr("nil");
+		Sdot = symbolFromStr(".");
 		levels[symbolFromStr("(")] = -1,
 		levels[symbolFromStr("{")] = -1, // pseudo-operators
 		levels[symbolFromStr("[")] = -1,
@@ -771,7 +773,8 @@ NodeT Lang5D::replaceIN(NodeT equation, NodeT body) const {
 NodeT Lang5D::moperation(NodeT operator_, NodeT a, NodeT b) const {
 	return operator_ == Sbackslash ? fn(macroStandinOperand(a),b) :  /* CRASH HERE */
 	       operator_ == Sin ? replaceIN(a ,b) :
-		   operation(operator_, a, b);
+	       operator_ == Sdot ? call(a, quote(b)) : 
+	       operation(operator_, a, b);
 }
 /** returns: growth of the values stack */
 int Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>& values) const {
