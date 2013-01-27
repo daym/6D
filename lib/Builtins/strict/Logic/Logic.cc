@@ -1,5 +1,6 @@
 #include "6D/Values"
 #include "6D/Operations"
+#include "6D/FFIs"
 #include "Logic/Logic"
 #include "SpecialForms/SpecialForms"
 #include "Combinators/Combinators"
@@ -8,6 +9,7 @@ namespace Logic {
 using namespace Values;
 using namespace SpecialForms;
 using namespace Combinators;
+using namespace FFIs;
 NodeT trueN;
 NodeT falseN;
 static NodeT t;
@@ -29,4 +31,10 @@ void initLogic(void) {
 	falseN = wrapL(f);
 }
 
+}
+namespace FFIs {
+using namespace Logic;
+NodeT internNative(bool value) {
+	return value ? t : f;
+}
 }

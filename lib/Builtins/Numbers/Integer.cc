@@ -3,16 +3,11 @@
 #include "6D/Operations"
 #include "Numbers/Integer"
 #include "Values/Values"
-
-namespace Evaluators {
-using namespace Values;
-NodeT internNative(bool value);
-static inline NodeT internNative(NodeT value);
-};
+#include "6D/FFIs"
 
 namespace Numbers {
-using namespace Evaluators;
 using namespace Values;
+using namespace FFIs;
 
 void Integer::operator =(const Integer &x) {
 	// Calls like a = a have no effect
@@ -426,6 +421,156 @@ void Integer::operator --(int) {
 	operator --();
 }
 
+static const NativeInt minValue = std::numeric_limits<NativeInt>::min();
+static const NativeInt maxValue = std::numeric_limits<NativeInt>::max();
+
+NodeT operator+(const Int& a, const Int& b) {
+	//std::cout << "max " << maxValue << std::endl;
+	if(b.value < 0 ? minValue - b.value > a.value : maxValue - b.value < a.value) {
+		Integer result = Integer(a.value) + Integer(b.value);
+		return(new Integer(result));
+	}
+	/* TODO if we assumed addition with overflow was not undefined (and violoated C standard), we could check
+	     if( ((a ^ result) & (b ^ result)) < 0)
+	       OVERFLOW
+	   after the fact. */
+	NativeInt smallResult = a.value + b.value;
+	return(internNative(smallResult));
+}
+NodeT operator-(const Int& a, const Int& b) {
+	if(b.value < 0 ? maxValue + b.value < a.value : minValue + b.value > a.value) {
+		Integer result = Integer(a.value) - Integer(b.value);
+		return(new Integer(result));
+	}
+	NativeInt smallResult = a.value - b.value;
+        return(internNative(smallResult));
+}
+NodeT operator*(const Int& a, const Int& b) {
+	/*if(av == 0 || bv == 0)
+		return(&integers[0]);*/
+	if(b.value > 0 ? a.value > maxValue/b.value || a.value < minValue/b.value
+	               : b.value < -1 ? a.value > minValue/b.value || a.value < maxValue/b.value
+	                        : b.value == -1 && a.value == minValue) {
+		Integer result = Integer(a.value) * Integer(b.value);
+		return(new Integer(result));
+	}
+	NativeInt smallResult = a.value * b.value;
+        return(internNative(smallResult));
+}
+/*
+For multiplication of ints do:
+
+#include <iostream>
+#include <ostream>
+#include <iomanip>
+#include <limits>
+#include <cmath>
+
+bool multiply( int &c, int a, int b)
+{
+	c = a * b;
+	double d = (std::log(std::abs(double(a))) + std::log(std::abs(double(b))))/log(2);
+	return d < std::numeric_limits< int >::digits;
+}
+
+
+int main()
+{
+	using namespace std;
+	int const M = -numeric_limits<int>::max();
+	int r;
+
+	cout << boolalpha << hex;
+
+	cout << multiply( r, M / 4, M / 4 ) << ": " << r << endl;
+	cout << multiply( r, 10, 4 ) << ": " << r << endl;
+	cout << multiply( r, (M/ + 1, 2 ) << ": " << r << endl;
+	cout << multiply( r, (M/2) + 1, 4 ) << ": " << r << endl;
+}
+
+You can do that without the double-precision math using bit scanning, as int( std::log(1 << N)/std::log(2)) == N.
+*/
+
+bool operator<=(const Int& a, const Int& b) {
+        return(a.value <= b.value);
+}
+/*NodeT operator<=(const Integer& a, const Integer& b) {
+        return(Evaluators::internNative(a.compareTo(b) != Integer::greater));
+}*/
+static Integer xinteger1(1);
+static inline NodeT intASucc(NodeT argument) {
+	const Int* int1 = dynamic_cast<const Int*>(argument);
+	if(int1) {
+		NativeInt value = int1->value;
+		if(value + 1 < value) /* overflow */
+			return new Integer(Integer(value) + xinteger1);
+		return(internNative(value + 1));
+	} else
+		throw std::invalid_argument("intASucc invalid argument");
+}
+DEFINE_STRICT_FN(IntSucc, intASucc(argument))
+static inline NodeT integerASucc(NodeT argument) {
+	const Integer* integer1 = dynamic_cast<const Integer*>(argument);
+	if(integer1) {
+		return(new Integer((*integer1) + xinteger1));
+	}
+	const Int* int1 = dynamic_cast<const Int*>(argument);
+	if(int1) {
+		NativeInt value = int1->value;
+		if(value + 1 < value) /* overflow */
+			return new Integer(Integer(value) + xinteger1);
+		return(internNative(value + 1));
+	} else
+		throw std::invalid_argument("integerASucc invalid argument");
+}
+DEFINE_STRICT_FN(IntegerSucc, integerASucc(argument))
+REGISTER_STR(Int, {
+        std::stringstream sst;
+	if(node->value < 0)
+		sst << '(' << node->value << ')';
+	else
+	        sst << node->value;
+        return(sst.str());
+})
+static std::string strInteger(Integer* node) {
+	Integer& v = *node;
+	std::stringstream sst;
+	BigUnsigned q(v.getMagnitude());
+	BigUnsigned divisor(10);
+	BigUnsigned r;
+	if (v.getSign() == Integer::negative)
+		sst << ')';
+	for(int i = 0; i < 10000; ++i) {
+		if(q.isZero())
+			break;
+		r = q;
+		r.divideWithRemainder(divisor, q);
+		NativeInt rf = r.convertToSignedPrimitive<NativeInt>();
+		sst << rf;
+	}
+	if(sst.str().empty())
+		sst << '0';
+	if (v.getSign() == Integer::negative)
+		sst << "-(";
+	std::string result = sst.str();
+	std::reverse(result.begin(), result.end());
+	return(result);
+}
+REGISTER_STR(Integer, {
+	return(strInteger(node));
+})
+
+DEFINE_STRICT_FN(IntP, (dynamic_cast<const Int*>(argument) != NULL))
+DEFINE_STRICT_FN(IntegerP, (dynamic_cast<const Int*>(argument) != NULL||dynamic_cast<const Integer*>(argument) != NULL))
+
+REGISTER_BUILTIN(IntP, 1, 0, symbolFromStr("int?"))
+REGISTER_BUILTIN(IntegerP, 1, 0, symbolFromStr("integer?"))
+REGISTER_BUILTIN(IntSucc, 1, 0, symbolFromStr("intSucc"))
+REGISTER_BUILTIN(IntegerSucc, 1, 0, symbolFromStr("integerSucc"))
+
+}; /* namespace Numbers */
+namespace FFIs {
+using namespace Numbers;
 static Int integers[256] = {
         Int(0),
         Int(1),
@@ -689,144 +834,6 @@ NodeT internNative(NativeInt value) {
                 return(&integers[value]);
         return(new Int(value));
 }
-static const NativeInt minValue = std::numeric_limits<NativeInt>::min();
-static const NativeInt maxValue = std::numeric_limits<NativeInt>::max();
-
-NodeT operator+(const Int& a, const Int& b) {
-	//std::cout << "max " << maxValue << std::endl;
-	if(b.value < 0 ? minValue - b.value > a.value : maxValue - b.value < a.value) {
-		Integer result = Integer(a.value) + Integer(b.value);
-		return(new Integer(result));
-	}
-	/* TODO if we assumed addition with overflow was not undefined (and violoated C standard), we could check
-	     if( ((a ^ result) & (b ^ result)) < 0)
-	       OVERFLOW
-	   after the fact. */
-	NativeInt smallResult = a.value + b.value;
-	return(internNative(smallResult));
-}
-NodeT operator-(const Int& a, const Int& b) {
-	if(b.value < 0 ? maxValue + b.value < a.value : minValue + b.value > a.value) {
-		Integer result = Integer(a.value) - Integer(b.value);
-		return(new Integer(result));
-	}
-	NativeInt smallResult = a.value - b.value;
-        return(internNative(smallResult));
-}
-NodeT operator*(const Int& a, const Int& b) {
-	/*if(av == 0 || bv == 0)
-		return(&integers[0]);*/
-	if(b.value > 0 ? a.value > maxValue/b.value || a.value < minValue/b.value
-	               : b.value < -1 ? a.value > minValue/b.value || a.value < maxValue/b.value
-	                        : b.value == -1 && a.value == minValue) {
-		Integer result = Integer(a.value) * Integer(b.value);
-		return(new Integer(result));
-	}
-	NativeInt smallResult = a.value * b.value;
-        return(internNative(smallResult));
-}
-/*
-For multiplication of ints do:
-
-#include <iostream>
-#include <ostream>
-#include <iomanip>
-#include <limits>
-#include <cmath>
-
-bool multiply( int &c, int a, int b)
-{
-	c = a * b;
-	double d = (std::log(std::abs(double(a))) + std::log(std::abs(double(b))))/log(2);
-	return d < std::numeric_limits< int >::digits;
-}
-
-
-int main()
-{
-	using namespace std;
-	int const M = -numeric_limits<int>::max();
-	int r;
-
-	cout << boolalpha << hex;
-
-	cout << multiply( r, M / 4, M / 4 ) << ": " << r << endl;
-	cout << multiply( r, 10, 4 ) << ": " << r << endl;
-	cout << multiply( r, (M/ + 1, 2 ) << ": " << r << endl;
-	cout << multiply( r, (M/2) + 1, 4 ) << ": " << r << endl;
-}
-
-You can do that without the double-precision math using bit scanning, as int( std::log(1 << N)/std::log(2)) == N.
-*/
-
-bool operator<=(const Int& a, const Int& b) {
-        return(a.value <= b.value);
-}
-/*NodeT operator<=(const Integer& a, const Integer& b) {
-        return(Evaluators::internNative(a.compareTo(b) != Integer::greater));
-}*/
-static Integer xinteger1(1);
-static inline NodeT intASucc(NodeT argument) {
-	const Int* int1 = dynamic_cast<const Int*>(argument);
-	if(int1) {
-		NativeInt value = int1->value;
-		if(value + 1 < value) /* overflow */
-			return new Integer(Integer(value) + xinteger1);
-		return(internNative(value + 1));
-	} else
-		throw std::invalid_argument("intASucc invalid argument");
-}
-DEFINE_STRICT_FN(IntSucc, intASucc(argument))
-static inline NodeT integerASucc(NodeT argument) {
-	const Integer* integer1 = dynamic_cast<const Integer*>(argument);
-	if(integer1) {
-		return(new Integer((*integer1) + xinteger1));
-	}
-	const Int* int1 = dynamic_cast<const Int*>(argument);
-	if(int1) {
-		NativeInt value = int1->value;
-		if(value + 1 < value) /* overflow */
-			return new Integer(Integer(value) + xinteger1);
-		return(internNative(value + 1));
-	} else
-		throw std::invalid_argument("integerASucc invalid argument");
-}
-DEFINE_STRICT_FN(IntegerSucc, integerASucc(argument))
-REGISTER_STR(Int, {
-        std::stringstream sst;
-	if(node->value < 0)
-		sst << '(' << node->value << ')';
-	else
-	        sst << node->value;
-        return(sst.str());
-})
-static std::string strInteger(Integer* node) {
-	Integer& v = *node;
-	std::stringstream sst;
-	BigUnsigned q(v.getMagnitude());
-	BigUnsigned divisor(10);
-	BigUnsigned r;
-	if (v.getSign() == Integer::negative)
-		sst << ')';
-	for(int i = 0; i < 10000; ++i) {
-		if(q.isZero())
-			break;
-		r = q;
-		r.divideWithRemainder(divisor, q);
-		NativeInt rf = r.convertToSignedPrimitive<NativeInt>();
-		sst << rf;
-	}
-	if(sst.str().empty())
-		sst << '0';
-	if (v.getSign() == Integer::negative)
-		sst << "-(";
-	std::string result = sst.str();
-	std::reverse(result.begin(), result.end());
-	return(result);
-}
-REGISTER_STR(Integer, {
-	return(strInteger(node));
-})
 
 bool toNativeInt(NodeT node, NativeInt& result) {
 	const Int* intNode;
@@ -901,12 +908,4 @@ NodeT internNativeU(unsigned long long value) {
 }
 #endif
 
-DEFINE_STRICT_FN(IntP, (dynamic_cast<const Int*>(argument) != NULL))
-DEFINE_STRICT_FN(IntegerP, (dynamic_cast<const Int*>(argument) != NULL||dynamic_cast<const Integer*>(argument) != NULL))
-
-REGISTER_BUILTIN(IntP, 1, 0, symbolFromStr("int?"))
-REGISTER_BUILTIN(IntegerP, 1, 0, symbolFromStr("integer?"))
-REGISTER_BUILTIN(IntSucc, 1, 0, symbolFromStr("intSucc"))
-REGISTER_BUILTIN(IntegerSucc, 1, 0, symbolFromStr("integerSucc"))
-
-}; /* namespace Numbers */
+};

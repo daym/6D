@@ -90,7 +90,7 @@ public:
 	Values::NodeT parse1(FILE* f, const char* name) const;
 	Values::NodeT startMacro(Values::NodeT node, Scanner<Lang5D>& tokenizer) const;
 	Values::NodeT macroStandin(Values::NodeT operator_, Values::NodeT operand) const;
-	Values::NodeT withDefaultEnv(Values::NodeT body) const;
+	Values::NodeT withDefaultEnv(Values::NodeT node) const;
 };
 
 }

@@ -78,8 +78,8 @@ public:
 	//int            toInt          () const;
 	//unsigned short toUnsignedShort() const;
 	//short          toShort        () const;
-	NativeInt        toNativeInt() const;
-	NativeUInt        toNativeUInt() const;
+	FFIs::NativeInt        toNativeInt() const;
+	FFIs::NativeUInt        toNativeUInt() const;
 protected:
 	// Helper
 	template <class X> X convertToUnsignedPrimitive() const;
@@ -216,11 +216,9 @@ inline void Integer::flipSign() {
 }
 
 
-DECLARE_SMALL_VALUE(Int, Numbers::NativeInt)
+DECLARE_SMALL_VALUE(Int, FFIs::NativeInt)
 DECLARE_FFI_FN(IntP)
 DECLARE_FFI_FN(IntegerP)
-Values::NodeT internNative(NativeInt value);
-Values::NodeT internNativeU(NativeUInt value);
 DECLARE_FFI_FN(IntSucc)
 DECLARE_FFI_FN(IntegerSucc)
 
@@ -236,8 +234,12 @@ Values::NodeT operator<=(const Integer& a, const Integer& b);
 */
 bool operator<=(const Int& a, const Int& b);
 
-bool toNativeInt(Values::NodeT node, NativeInt& result);
-bool toNearestNativeInt(Values::NodeT node, NativeInt& result);
 
 }; /* namespace Numbers */
+namespace FFIs {
+Values::NodeT internNative(FFIs::NativeInt value);
+Values::NodeT internNativeU(FFIs::NativeUInt value);
+bool toNativeInt(Values::NodeT node, FFIs::NativeInt& result);
+bool toNearestNativeInt(Values::NodeT node, FFIs::NativeInt& result);
+};
 #endif

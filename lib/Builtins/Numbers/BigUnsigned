@@ -13,13 +13,13 @@ namespace Numbers {
  * The number is stored as a NumberlikeArray of unsigned longs as if it were
  * written in base 256^sizeof(unsigned long).  The least significant block is
  * first, and the length is such that the most significant block is nonzero. */
-class BigUnsigned : protected std::vector<NativeUInt ALLOCATOR_VECTOR2(NativeUInt)> {
+class BigUnsigned : protected std::vector<FFIs::NativeUInt ALLOCATOR_VECTOR2(FFIs::NativeUInt)> {
 public:
 	// Enumeration for the result of a comparison.
 	enum CmpRes { less = -1, equal = 0, greater = 1 };
 
 	// BigUnsigneds are built with a Blk type of unsigned long.
-	typedef NativeUInt Blk;
+	typedef FFIs::NativeUInt Blk;
 
 	static const unsigned int N = 8 * sizeof(Blk);
 

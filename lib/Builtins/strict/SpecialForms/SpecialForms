@@ -2,6 +2,7 @@
 #define __6D_SPECIAL_FORMS_H
 #include "SpecialForms/Quoter"
 #include "SpecialForms/Constanter"
+#include "6D/Values"
 namespace SpecialForms {
 DECLARE_ENV_SPECIAL_FORM(Constanter)
 DECLARE_ENV_SPECIAL_FORM(Constanter2)
@@ -11,6 +12,9 @@ static inline bool fnSpecialFormP(Values::NodeT fn) {
 static inline bool fnWantsItsArgumentReducedP(Values::NodeT fn) {
 	return !fnSpecialFormP(fn);
 }
+/*Values::NodeT closeOverSpecialForms(Values::NodeT body) {
+        return Values::close(Squote, SpecialForms::Quoter, body);
+}*/
 
 }
 #endif /* #ifndef __6D_SPECIAL_FORMS_H */

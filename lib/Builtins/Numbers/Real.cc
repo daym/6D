@@ -5,15 +5,13 @@
 #include "Numbers/Integer"
 #include "Values/Values"
 
-namespace FFIs {
-Values::NodeT internNative(Numbers::NativeFloat value) {
-	return(new Numbers::Float(value));
-}
-}
 
 namespace Numbers {
 using namespace FFIs;
 using namespace Values;
+Values::NodeT internNative(Numbers::NativeFloat value) {
+	return(new Numbers::Float(value));
+}
 REGISTER_STR(Float, {
 	std::stringstream sst;
 	sst.precision(std::numeric_limits<NativeFloat>::digits10 + 1);
@@ -67,7 +65,7 @@ bool toNativeFloat(NodeT node, NativeFloat& result) {
 	} else {
 		// only coerce integers to float if there is no information loss
 		NativeInt value = 0;
-		if(!toNativeInt(node, value))
+		if(!FFIs::toNativeInt(node, value))
 			return(false);
 		result = (NativeFloat) value;
 		return((NativeInt) result == value);

@@ -23,8 +23,8 @@ Values/Symbol.o \
 Allocators/Allocators.o \
 Values/wstrings.o \
 Values/Hashtable.o \
-Evaluators/Evaluators.o \
 $(STRICT_OBJECTS) \
+$(EVAL_OBJECTS) \
 $(NUMBERS)
 LIB = lib6dbuiltins.so.1
 STATIC_LIB = lib6dbuiltins1.a  
@@ -38,9 +38,9 @@ $(LIB): $(OBJECTS)
 	$(CXX) -shared -o $(LIB) $(OBJECTS) $(LDFLAGS)
 $(STATIC_LIB): $(OBJECTS)
 	$(AR) rcs $(STATIC_LIB) $(OBJECTS)
-Tests/01_ShuntingYard/testShuntingYard: Tests/01_ShuntingYard/main.o Formatters/Math.o Formatters/SExpression.o Formatters/TExpression.o Scanners/Lang5D.o Scanners/Scanner.o Scanners/ShuntingYardParser.o Values/Values.o Values/Keyword.o Values/Symbol.o Allocators/Allocators.o
+Tests/01_ShuntingYard/testShuntingYard: Tests/01_ShuntingYard/main.o $(OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
-Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o Formatters/Math.o Formatters/SExpression.o Formatters/TExpression.o Scanners/Lang5D.o Scanners/Scanner.o Scanners/ShuntingYardParser.o Values/Values.o Values/Keyword.o Values/Symbol.o Allocators/Allocators.o $(EVAL_OBJECTS) $(STRICT_OBJECTS)
+Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
 Formatters/Math.o: Formatters/Math.cc Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
 Formatters/SExpression.o: Formatters/SExpression.cc Formatters/SExpression Values/Values include/6D/Values 
@@ -56,13 +56,13 @@ Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Scanners/Lang5D Form
 Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
-Numbers/Integer.o: Numbers/Integer.cc Numbers/Integer Numbers/Small
-Numbers/Real.o: Numbers/Real.cc Numbers/Real Numbers/Small Numbers/Integer
+Numbers/Integer.o: Numbers/Integer.cc Numbers/Integer Numbers/Small include/6D/FFIs include/6D/Values
+Numbers/Real.o: Numbers/Real.cc Numbers/Real Numbers/Small Numbers/Integer include/6D/FFIs include/6D/Values
 Numbers/BigUnsigned.o: Numbers/BigUnsigned.cc Numbers/BigUnsigned Numbers/Small
-Numbers/Ratio.o: Numbers/Ratio.cc Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer
+Numbers/Ratio.o: Numbers/Ratio.cc Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer include/6D/FFIs include/6D/Values
 strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.cc strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations
 strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.cc strict/SpecialForms/Constanter strict/SpecialForms/SpecialForms include/6D/Operations
-lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators
+lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs
 strict/Logic/Logic.o: strict/Logic/Logic.cc strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators include/6D/Operations include/6D/Evaluators
 test: Tests/01_ShuntingYard/testShuntingYard Tests/02_Evaluator/testEvaluator

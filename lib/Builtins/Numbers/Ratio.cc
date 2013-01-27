@@ -3,8 +3,10 @@
 #include <assert.h>
 #include "Values/Values"
 #include "Numbers/Ratio"
+#include "6D/FFIs"
 namespace Numbers {
 using namespace Values;
+using namespace FFIs;
 Ratio* ratio(NodeT aa, NodeT bb) {
 	Ratio* result = new Ratio;
 	result->a = aa;
