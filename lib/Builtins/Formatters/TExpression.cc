@@ -13,7 +13,8 @@ static NodeT getSymbolByIndex(int index, NodeT names) {
 		return getSymbolByIndex(index - 1, getConsTail(names));
 }
 /* TODO:
-    track the bindings of variables and backsubstitute if possible.
+	- track the bindings of variables and backsubstitute values if possible (WTF).
+	- synthetisize let forms (always or just if the entire thing is smaller than some minimum size?)
 */
 void print0(FILE* destination, NodeT names, NodeT node) {
 	using namespace Values;
@@ -22,7 +23,10 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 	if((i = getSymbolreferenceIndex(node)) != -1) {
 		NodeT node = getSymbolByIndex(i, names);
 		/* FIXME what if node is nil? Just make names up maybe (putting them at the end of #names would be safe, too - and mimic how it should have looked if they were there) */
-		fprintf(destination, "%s", getSymbol1Name(node));
+		if(node)
+			fprintf(destination, "%s", getSymbol1Name(node));
+		else
+			fprintf(destination, "<can't figure it out>");
 	} else if(symbolP(node)) {
 		fprintf(destination, "%s", getSymbol1Name(node));
 	} else if(keywordP(node)) {

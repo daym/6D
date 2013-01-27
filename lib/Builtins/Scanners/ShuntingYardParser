@@ -71,9 +71,15 @@ public:
 		Values::NodeT input;
 		prevInput = env.SopeningParen; // intern("(");
 		NodeT SEOF = env.SEOF;
+		// TODO maybe don't auto-apply on any kind of closing paren.
 		while((input = tokenizer.getToken()), !env.errorP(input) && input != SEOF && (input != endToken || !operators.empty()) ) {
 			tokenizer.consume();
 			if (env.openingParenP(input)) { /* special case of the stuff below in order to declutter the stuff below */
+				if((!env.operatorP(prevInput) || env.closingParenP(prevInput))) { /* implicit application before unary operator */
+					prevInput = applyAndPush(2, false, env.Sapply);
+					if(env.errorP(prevInput))
+						return result;
+				}
 				operators.push(input);
 				if (env.macroStarterP(input)) {
 					pushOperand(/*yield */ env.startMacro(input, tokenizer)); /* this is the final result for the macro, probably */
