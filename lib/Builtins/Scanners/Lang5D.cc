@@ -9,6 +9,8 @@
 #include "Formatters/TExpression"
 #include "Scanners/ShuntingYardParser"
 #include "SpecialForms/SpecialForms"
+#include "ModuleSystem/ModuleSystem"
+#include "Combinators/Combinators"
 #undef GETC
 #undef UNGETC
 #define GETC fgetc(file)
@@ -52,6 +54,8 @@ NodeT Lang5D::Sfrom;
 NodeT Lang5D::Shashexports;
 NodeT Lang5D::Sif;
 NodeT Lang5D::defaultDynEnv;
+NodeT Lang5D::Sexports;
+NodeT Lang5D::Snil;
 //NodeT Lang5D::Sdot;
 
 /* TODO just use a function */
@@ -214,6 +218,8 @@ Lang5D::Lang5D(void) {
 		Shashexports = symbolFromStr("#exports");
 		Sif = symbolFromStr("if");
 		Srightbracket = symbolFromStr("]");
+		Sexports = symbolFromStr("exports");
+		Snil = symbolFromStr("nil");
 		levels[symbolFromStr("(")] = -1,
 		levels[symbolFromStr("{")] = -1, // pseudo-operators
 		levels[symbolFromStr("[")] = -1,
@@ -346,7 +352,7 @@ NodeT Lang5D::parseListLiteral(NodeT endToken, Scanner<Lang5D>& tokenizer) const
 		NodeT tl = parseListLiteral(endToken, tokenizer);
 		if(errorP(tl))
 			return tl;
-		return cons(hd, tl);
+		return mcons(hd, tl); // it is NOT allowed to construct these directly. The annotator won't see them.
 	}
 }
 NodeT Lang5D::startMacro(NodeT node, Scanner<Lang5D>& tokenizer) const {
@@ -558,6 +564,7 @@ NodeT Lang5D::readKeyword(FILE* file, int& linenumber, int c) const {
 }
 NodeT Lang5D::readSpecialCoding(FILE* file, int& linenumber, int c2) const {
 	int c = GETC;
+	// #: for signalling an error
 	switch(c) {
 	case 'o':
 		return collectNumeric2(file, linenumber, 8, octalBodyCharP);
@@ -632,20 +639,65 @@ NodeT Lang5D::readToken(FILE* file, int& linenumber) const {
 		return error("<token>", std::string(buf));
 	}
 }
+NodeT Lang5D::reflectHashExports(NodeT entries) const {
+	return (mnilP(entries)) ? entries : mcons(mquote(mgetConsHead(entries)), reflectHashExports(mgetConsTail(entries)));
+}
+/* [a b c] => [('a, a) ('b, b) ('c, c)] */
+NodeT Lang5D::blowHashExportsUp(NodeT tl, NodeT entries) const {
+	if(mnilP(entries)) {
+		return tl;
+	} else {
+		NodeT sym = mgetConsHead(entries);
+		return mcons(mpair(mquote(sym), sym), blowHashExportsUp(tl, mgetConsTail(entries)));
+	}
+}
 NodeT Lang5D::mcall(NodeT a, NodeT b) const {
 	if(a == Simport)
 		return macroStandin(a, b);
-	else
+	else if(a == Shashexports) {
+		// tl = ('exports, 'exports:b)
+		return blowHashExportsUp(mcons(mpair(mquote(Sexports), mcons(mquote(Sexports), reflectHashExports(b))), NULL), b);
+	} else
 		return call(a,b);
 }
 NodeT Lang5D::replaceIMPORT(NodeT body, NodeT source, NodeT symlist) const {
+	// these replace IMPORTS on a only-after-parsing level. At this point, the list is not constructed yet (otherwise the annotator wouldn't find it).
 	if(symlist) {
 		//NodeT close(NodeT /* symbol */ parameter, NodeT argument, NodeT body) {
 		//NodeT accessor = operation(Sdot, source, quote(getConsHead(symlist))); /* technically this is bad since it captures the (.) that is in scope. */
-		NodeT accessor = call(source, call(Squote, getConsHead(symlist))); /* better? */
-		return Values::close(getConsHead(symlist), accessor, replaceIMPORT(body, source, getConsTail(symlist)));
+		NodeT hd = mgetConsHead(symlist);
+		NodeT accessor = call(source, mquote(hd)); /* better? */
+		return Values::close(hd, accessor, replaceIMPORT(body, source, mgetConsTail(symlist)));
 	} else
 		return body;
+}
+Values::NodeT Lang5D::mcons(Values::NodeT hd, Values::NodeT tl) const {
+	// TODO prevent variable capture of the (:)
+	return call2(Scolon, hd, tl);
+}
+Values::NodeT Lang5D::mpair(Values::NodeT hd, Values::NodeT tl) const {
+	// TODO prevent variable capture of the (:)
+	return call2(Scomma, hd, tl);
+}
+bool Lang5D::mnilP(Values::NodeT c) const {
+	return nilP(c) || c == Snil;
+}
+Values::NodeT Lang5D::mgetConsHead(Values::NodeT c) const {
+	NodeT c2 = getCallCallable(c);
+	assert(c2);
+	assert(getCallCallable(c2) == Scolon);
+	NodeT a0 = getCallArgument(c2);
+	return a0;
+}
+Values::NodeT Lang5D::mgetConsTail(Values::NodeT c) const {
+	NodeT c2 = getCallCallable(c);
+	assert(c2);
+	assert(getCallCallable(c2) == Scolon);
+	NodeT a1 = getCallArgument(c);
+	return a1;
+}
+Values::NodeT Lang5D::mquote(Values::NodeT a) const {
+	return call(Squote, a);
 }
 NodeT Lang5D::replaceIN(NodeT equation, NodeT body) const {
 	/* two possibilities: */
@@ -762,7 +814,10 @@ NodeT Lang5D::error(NodeT expectedPart, NodeT gotPart) const {
 	return error("???", "???");
 }
 NodeT Lang5D::withDefaultEnv(NodeT body) const {
-        return Values::close(Squote, SpecialForms::Quoter, body);
+	using namespace Values;
+        return close(Squote, SpecialForms::Quoter, 
+	       close(Shashexports, Combinators::Identity, 
+	       body));
 }
 
 }

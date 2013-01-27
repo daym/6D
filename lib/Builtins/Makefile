@@ -45,7 +45,7 @@ Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS)
 Formatters/Math.o: Formatters/Math.cc Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
 Formatters/SExpression.o: Formatters/SExpression.cc Formatters/SExpression Values/Values include/6D/Values 
 Formatters/TExpression.o: Formatters/TExpression.cc Formatters/TExpression Values/Values  include/6D/Values
-Scanners/Lang5D.o: Scanners/Lang5D.cc Scanners/Scanner Scanners/ShuntingYardParser
+Scanners/Lang5D.o: Scanners/Lang5D.cc Scanners/Scanner Scanners/ShuntingYardParser Combinators/Combinators
 Scanners/Scanner.o: Scanners/Scanner.cc Scanners/Scanner 
 Scanners/ShuntingYardParser.o: Scanners/ShuntingYardParser.cc Scanners/ShuntingYardParser 
 Values/Values.o: Values/Values.cc Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values
@@ -65,6 +65,7 @@ strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.cc strict/Speci
 lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs
 strict/Logic/Logic.o: strict/Logic/Logic.cc strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators include/6D/Operations include/6D/Evaluators
+ModuleSystem/Memoizer.o: ModuleSystem/Memoizer.cc ModuleSystem/Memoizer
 test: Tests/01_ShuntingYard/testShuntingYard Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
 	Tests/02_Evaluator/run

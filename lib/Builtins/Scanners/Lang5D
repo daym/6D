@@ -9,6 +9,8 @@
 namespace Scanners {
 
 class Lang5D {
+private:
+	Values::NodeT reflectHashExports(Values::NodeT entries) const;
 protected:
 	Values::NodeT collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const;
 	Values::NodeT collect1(FILE* file, int& linenumber, bool (*continueP)(int input)) const;
@@ -30,6 +32,13 @@ protected:
 	Values::NodeT parseValue(Scanner<Lang5D>& scanner) const;
 	Values::NodeT parseListLiteral(Values::NodeT endToken, Scanner<Lang5D>& tokenizer) const;
 	Values::NodeT replaceIMPORT(Values::NodeT body, Values::NodeT source, Values::NodeT symlist) const;
+	Values::NodeT mcons(Values::NodeT hd, Values::NodeT tl) const;
+	Values::NodeT mpair(Values::NodeT hd, Values::NodeT tl) const;
+	Values::NodeT mgetConsHead(Values::NodeT c) const;
+	Values::NodeT mgetConsTail(Values::NodeT c) const;
+	Values::NodeT mquote(Values::NodeT a) const;
+	bool mnilP(Values::NodeT a) const;
+	Values::NodeT blowHashExportsUp(Values::NodeT tl, Values::NodeT entries) const;
 public:
 	Lang5D(void);
 	static Values::NodeT SLF;
@@ -68,6 +77,8 @@ public:
 	static Values::NodeT Shashexports;
 	static Values::NodeT Sif;
 	static Values::NodeT defaultDynEnv;
+	static Values::NodeT Sexports;
+	static Values::NodeT Snil;
 	Values::NodeT readToken(FILE* f, int& linenumber) const;
 	Values::NodeT error(std::string expectedPart, std::string gotPart) const;
 	Values::NodeT error(Values::NodeT expectedPart, Values::NodeT gotPart) const;

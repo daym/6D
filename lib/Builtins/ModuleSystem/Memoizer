@@ -1,0 +1,6 @@
+#ifndef __6D_MODULE_SYSTEM_MEMOIZER_H
+#define __6D_MODULE_SYSTEM_MEMOIZER_H
+namespace ModuleSystem {
+
+}
+#endif /* ndef __6D_MODULE_SYSTEM_MEMOIZER_H */
