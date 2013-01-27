@@ -6,7 +6,7 @@
 #include "Allocators/Allocators"
 #include "Formatters/TExpression"
 namespace Values {
-
+using namespace Allocators;
 struct Symbol;
 struct Keyword;
 struct CFFIFn;

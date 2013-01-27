@@ -3,6 +3,7 @@
 #include "6D/Values"
 
 namespace Evaluators {
+void initEvaluator(void);
 Values::NodeT annotate(Values::NodeT environment, Values::NodeT node);
 Values::NodeT eval(Values::NodeT node);
 Values::NodeT execute(Values::NodeT term);

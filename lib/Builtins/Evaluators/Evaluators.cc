@@ -14,6 +14,8 @@
 #include "Values/Hashtable"
 #include "Values/Symbol"
 #include "SpecialForms/SpecialForms"
+#include "Combinators/Combinators"
+#include "Logic/Logic"
 
 namespace Evaluators {
 using namespace Values;
@@ -24,6 +26,11 @@ bool builtinCallP(Values::NodeT node);
 Values::NodeT callBuiltin(Values::NodeT fn, Values::NodeT argument);
 
 /* END Binary Operations */
+
+void initEvaluator(void) {
+	Combinators::initCombinators();
+	Logic::initLogic();
+}
 
 static void getFreeVariablesImpl(Hashtable& boundNames, int boundNamesCount/*includes shadowed*/, Hashtable& freeNames, int& freeNamesCount/*includes name unknown*/, NodeT root) {
 	int i;

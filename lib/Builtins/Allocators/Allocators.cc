@@ -11,6 +11,7 @@
 #endif
 #include <string.h>
 #include "Allocators/Allocators"
+namespace Allocators {
 void initAllocators(void) {
 	g_thread_init(NULL);
 	g_mem_gc_friendly = TRUE;
@@ -39,4 +40,5 @@ void efree(void* address) {
 #elif defined(__linux__) || defined(__APPLE__)
 	munmap((size_t*)address - 1, *((size_t*)address - 1));
 #endif
+}
 }

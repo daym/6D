@@ -12,6 +12,7 @@
 #else
 #define GC_MALLOC_ATOMIC malloc
 #endif
+namespace Allocators {
 void initAllocators(void);
 static inline char* GCx_strdup(const char* value) {
 //#ifdef USE_LD_WRAP
@@ -41,5 +42,5 @@ void efree(void* beginning);
 #define ALLOCATOR_VECTOR2(t) 
 #define GC_BASECLASS 
 #endif
-
+}
 #endif /* ndef __6D_ALLOCATORS_H */
