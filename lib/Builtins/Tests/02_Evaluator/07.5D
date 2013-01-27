@@ -1,0 +1,3 @@
+let not := \a \t \f a f t in 
+let t := \t \f t in 
+(not t) 'y 'n
