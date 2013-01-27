@@ -21,5 +21,17 @@ NodeT keysOfHashtable(Hashtable::const_iterator iter, Hashtable::const_iterator 
 		return(cons(k, keysOfHashtable(iter, endIter)));
 	}
 }
+NodeT getHashtableEntryByKey(NodeT hashtableP, NodeT key, NodeT fallback) {
+	const Hashtable* hashtable = (const Hashtable*) hashtableP;
+	const Hashtable::const_iterator iter = hashtable->find(key);
+	if(iter != hashtable->end())
+		return iter->second;
+	else
+		return fallback;
+}
+void setHashtableEntry(NodeT hashtableP, NodeT key, NodeT value) {
+	Hashtable* hashtable = (Hashtable*) hashtableP; /* const incorrect */
+	(*hashtable)[key] = value;
+}
 
 }

@@ -94,6 +94,5 @@ bool FFIFnP(NodeT node) G_5D_PURE;
 NodeT execFFIFn(NodeT node, NodeT argument) /*impure*/;
 bool FFIFnWithCallbackP(NodeT n, FFIFnCallbackT callback) G_5D_PURE; /* used "internally" only */
 
-
 }
 #endif /* ndef __6D_VALUES_H */
