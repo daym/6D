@@ -1,5 +1,5 @@
-let (&&) = \a \b \t \f a (b t f) f in 
-let (||) = \a \b \t \f a t (b t f) in 
-let t = \t \f t in 
-let f = \t \f f in 
+let (&&) := \a \b \t \f a (b t f) f in 
+let (||) := \a \b \t \f a t (b t f) in 
+let t := \t \f t in 
+let f := \t \f f in 
 (t && t) 'y 'n

@@ -70,6 +70,7 @@ public:
 	static Values::NodeT Srightcurly;
 	static Values::NodeT Srightbracket;
 	static Values::NodeT Sequal;
+	static Values::NodeT Scolonequal;
 	static Values::NodeT Sin;
 	static Values::NodeT Sfrom;
 	static Values::NodeT SEOF;

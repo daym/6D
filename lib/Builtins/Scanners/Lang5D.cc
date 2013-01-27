@@ -60,6 +60,7 @@ NodeT Lang5D::Sif;
 NodeT Lang5D::defaultDynEnv;
 NodeT Lang5D::Sexports;
 NodeT Lang5D::Snil;
+NodeT Lang5D::Scolonequal;
 using namespace SpecialForms;
 //NodeT Lang5D::Sdot;
 static inline NodeT merror(const std::string& expectedPart, const std::string& gotPart) {
@@ -261,6 +262,7 @@ Lang5D::Lang5D(void) {
 		SEOF = symbolFromStr("\32"); // EOF
 		Serror = symbolFromStr("<error>");
 		Sequal = symbolFromStr("=");
+		Scolonequal = symbolFromStr(":=");
 		Shashexports = symbolFromStr("#exports");
 		Sif = symbolFromStr("if");
 		Srightbracket = symbolFromStr("]");
@@ -319,6 +321,7 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr(";")] = 5,
 		levels[symbolFromStr("?;")] = 5,
 		levels[symbolFromStr("\\")] = 4,
+		levels[symbolFromStr(":=")] = 3,
 		levels[symbolFromStr("import")] = 2,
 		levels[symbolFromStr("from")] = 3,
 		levels[symbolFromStr("let")] = 1,
@@ -356,7 +359,7 @@ int Lang5D::operatorArgcount(NodeT node) const {
 	       (node == Selif) ? R : 
 	       (node == Selse) ? R : 
 	       (node == Ssemicolon) ? R : 
-	       (node == Sbackslash) ? R :
+	       (node == Sbackslash) ? R /* the macro just swaps the operator and the operand, basically*/ :
 	       (node == Slet) ? P :
 	       (node == Sif) ? P :
 	       (node == Sin) ? R :
@@ -759,7 +762,7 @@ NodeT Lang5D::replaceIN(NodeT equation, NodeT body) const {
 		} else
 			return error("<equation>", "<junk>");
 	}
-	if(getOperationOperator(equation) != Sequal)
+	if(getOperationOperator(equation) != Sequal && getOperationOperator(equation) != Scolonequal)
 		return error("<equation>", "<inequation>");
 	NodeT formalParameter = getOperationArgument1(equation);
 	NodeT value = getOperationArgument2(equation);
