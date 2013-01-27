@@ -10,6 +10,7 @@
 #include "6D/Values"
 #include "6D/Operations"
 #include "6D/Allocators"
+#include "6D/Evaluators"
 #include "Values/Hashtable"
 #include "Values/Symbol"
 #include "SpecialForms/SpecialForms"
@@ -63,7 +64,6 @@ static inline bool errorP(NodeT term) {
 	// FIXME
 	return false;
 }
-// TODO GC-proof deque
 static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashtable& boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.
 	NodeT result;
@@ -78,7 +78,7 @@ static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashta
 			boundNamesSet.removeByKey(parameterSymbolNode);
 		} else // already bound to something else: make sure not to get rid of it.
 			result = annotateImpl(dynEnv, cons(parameterSymbolNode, boundNames), boundNamesSet, body);
-		return (result == body) ? root : fn(parameterNode, result);
+		return (result == body) ? root : errorP(result) ? result : fn(parameterNode, result);
 	} else if(callP(root)) {
 		NodeT operator_ = getCallCallable(root);
 		NodeT operand = getCallArgument(root);
@@ -87,7 +87,7 @@ static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashta
 		}*/
 		NodeT newOperatorNode = annotateImpl(dynEnv, boundNames, boundNamesSet, operator_);
 		NodeT newOperandNode = SpecialForms::quoteP(newOperatorNode) ? operand : annotateImpl(dynEnv, boundNames, boundNamesSet, operand);
-		return (operator_ == newOperatorNode && operand == newOperandNode) ? root : call(newOperatorNode, newOperandNode);
+		return (operator_ == newOperatorNode && operand == newOperandNode) ? root : errorP(newOperatorNode) ? newOperatorNode : errorP(newOperandNode) ? newOperandNode : call(newOperatorNode, newOperandNode);
 	} else if(symbolP(root)) {
 		int i = indexOfSymbol(root, 0, boundNames);
 		if(i != -1) { /* found */
@@ -95,7 +95,8 @@ static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashta
 			return symbolreference(i); /* root */
 		} else {
 			//return eval(call(dynEnv, quote(root)));
-			return call(dynEnv, SpecialForms::quote(root)); // make very VERY sure that is not annotated again.
+			// can be error.
+			return eval(annotate(nil, call(dynEnv, SpecialForms::quote(root)))); // make very VERY sure that is not annotated again.
 			//return error(root, "<bound-identifier>", getSymbol1Name(root));
 		}
 	} // else other stuff.

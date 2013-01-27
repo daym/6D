@@ -11,6 +11,9 @@ static NodeT getSymbolByIndex(int index, NodeT names) {
 	else
 		return getSymbolByIndex(index - 1, getConsTail(names));
 }
+/* TODO:
+    track the bindings of variables and backsubstitute if possible.
+*/
 void print0(FILE* destination, NodeT names, NodeT node) {
 	using namespace Values;
 	int i;
