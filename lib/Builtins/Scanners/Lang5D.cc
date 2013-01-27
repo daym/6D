@@ -11,12 +11,14 @@
 #include "SpecialForms/SpecialForms"
 #include "ModuleSystem/ModuleSystem"
 #include "Combinators/Combinators"
+#include "6D/FFIs"
 #undef GETC
 #undef UNGETC
 #define GETC fgetc(file)
 #define UNGETC(c) ungetc(c, file)
 namespace Scanners {
 using namespace Values;
+using namespace FFIs;
 
 NodeT Lang5D::SLF;
 NodeT Lang5D::Sindent;
@@ -57,6 +59,17 @@ NodeT Lang5D::defaultDynEnv;
 NodeT Lang5D::Sexports;
 NodeT Lang5D::Snil;
 //NodeT Lang5D::Sdot;
+static inline NodeT merror(const std::string& expectedPart, const std::string& gotPart) {
+	// FIXME nicer
+	return cons(symbolFromStr("error"), cons(strCXX(expectedPart), cons(strCXX(gotPart), nil)));
+}
+static inline std::string nvl(const char* a, const char* b) {
+	return a ? a : b;
+}
+static inline NodeT getDynEnvEntry(NodeT sym) {
+	return merror("<dynamic-variable>", nvl(getSymbol1Name(sym), "???"));
+}
+DEFINE_STRICT_FN(DynEnv, getDynEnvEntry(argument))
 
 /* TODO just use a function */
 static std::map<NodeT, int> levels;
@@ -282,12 +295,11 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr("}")] = -1,
 		levels[symbolFromStr("]")] = -1,
 		levels[symbolFromStr("<dedent>")] = -1;
-		defaultDynEnv = symbolFromStr("X");
+		defaultDynEnv = DynEnv;
 	}
 }
 NodeT Lang5D::error(std::string expectedPart, std::string gotPart) const {
-	// FIXME nicer
-	return cons(Serror, cons(strCXX(expectedPart), cons(strCXX(gotPart), NULL)));
+	return merror(expectedPart, gotPart);
 }
 bool Lang5D::errorP(NodeT node) const {
 	return consP(node) && getConsHead(node) == Serror;
