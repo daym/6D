@@ -34,10 +34,12 @@ void efree(void* beginning);
 #define ALLOCATOR_STACK , std::deque<NodeT, gc_allocator<Values::NodeT> > 
 #define ALLOCATOR_VECTOR , gc_allocator<Values::NodeT>
 #define ALLOCATOR_VECTOR2(t) , gc_allocator<t>
+#define GC_BASECLASS : public gc
 #else
 #define ALLOCATOR_STACK
 #define ALLOCATOR_VECTOR
 #define ALLOCATOR_VECTOR2(t) 
+#define GC_BASECLASS 
 #endif
 
 #endif /* ndef __6D_ALLOCATORS_H */

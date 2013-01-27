@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <string.h>
 #include <vector>
+#include <sstream>
 #include <deque>
 #include "Evaluators/Evaluators"
 #include "Values/Values"
@@ -54,8 +55,9 @@ int getFreeVariables(Hashtable& freeNames, NodeT root) {
 	return freeNamesCount;
 }
 static inline NodeT error(NodeT context, const char* expectedText, const char* gotText) {
-	// FIXME
-	return nil;
+	std::stringstream sst;
+	sst << "error: expected \"" << expectedText << "\" but got \"" << gotText << "\"";
+	return cons(cons(symbolFromStr("error"), strCXX(sst.str())), nil);
 }
 static inline bool errorP(NodeT term) {
 	// FIXME
@@ -138,7 +140,7 @@ static inline NodeT remember(NodeT app, NodeT result) {
 }
 NodeT eval1(NodeT term) {
 	if(!callP(term))
-		return term;
+		return error(term, "<call>", "<noncall>"); // term;
 	Call* call = (Call*)(term);
 	if(call->resultGeneration == fGeneration)
 		return call->result;
@@ -153,6 +155,8 @@ NodeT eval1(NodeT term) {
 	if(fnP(x_fn)) {
 		NodeT body = getFnBody(fn);
 		body = shift(x_argument, 0, body);
+		if(errorP(body))
+			return body;
 		++recursionLevel;
 		body = eval1(body);
 		--recursionLevel;
@@ -180,6 +184,7 @@ Values::NodeT eval(Values::NodeT node) {
 #define WORLD nil
 Values::NodeT execute(NodeT term) {
 	Values::NodeT r = eval(call(term, WORLD));
+	// TODO error check
 	return(getConsHead(r));
 }
 

@@ -67,6 +67,7 @@ public:
 	static Values::NodeT Serror;
 	static Values::NodeT Shashexports;
 	static Values::NodeT Sif;
+	static Values::NodeT defaultDynEnv;
 	Values::NodeT readToken(FILE* f, int& linenumber) const;
 	Values::NodeT error(std::string expectedPart, std::string gotPart) const;
 	Values::NodeT error(Values::NodeT expectedPart, Values::NodeT gotPart) const;
@@ -83,12 +84,13 @@ public:
 	bool operatorLE(Values::NodeT a, Values::NodeT b) const;
 	Values::NodeT readShebang(FILE* file, int& linenumber, int c) const;
 	Values::NodeT astFromRpn(const std::vector<Values::NodeT ALLOCATOR_VECTOR>& list) const;
-	void callRpnOperator(Values::NodeT operator_, std::vector<Values::NodeT ALLOCATOR_VECTOR>& /*ref*/values) const;
+	int callRpnOperator(Values::NodeT operator_, std::vector<Values::NodeT ALLOCATOR_VECTOR>& /*ref*/values) const;
 	Values::NodeT parse(Scanner<Lang5D>& scanner) const;
 	Values::NodeT parse0(Scanner<Lang5D>& scanner, Values::NodeT endToken) const;
 	Values::NodeT parse1(FILE* f, const char* name) const;
 	Values::NodeT startMacro(Values::NodeT node, Scanner<Lang5D>& tokenizer) const;
 	Values::NodeT macroStandin(Values::NodeT operator_, Values::NodeT operand) const;
+	Values::NodeT withDefaultEnv(Values::NodeT body) const;
 };
 
 }

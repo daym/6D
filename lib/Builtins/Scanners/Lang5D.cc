@@ -51,6 +51,7 @@ NodeT Lang5D::Sin;
 NodeT Lang5D::Sfrom;
 NodeT Lang5D::Shashexports;
 NodeT Lang5D::Sif;
+NodeT Lang5D::defaultDynEnv;
 //NodeT Lang5D::Sdot;
 
 /* TODO just use a function */
@@ -177,41 +178,41 @@ static bool raryBodyCharP(int input) {
 	return (input >= '0' && input <= '9') || (input >= 'a' && input <= 'z') || (input >= 'A' && input <= 'Z');
 }
 Lang5D::Lang5D(void) {
-	SLF = symbolFromStr("<LF>");
-	Sindent = symbolFromStr("<indent>");
-	Sdedent = symbolFromStr("<dedent>");
-	SopeningParen = symbolFromStr("(");
-	Sapply = symbolFromStr(" ");
-	Sdash = symbolFromStr("-");
-	Szero = symbolFromStr("0");
-	Sunderscore = symbolFromStr("_");
-	Scircumflex = symbolFromStr("^");
-	Sstarstar = symbolFromStr("**");
-	Scross = symbolFromStr("⨯");
-	Scolon = symbolFromStr(":");
-	Squote = symbolFromStr("'");
-	Scomma = symbolFromStr(",");
-	Sdollar = symbolFromStr("$");
-	Selif = symbolFromStr("elif");
-	Selse = symbolFromStr("else");
-	Ssemicolon = symbolFromStr(";");
-	Sbackslash = symbolFromStr("\\");
-	Slet = symbolFromStr("let");
-	Sin = symbolFromStr("in");
-	Sfrom = symbolFromStr("from");
-	Sletexclam = symbolFromStr("let!");
-	Simport = symbolFromStr("import");
-	Sleftparen = symbolFromStr("(");
-	Sleftcurly = symbolFromStr("{");
-	Sleftbracket = symbolFromStr("[");
-	Srightparen = symbolFromStr(")");
-	Srightcurly = symbolFromStr("}");
-	SEOF = symbolFromStr("\32"); // EOF
-	Serror = symbolFromStr("<error>");
-	Sequal = symbolFromStr("=");
-	Shashexports = symbolFromStr("#exports");
-	Sif = symbolFromStr("if");
 	if(Srightbracket == NULL) {
+		SLF = symbolFromStr("<LF>");
+		Sindent = symbolFromStr("<indent>");
+		Sdedent = symbolFromStr("<dedent>");
+		SopeningParen = symbolFromStr("(");
+		Sapply = symbolFromStr(" ");
+		Sdash = symbolFromStr("-");
+		Szero = symbolFromStr("0");
+		Sunderscore = symbolFromStr("_");
+		Scircumflex = symbolFromStr("^");
+		Sstarstar = symbolFromStr("**");
+		Scross = symbolFromStr("⨯");
+		Scolon = symbolFromStr(":");
+		Squote = symbolFromStr("'");
+		Scomma = symbolFromStr(",");
+		Sdollar = symbolFromStr("$");
+		Selif = symbolFromStr("elif");
+		Selse = symbolFromStr("else");
+		Ssemicolon = symbolFromStr(";");
+		Sbackslash = symbolFromStr("\\");
+		Slet = symbolFromStr("let");
+		Sin = symbolFromStr("in");
+		Sfrom = symbolFromStr("from");
+		Sletexclam = symbolFromStr("let!");
+		Simport = symbolFromStr("import");
+		Sleftparen = symbolFromStr("(");
+		Sleftcurly = symbolFromStr("{");
+		Sleftbracket = symbolFromStr("[");
+		Srightparen = symbolFromStr(")");
+		Srightcurly = symbolFromStr("}");
+		SEOF = symbolFromStr("\32"); // EOF
+		Serror = symbolFromStr("<error>");
+		Sequal = symbolFromStr("=");
+		Shashexports = symbolFromStr("#exports");
+		Sif = symbolFromStr("if");
 		Srightbracket = symbolFromStr("]");
 		levels[symbolFromStr("(")] = -1,
 		levels[symbolFromStr("{")] = -1, // pseudo-operators
@@ -275,6 +276,7 @@ Lang5D::Lang5D(void) {
 		levels[symbolFromStr("}")] = -1,
 		levels[symbolFromStr("]")] = -1,
 		levels[symbolFromStr("<dedent>")] = -1;
+		defaultDynEnv = symbolFromStr("X");
 	}
 }
 NodeT Lang5D::error(std::string expectedPart, std::string gotPart) const {
@@ -668,48 +670,52 @@ NodeT Lang5D::moperation(NodeT operator_, NodeT a, NodeT b) const {
 	       operator_ == Sin ? replaceIN(a ,b) :
 		   operation(operator_, a, b);
 }
-void Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>& values) const {
+/** returns: growth of the values stack */
+int Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>& values) const {
 	/* note that 2-operand macro operators leave their own result on #values */
 	int argcount = operatorArgcount(operator_);
 	if(argcount < 0)
 		argcount = -argcount;
 	if(operator_ == SLF || operator_ == Slet) { /* ignore for now */
 		//fprintf(stderr, "LF NONE\n");
-		return;
+		return 0;
 	}
 	if(argcount == 1) {
-		fprintf(stderr, "ONE ARG \"");
-		Formatters::TExpression::print(stderr, operator_);
-		fprintf(stderr, "\" ");
+		//fprintf(stderr, "ONE ARG \"");
+		//Formatters::TExpression::print(stderr, operator_);
+		//fprintf(stderr, "\" ");
 		if(values.size() < 1) {
 			fprintf(stderr, "NOT ENOUGH 1\n");
 			values.push_back(error("<1-arguments>", "<too-little>"));
+			return 1;
 		} else {
 			NodeT a = values.back();
-			Formatters::TExpression::print(stderr, a);
-			fprintf(stderr, "\n");
+			//Formatters::TExpression::print(stderr, a);
+			//fprintf(stderr, "\n");
 			values.pop_back();
 			values.push_back(mcall(operator_,a));
+			return 0;
 		}
-		return;
 	}
 	assert(argcount == 2);
 	if(values.size() < 2) {
 		//fprintf(stderr, "NOT ENOUGH\n");
 		values.push_back(error("<2-arguments>", "<too-little>"));
+		return 0;
 	} else {
-		fprintf(stderr, "TWO ARGS \"");
-		Formatters::TExpression::print(stderr, operator_);
-		fprintf(stderr, "\" ");
+		//fprintf(stderr, "TWO ARGS \"");
+		//Formatters::TExpression::print(stderr, operator_);
+		//fprintf(stderr, "\" ");
 		NodeT b = values.back();
 		values.pop_back();
 		NodeT a = values.back();
 		values.pop_back();
-		Formatters::TExpression::print(stderr, a);
-		fprintf(stderr, "!");
-		Formatters::TExpression::print(stderr, b);
-		fprintf(stderr, "\n");
+		//Formatters::TExpression::print(stderr, a);
+		//fprintf(stderr, "!");
+		//Formatters::TExpression::print(stderr, b);
+		//fprintf(stderr, "\n");
 		values.push_back(operator_ == Sapply ? mcall(a,b) : moperation(operator_, a, b));
+		return 1 - 2;
 	}
 }
 NodeT Lang5D::parseValue(Scanner<Lang5D>& scanner) const {
@@ -754,6 +760,9 @@ NodeT Lang5D::parse1(FILE* f, const char* name) const {
 NodeT Lang5D::error(NodeT expectedPart, NodeT gotPart) const {
 	/* FIXME */
 	return error("???", "???");
+}
+NodeT Lang5D::withDefaultEnv(NodeT body) const {
+	return Values::close(Squote, SpecialForms::Quoter, body);
 }
 
 }

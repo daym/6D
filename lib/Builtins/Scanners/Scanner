@@ -10,7 +10,7 @@
 #define GETC fgetc(this->file)
 #define UNGETC(c) ungetc(c, this->file)
 template<typename T>
-class Scanner {
+struct Scanner GC_BASECLASS {
 private: /* ugh */
 	Values::NodeT value;
 	FILE* file;
@@ -35,9 +35,9 @@ protected:
 			} else if(c == '\n') {
 				this->bBeginningOfLine = true;
 				this->indent = 0;
-				this->value = env.SLF;
+				//this->value = env.SLF;
 				++this->linenumber;
-				return true;
+				//return true;
 			} else if(this->bBeginningOfLine) { /* actual text for the first time on the line */
 				UNGETC(c); /* make sure the user will see the actual text */
 				this->bBeginningOfLine = false;
