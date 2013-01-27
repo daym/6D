@@ -35,6 +35,7 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 		fprintf(destination, "(");
 		NodeT callable = getCallCallable(node);
 		if(callP(callable)) {
+			// TODO escape fn parameter if it is an operator
 			print0(destination, names, getCallCallable(callable));
 			fprintf(destination, " ");
 			print0(destination, names, getCallArgument(callable));
@@ -45,12 +46,14 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 		fprintf(destination, ")");
 	} else if(fnP(node)) {
 		fprintf(destination, "(\\");
+		// TODO escape fn parameter if it is an operator
 		print0(destination, names, getFnParameter(node));
 		names = cons(getFnParameter(node), names);
 		fprintf(destination, " ");
 		NodeT body = getFnBody(node);
 		if(fnP(body)) {
 			fprintf(destination, "\\");
+			// TODO escape fn parameter if it is an operator
 			print0(destination, names, getFnParameter(body));
 			names = cons(getFnParameter(body), names);
 			fprintf(destination, " ");

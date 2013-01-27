@@ -7,6 +7,7 @@
 #include "Evaluators/Evaluators"
 #include "Values/Values"
 #include "Formatters/Math"
+#include "Formatters/TExpression"
 #include "6D/Values"
 #include "6D/Operations"
 #include "6D/Allocators"
@@ -148,6 +149,9 @@ static inline NodeT remember(NodeT app, NodeT result) {
 	return(result);
 }
 NodeT eval1(NodeT term) {
+	//Formatters::TExpression::print(stderr, term);
+	//fprintf(stderr, "\n");
+	//fflush(stderr);
 	if(!callP(term))
 		return term; //return error(term, "<call>", "<noncall>"); // term;
 	Call* call = (Call*)(term);
@@ -162,7 +166,7 @@ NodeT eval1(NodeT term) {
 	if(errorP(x_argument))
 		return x_argument;
 	if(fnP(x_fn)) {
-		NodeT body = getFnBody(fn);
+		NodeT body = getFnBody(x_fn);
 		body = shift(x_argument, 0, body);
 		if(errorP(body))
 			return body;
