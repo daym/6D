@@ -12,6 +12,7 @@
 #include "SpecialForms/SpecialForms"
 #include "ModuleSystem/ModuleSystem"
 #include "Combinators/Combinators"
+#include "Numbers/Integer"
 #include "6D/FFIs"
 #undef GETC
 #undef UNGETC
@@ -81,6 +82,17 @@ static inline NodeT getDynEnvEntry(NodeT sym) {
 				FFIs::NativeInt value = strtol(name, NULL, 10);
 				if(errno == 0)
 					return internNative(value);
+				else {
+					using namespace Numbers;
+					Integer result;
+					for(;isdigit(*name);++name) {
+						char c = *name;
+						int off = c - '0';
+						result *= 10;
+						result += off;
+					}
+					return new Integer(result);
+				}
 			}
 		}
 	}
