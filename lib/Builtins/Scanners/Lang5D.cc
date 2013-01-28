@@ -361,7 +361,7 @@ int Lang5D::operatorArgcount(NodeT node) const {
 	       (node == Selif) ? R : 
 	       (node == Selse) ? R : 
 	       (node == Ssemicolon) ? R : 
-	       (node == Sbackslash) ? R /* the macro just swaps the operator and the operand, basically*/ :
+	       (node == Sbackslash) ? P :
 	       (node == Slet) ? P :
 	       (node == Sif) ? P :
 	       (node == Sin) ? R :
@@ -407,7 +407,7 @@ NodeT Lang5D::parseListLiteral(NodeT endToken, Scanner<Lang5D>& tokenizer) const
 }
 NodeT Lang5D::startMacro(NodeT node, Scanner<Lang5D>& tokenizer) const {
 	if(node == Sbackslash) {
-		return macroStandin(node, tokenizer.consume());
+		return macroStandin(node, tokenizer.consume()); /* TODO (+) */
 	} else if(node == Sleftbracket) {
 		return parseListLiteral(Srightbracket, tokenizer);
 		// tokenizer.consume(); // right bracket will be consumed by the Shunting Yard Parser (it has '[' on its 'operators stack)
@@ -430,9 +430,9 @@ NodeT Lang5D::openingParenOf(NodeT node) const {
 }
 bool Lang5D::operatorLE(NodeT a, NodeT b) const {
 	if(a == b) { /* speed optimization */
-		return operatorArgcount(b) > 0;
+		return operatorArgcount(b) > 1;
 	} else {
-		return levels[a] < levels[b] || (levels[a] == levels[b] && operatorArgcount(b) > 0); // latter: leave right-associative operators on stack if in doubt.
+		return levels[a] < levels[b] || (levels[a] == levels[b] && operatorArgcount(b) > 1); // latter: leave right-associative operators on stack if in doubt.
 	}
 }
 NodeT Lang5D::collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const {
@@ -702,7 +702,12 @@ NodeT Lang5D::blowHashExportsUp(NodeT tl, NodeT entries) const {
 	}
 }
 NodeT Lang5D::mcall(NodeT a, NodeT b) const {
-	if(a == Squote) { // the usual masking doesn't work since it would get an De Bruijn index anyway and be replaced.
+	if(macroStandinOperator(a) == Sbackslash) {
+		//Formatters::TExpression::print(stderr, a);
+		//fprintf(stderr, "\n");
+		//fflush(stderr);
+		return fn(macroStandinOperand(a),b)/* CRASH HERE */;
+	} else if(a == Squote) { // the usual masking doesn't work since it would get an De Bruijn index anyway and be replaced.
 		return mquote(b);
 	} else if(a == Simport)
 		return macroStandin(a, b);
@@ -771,7 +776,7 @@ NodeT Lang5D::replaceIN(NodeT equation, NodeT body) const {
 	return call(fn(formalParameter, body), value);
 }
 NodeT Lang5D::moperation(NodeT operator_, NodeT a, NodeT b) const {
-	return operator_ == Sbackslash ? fn(macroStandinOperand(a),b) :  /* CRASH HERE */
+	return //operator_ == Sbackslash ? fn(macroStandinOperand(a),b) :  /* CRASH HERE */
 	       operator_ == Sin ? replaceIN(a ,b) :
 	       operator_ == Sdot ? call(a, quote(b)) : 
 	       operation(operator_, a, b);
@@ -787,9 +792,9 @@ int Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>
 		return 0;
 	}
 	if(argcount == 1) {
-		fprintf(stderr, "ONE ARG \"");
-		Formatters::TExpression::print(stderr, operator_);
-		fprintf(stderr, "\" ");
+		//fprintf(stderr, "ONE ARG \"");
+		//Formatters::TExpression::print(stderr, operator_);
+		//fprintf(stderr, "\" ");
 		if(values.size() < 1) {
 			fprintf(stderr, "NOT ENOUGH 1\n");
 			values.push_back(error("<1-arguments>", "<too-little>"));
@@ -799,6 +804,10 @@ int Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>
 			//Formatters::TExpression::print(stderr, a);
 			//fprintf(stderr, "\n");
 			values.pop_back();
+			if(macroStarterP(operator_)) {
+				operator_ = values.back();
+				values.pop_back();
+			}
 			values.push_back(mcall(operator_,a));
 			return 0;
 		}
@@ -809,17 +818,17 @@ int Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>
 		values.push_back(error("<2-arguments>", "<too-little>"));
 		return 0;
 	} else {
-		fprintf(stderr, "TWO ARGS \"");
-		Formatters::TExpression::print(stderr, operator_);
-		fprintf(stderr, "\" ");
+		//fprintf(stderr, "TWO ARGS \"");
+		//Formatters::TExpression::print(stderr, operator_);
+		//fprintf(stderr, "\" ");
 		NodeT b = values.back();
 		values.pop_back();
 		NodeT a = values.back();
 		values.pop_back();
-		Formatters::TExpression::print(stderr, a);
-		fprintf(stderr, "!");
-		Formatters::TExpression::print(stderr, b);
-		fprintf(stderr, "\n");
+		//Formatters::TExpression::print(stderr, a);
+		//fprintf(stderr, "!");
+		//Formatters::TExpression::print(stderr, b);
+		//fprintf(stderr, "\n");
 		values.push_back(operator_ == Sapply ? mcall(a,b) : moperation(operator_, a, b));
 		return 1 - 2;
 	}

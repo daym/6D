@@ -50,6 +50,7 @@ private:
 			operators.push(input);
 		if (env.macroStarterP(input)) { /* assumes macros all start at prefix loc */
 			result.push_back( /*yield */ env.startMacro(input, tokenizer));
+			// FIXME just for '\\'
 			//input = nil; /* for the purposes of operator detection, the value was not an operator. Note that we cannot write result.back() or similar here since otherwise macro standins could be misdetected. */
 			++executionResultCount;
 		}
