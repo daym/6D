@@ -1,6 +1,6 @@
 #ifndef __5D_FFI
 #define __5D_FFI
-#include <6D/Values>
+#include "6D/Values"
 
 namespace FFIs {
 /* conversions */
