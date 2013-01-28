@@ -62,6 +62,8 @@ NodeT Lang5D::Sexports;
 NodeT Lang5D::Snil;
 NodeT Lang5D::Scolonequal;
 NodeT Lang5D::Sdot;
+NodeT Lang5D::Shasht;
+NodeT Lang5D::Shashf;
 using namespace SpecialForms;
 //NodeT Lang5D::Sdot;
 static inline NodeT merror(const std::string& expectedPart, const std::string& gotPart) {
@@ -270,6 +272,8 @@ Lang5D::Lang5D(void) {
 		Sexports = symbolFromStr("exports");
 		Snil = symbolFromStr("nil");
 		Sdot = symbolFromStr(".");
+		Shasht = symbolFromStr("#t");
+		Shashf = symbolFromStr("#f");
 		levels[symbolFromStr("(")] = -1,
 		levels[symbolFromStr("{")] = -1, // pseudo-operators
 		levels[symbolFromStr("[")] = -1,
@@ -626,6 +630,10 @@ NodeT Lang5D::readSpecialCoding(FILE* file, int& linenumber, int c2) const {
 		return readShebang(file, linenumber, c);
 	case 'e':
 		return readHashExports(file, linenumber, c);
+	case 't':
+		return Shasht;
+	case 'f':
+		return Shashf;
 	default:
 		if(digitCharP(c)) {
 			int basis = collectNumeric3(file, linenumber, 10, digitCharP);
@@ -651,7 +659,7 @@ NodeT Lang5D::readString(FILE* file, int& linenumber, int c) const {
 		} else {
 			char const* nn = getSymbol1Name(n);
 			assert(nn);
-			return strCXX(nn);
+			return strCXX(nn); // TODO maybe we should special-case those just as we did numbers (instead of creating the strings here)?
 		}
 	} else
 		return error("<string>", "<junk>");
