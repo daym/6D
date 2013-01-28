@@ -87,7 +87,7 @@ public:
 				operators.push(input);
 				if (env.macroStarterP(input)) {
 					pushOperand(/*yield */ env.startMacro(input, tokenizer)); /* this is the final result for the macro, probably */
-					input = nil; /* for the purposes of operator detection, the value was not an operator. Note that we cannot write result.back() or similar here since otherwise macro standins could be misdetected. */
+					//input = nil; /* for the purposes of operator detection, the value was not an operator. Note that we cannot write result.back() or similar here since otherwise macro standins could be misdetected. */
 				}
 			} else if(prevInput == env.Sleftparen && tokenizer.getToken() == env.Srightparen && env.operatorP(input)) { /* (+) */
 				pushOperand(input);
