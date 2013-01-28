@@ -73,7 +73,8 @@ public:
 		prevInput = env.SopeningParen; // intern("(");
 		NodeT SEOF = env.SEOF;
 		// TODO maybe don't auto-apply on any kind of closing paren.
-		while((input = tokenizer.getToken()), !env.errorP(input) && input != SEOF && (input != endToken || !operators.empty()) ) {
+		if(tokenizer.getToken() != endToken)
+		while((input = tokenizer.getToken()), !env.errorP(input) && input != SEOF) {
 			tokenizer.consume();
 			if (env.openingParenP(input)) { /* special case of the stuff below in order to declutter the stuff below */
 				if((!env.operatorP(prevInput) || env.closingParenP(prevInput))) { /* implicit application before unary operator */
