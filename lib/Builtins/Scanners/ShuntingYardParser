@@ -123,6 +123,8 @@ public:
 				pushOperand(/*yield */ input);
 			}
 			prevInput = input; // (!env.closingParenP(input)) ? (input) : nil;
+			if(input == endToken && operators.empty())
+				break;
 		}
 		while (!operators.empty()) {
 			executionResultCount += env.callRpnOperator(operators.top(), result);

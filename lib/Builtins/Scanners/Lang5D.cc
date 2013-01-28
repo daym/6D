@@ -397,10 +397,10 @@ NodeT Lang5D::parseListLiteral(NodeT endToken, Scanner<Lang5D>& tokenizer) const
 		return nil;
 	else {
 		NodeT hd = parseValue(tokenizer);
-		if(errorP(hd))
+		if(errorP(hd) || hd == SEOF)
 			return hd;
 		NodeT tl = parseListLiteral(endToken, tokenizer);
-		if(errorP(tl))
+		if(errorP(tl) || tl == SEOF)
 			return tl;
 		return mcons(hd, tl); // it is NOT allowed to construct these directly. The annotator won't see them.
 	}
