@@ -1,0 +1,1 @@
+let (,) := (requireModule "Pair").(,) in 2
