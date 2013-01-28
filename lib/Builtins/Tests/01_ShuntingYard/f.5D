@@ -1,0 +1,8 @@
+		rem "sign of r is either negative or r is equal to zero. Note that resulting modulus must always be positive or zero."$
+		if (r < 0)
+			if (b < 0)
+				[(c + 1) (r - b)]
+			else
+				[(c - 1) (r + b)]
+		else
+			[c r]
