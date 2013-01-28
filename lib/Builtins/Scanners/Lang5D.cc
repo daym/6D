@@ -66,7 +66,7 @@ using namespace SpecialForms;
 //NodeT Lang5D::Sdot;
 static inline NodeT merror(const std::string& expectedPart, const std::string& gotPart) {
 	// FIXME nicer
-	return cons(symbolFromStr("error"), cons(strCXX(expectedPart), cons(strCXX(gotPart), nil)));
+	return cons(symbolFromStr("<error>"), cons(strCXX(expectedPart), cons(strCXX(gotPart), nil)));
 }
 static inline std::string nvl(const char* a, const char* b) {
 	return a ? a : b;
@@ -407,11 +407,9 @@ NodeT Lang5D::parseListLiteral(NodeT endToken, Scanner<Lang5D>& tokenizer) const
 }
 NodeT Lang5D::startMacro(NodeT node, Scanner<Lang5D>& tokenizer) const {
 	if(node == Sbackslash) {
-		return macroStandin(node, tokenizer.consume()); /* TODO (+) */
+		return macroStandin(node, parseValue(tokenizer));
 	} else if(node == Sleftbracket) {
 		return parseListLiteral(Srightbracket, tokenizer);
-		// tokenizer.consume(); // right bracket will be consumed by the Shunting Yard Parser (it has '[' on its 'operators stack)
-		//std::vector<NodeT ALLOCATOR_VECTOR> items = Scanners::parse(tokenizer, *this, Srightbracket);
 	}
 	return node;
 }
