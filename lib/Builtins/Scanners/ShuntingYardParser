@@ -73,8 +73,10 @@ public:
 		prevInput = env.SopeningParen; // intern("(");
 		NodeT SEOF = env.SEOF;
 		// TODO maybe don't auto-apply on any kind of closing paren.
-		if(tokenizer.getToken() != endToken)
 		while((input = tokenizer.getToken()), !env.errorP(input) && input != SEOF) {
+			bool bOstensibleEnd = input == endToken;
+			if(bOstensibleEnd && operators.empty())
+				break;
 			tokenizer.consume();
 			if (env.openingParenP(input)) { /* special case of the stuff below in order to declutter the stuff below */
 				if((!env.operatorP(prevInput) || env.closingParenP(prevInput))) { /* implicit application before unary operator */
@@ -93,6 +95,8 @@ public:
 				if(env.errorP(input))
 					return result;
 				input = nil; // not an operator and not first a ) and then a prefix operator
+				if(env.Srightparen == endToken && operators.empty())
+					break;
 			} else if(env.operatorP(input)) {
 				bool bUnary = false;
 				argcount = env.operatorArgcount(input);
@@ -125,7 +129,7 @@ public:
 				pushOperand(/*yield */ input);
 			}
 			prevInput = input; // (!env.closingParenP(input)) ? (input) : nil;
-			if(input == endToken && operators.empty())
+			if(bOstensibleEnd && operators.empty())
 				break;
 		}
 		while (!operators.empty()) {
