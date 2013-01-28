@@ -787,9 +787,9 @@ int Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>
 		return 0;
 	}
 	if(argcount == 1) {
-		//fprintf(stderr, "ONE ARG \"");
-		//Formatters::TExpression::print(stderr, operator_);
-		//fprintf(stderr, "\" ");
+		fprintf(stderr, "ONE ARG \"");
+		Formatters::TExpression::print(stderr, operator_);
+		fprintf(stderr, "\" ");
 		if(values.size() < 1) {
 			fprintf(stderr, "NOT ENOUGH 1\n");
 			values.push_back(error("<1-arguments>", "<too-little>"));
@@ -805,21 +805,21 @@ int Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>
 	}
 	assert(argcount == 2);
 	if(values.size() < 2) {
-		//fprintf(stderr, "NOT ENOUGH\n");
+		fprintf(stderr, "NOT ENOUGH\n");
 		values.push_back(error("<2-arguments>", "<too-little>"));
 		return 0;
 	} else {
-		//fprintf(stderr, "TWO ARGS \"");
-		//Formatters::TExpression::print(stderr, operator_);
-		//fprintf(stderr, "\" ");
+		fprintf(stderr, "TWO ARGS \"");
+		Formatters::TExpression::print(stderr, operator_);
+		fprintf(stderr, "\" ");
 		NodeT b = values.back();
 		values.pop_back();
 		NodeT a = values.back();
 		values.pop_back();
-		//Formatters::TExpression::print(stderr, a);
-		//fprintf(stderr, "!");
-		//Formatters::TExpression::print(stderr, b);
-		//fprintf(stderr, "\n");
+		Formatters::TExpression::print(stderr, a);
+		fprintf(stderr, "!");
+		Formatters::TExpression::print(stderr, b);
+		fprintf(stderr, "\n");
 		values.push_back(operator_ == Sapply ? mcall(a,b) : moperation(operator_, a, b));
 		return 1 - 2;
 	}
@@ -869,7 +869,6 @@ NodeT Lang5D::error(NodeT expectedPart, NodeT gotPart) const {
 }
 NodeT Lang5D::withDefaultEnv(NodeT body) const {
 	using namespace Values;
-	return body;
         return //close(Squote, SpecialForms::Quoter, 
 	       close(Shashexports, Combinators::Identity, 
 	       body);
