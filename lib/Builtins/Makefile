@@ -26,7 +26,8 @@ Values/wstrings.o \
 Values/Hashtable.o \
 $(STRICT_OBJECTS) \
 $(EVAL_OBJECTS) \
-$(NUMBERS)
+$(NUMBERS) \
+Builtins/Builtins.o
 LIB = lib6dbuiltins.so.1
 STATIC_LIB = lib6dbuiltins1.a  
 
@@ -56,7 +57,7 @@ Values/Keyword.o: Values/Keyword.cc Values/Keyword Values/Hashtable
 Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
 Allocators/Allocators.o: Allocators/Allocators.cc Allocators/Allocators include/6D/Allocators
 Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Values include/6D/Allocators
-Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
+Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins
 Tests/03_Numbers/main.o: Tests/03_Numbers/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
@@ -70,6 +71,7 @@ lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values inclu
 strict/Logic/Logic.o: strict/Logic/Logic.cc strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators include/6D/Operations include/6D/Evaluators
 ModuleSystem/Memoizer.o: ModuleSystem/Memoizer.cc ModuleSystem/Memoizer Values/Values Values/Hashtable
+Builtins/Builtins.o: Builtins/Builtins.cc Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
 	Tests/03_Numbers/run

@@ -4,7 +4,7 @@
 #include "SpecialForms/Constanter"
 #include "6D/Values"
 namespace SpecialForms {
-DECLARE_ENV_SPECIAL_FORM(Constanter)
+DECLARE_SPECIAL_FORM(Constanter)
 DECLARE_ENV_SPECIAL_FORM(Constanter2)
 static inline bool fnSpecialFormP(Values::NodeT fn) {
 	return (SPECIAL_FORM_EQUAL_P(fn, Quoter) || SPECIAL_FORM_EQUAL_P(fn, Constanter) || SPECIAL_FORM_EQUAL_P(fn, Constanter2));
