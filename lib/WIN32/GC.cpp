@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <set>
 #include "6D/Allocators"
 namespace Allocators {
@@ -13,6 +14,7 @@ void* gc::operator new(size_t size, enum GCPlacement placement) {
 }
 void* gc::operator new(size_t size, void* p) {
 	abort();
+	return NULL;
 }
 void gc::operator delete(void* obj) {
 	free(obj);
