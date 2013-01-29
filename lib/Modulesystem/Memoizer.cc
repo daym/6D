@@ -1,8 +1,11 @@
 #include "Modulesystem/Memoizer"
 #include "Values/Hashtable"
+#include "6D/Evaluators"
+#include "6D/FFIs"
 /* TODO equal FN */
 namespace Modulesystem {
 using namespace Values;
+using namespace FFIs;
 static NodeT dummy;
 /* memoized: given an environment and argument, tries to find existing memo table entry. If not there, */
 static NodeT memoized(NodeT env, NodeT key) {
@@ -10,7 +13,7 @@ static NodeT memoized(NodeT env, NodeT key) {
 	NodeT fn = getPairSnd(env);
 	NodeT result = getHashtableEntryByKey(hashtable, key, dummy);
 	if(result == dummy) {
-		result = eval(fn, key);
+		result = Evaluators::eval(fn, key);
 		setHashtableEntry(hashtable, key, result);
 	}
 	return result;
