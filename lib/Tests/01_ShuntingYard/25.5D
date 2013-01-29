@@ -1,0 +1,1135 @@
+let filename := "/usr/lib/x86_64-linux-gnu/libgtk-3.so.0" in
+let (,) := (requireModule "Pair").(,) in
+let GtkWidget := (
+	(requireModule "Composition").dispatch [
+	('map!, widgetMap!)
+	('classInstallStyleProperty!, widgetClassInstallStyleProperty!)
+	('hasDefault!, widgetHasDefault!)
+
+	('setDefaultDirection!, widgetSetDefaultDirection!)
+	('setHasWindow!, widgetSetHasWindow!)
+	('getEvents!, widgetGetEvents!)
+	('setParentWindow!, widgetSetParentWindow!)
+
+	('isAncestor!, widgetIsAncestor!)
+
+	('pathNew!, widgetPathNew!)
+	('getVisible!, widgetGetVisible!)
+	('resetRcStyles!, widgetResetRcStyles!)
+	('path!, widgetPath!)
+	('helpTypeGetType!, widgetHelpTypeGetType!)
+	('setMapped!, widgetSetMapped!)
+	('classSetAccessibleType!, widgetClassSetAccessibleType!)
+	('addAccelerator!, widgetAddAccelerator!)
+	('getAllocation!, widgetGetAllocation!)
+	('overrideSymbolicColor!, widgetOverrideSymbolicColor!)
+	('pathIterGetObjectType!, widgetPathIterGetObjectType!)
+	('keynavFailed!, widgetKeynavFailed!)
+	('isToplevel!, widgetIsToplevel!)
+	('getAllocatedWidth!, widgetGetAllocatedWidth!)
+	('ensureStyle!, widgetEnsureStyle!)
+	('getVexpandSet!, widgetGetVexpandSet!)
+	('pathIterHasRegion!, widgetPathIterHasRegion!)
+	('triggerTooltipQuery!, widgetTriggerTooltipQuery!)
+	('getModifierStyle!, widgetGetModifierStyle!)
+	('modifyCursor!, widgetModifyCursor!)
+	('overrideBackgroundColor!, widgetOverrideBackgroundColor!)
+	('getSensitive!, widgetGetSensitive!)
+	('sizeRequest!, widgetSizeRequest!)
+	('isFocus!, widgetIsFocus!)
+	('getHasTooltip!, widgetGetHasTooltip!)
+	('getState!, widgetGetState!)
+	('getMapped!, widgetGetMapped!)
+	('pathIterListRegions!, widgetPathIterListRegions!)
+	('styleGetValist!, widgetStyleGetValist!)
+	('showNow!, widgetShowNow!)
+	('getPreferredHeight!, widgetGetPreferredHeight!)
+	('getAncestor!, widgetGetAncestor!)
+	('childNotify!, widgetChildNotify!)
+	('destroyed!, widgetDestroyed!)
+	('grabFocus!, widgetGrabFocus!)
+	('errorBell!, widgetErrorBell!)
+	('setDoubleBuffered!, widgetSetDoubleBuffered!)
+	('getSupportMultidevice!, widgetGetSupportMultidevice!)
+	('isComposited!, widgetIsComposited!)
+	('overrideColor!, widgetOverrideColor!)
+	('setName!, widgetSetName!)
+	('pathIterGetSiblingIndex!, widgetPathIterGetSiblingIndex!)
+	('realize!, widgetRealize!)
+	('getDefaultStyle!, widgetGetDefaultStyle!)
+	('listAccelClosures!, widgetListAccelClosures!)
+	('overrideCursor!, widgetOverrideCursor!)
+	('getTooltipText!, widgetGetTooltipText!)
+	('getDeviceEvents!, widgetGetDeviceEvents!)
+	('getDefaultDirection!, widgetGetDefaultDirection!)
+	('getReceivesDefault!, widgetGetReceivesDefault!)
+	('pathCopy!, widgetPathCopy!)
+	('popCompositeChild!, widgetPopCompositeChild!)
+	('modifyFg!, widgetModifyFg!)
+	('setCompositeName!, widgetSetCompositeName!)
+	('setState!, widgetSetState!)
+	('getStateFlags!, widgetGetStateFlags!)
+	('getTooltipMarkup!, widgetGetTooltipMarkup!)
+	('pathGetObjectType!, widgetPathGetObjectType!)
+	('setAllocation!, widgetSetAllocation!)
+	('getRootWindow!, widgetGetRootWindow!)
+	('pathRef!, widgetPathRef!)
+	('setMarginLeft!, widgetSetMarginLeft!)
+	('getName!, widgetGetName!)
+	('getCompositeName!, widgetGetCompositeName!)
+	('queueResize!, widgetQueueResize!)
+	('getParent!, widgetGetParent!)
+	('getPreferredHeightForWidth!, widgetGetPreferredHeightForWidth!)
+	('addMnemonicLabel!, widgetAddMnemonicLabel!)
+	('event!, widgetEvent!)
+	('grabDefault!, widgetGrabDefault!)
+	('getSettings!, widgetGetSettings!)
+	('setTooltipWindow!, widgetSetTooltipWindow!)]
+	GtkObject
+) in 
+let cclasses := (requireModule "Composition").dispatch1 (#exports[a bb
+GtkWidget
+GtkCellRendererAccel
+GtkCellRendererSpin
+GtkButton
+GtkLinkButton
+GtkPageSetup
+GtkPrintContext
+GtkPrintOperation
+GtkPrintSettings
+GtkDialog
+GtkRecentChooserDialog
+GtkMenuShell
+GtkMenu
+GtkRecentChooserMenu
+GtkBox
+GtkVBox
+GtkRecentChooserWidget
+GtkRecentFilter
+GtkRecentManager
+GtkStatusIcon
+GtkMountOperation
+GtkAction
+GtkRecentAction
+GtkScaleButton
+GtkTooltip
+GtkVolumeButton
+GtkEntryBuffer
+GtkHBox
+GtkInfoBar
+GtkAboutDialog
+GtkAccelGroup
+GtkMisc
+GtkLabel
+GtkAccelLabel
+GtkAccelMap
+GtkAccessible
+GtkActionGroup
+GtkAdjustment
+GtkAlignment
+GtkArrow
+GtkCellRendererPixbuf
+GtkCellView
+GtkEntry
+GtkEntry
+GtkEventBox
+GtkExpander
+GtkFileChooserDialog
+GtkFileChooserWidget
+GtkFileFilter
+GtkFixed
+GtkFontButton
+GtkFontSelection
+GtkFontSelectionDialog
+GtkHandleBox
+GtkHButtonBox
+GtkPaned
+GtkRange
+GtkScale
+GtkHScale
+GtkScrollbar
+GtkSeparator
+GtkHSeparator
+GtkIconFactory
+GtkIconTheme
+GtkIconView
+GtkImage
+GtkImageMenuItem
+GtkIMContext
+GtkIMContextSimple
+GtkIMMulticontext
+GtkInvisible
+GtkLayout
+GtkListStore
+GtkMenuBar
+GtkToolItem
+GtkToolButton
+GtkMenuToolButton
+GtkMessageDialog
+GtkNotebook
+GtkProgressBar
+GtkToggleAction
+GtkRadioAction
+GtkRadioButton
+GtkRadioMenuItem
+GtkToggleToolButton
+GtkRadioToolButton
+GtkRcStyle
+GtkScrolledWindow
+GtkSeparatorMenuItem
+GtkSeparatorToolItem
+GtkSettings
+GtkSizeGroup
+GtkSpinButton
+GtkStatusbar
+GtkStyle
+GtkTable
+GtkTearoffMenuItem
+GtkTextBuffer
+GtkTextChildAnchor
+GtkTextMark
+GtkTextTag
+GtkTextTagTable
+GtkTextView
+GtkToolbar
+GtkTreeModelFilter
+GtkTreeModelSort
+GtkTreeSelection
+GtkTreeStore
+GtkTreeView
+GtkTreeViewColumn
+GtkUIManager
+GtkVButtonBox
+GtkViewport
+GtkVScale
+GtkVSeparator
+GtkWindowGroup
+GtkText
+GtkTree
+GtkPaperSize
+GtkRecentInfo
+GtkTargetList
+GtkBorder
+GtkIconInfo
+GtkIconSet
+GtkIconSource
+GtkRequisition
+GtkSelectionData
+GtkTextAttributes
+GtkTextIter
+GtkTreeIter
+GtkTreeRowReference
+GtkTreePath
+GtkPrintOperationPreview
+GtkRecentChooser
+GtkToolShell
+GtkActivatable
+GtkOrientable
+GtkBuildable
+GtkCellEditable
+GtkCellLayout
+GtkEditable
+GtkFileChooser
+GtkTreeDragDest
+GtkTreeDragSource
+GtkTreeModel
+GtkTreeSortable
+]) in 
+let Widget := GtkWidget in 
+let Container := GtkContainer in 
+let Bin := GtkBin in 
+let ComboBox := GtkComboBox in 
+let ComboBoxText := GtkComboBoxText in 
+let ToolItemGroup := GtkToolItemGroup in 
+let ToolPalette := GtkToolPalette in 
+let CellRenderer := GtkCellRenderer in 
+let CellRendererSpinner := GtkCellRendererSpinner in 
+let Window := GtkWindow in 
+let OffscreenWindow := GtkOffscreenWindow in 
+let DrawingArea := GtkDrawingArea in 
+let Spinner := GtkSpinner in 
+let Assistant := GtkAssistant in 
+let CellRendererText := GtkCellRendererText in 
+let CellRendererAccel := GtkCellRendererAccel in 
+let CellRendererSpin := GtkCellRendererSpin in 
+let Button := GtkButton in 
+let LinkButton := GtkLinkButton in 
+let PageSetup := GtkPageSetup in 
+let PrintContext := GtkPrintContext in 
+let PrintOperation := GtkPrintOperation in 
+let PrintSettings := GtkPrintSettings in 
+let Dialog := GtkDialog in 
+let RecentChooserDialog := GtkRecentChooserDialog in 
+let MenuShell := GtkMenuShell in 
+let Menu := GtkMenu in 
+let RecentChooserMenu := GtkRecentChooserMenu in 
+let Box := GtkBox in 
+let VBox := GtkVBox in 
+let RecentChooserWidget := GtkRecentChooserWidget in 
+let RecentFilter := GtkRecentFilter in 
+let RecentManager := GtkRecentManager in 
+let StatusIcon := GtkStatusIcon in 
+let MountOperation := GtkMountOperation in 
+let Builder := GtkBuilder in 
+let Action := GtkAction in 
+let RecentAction := GtkRecentAction in 
+let ScaleButton := GtkScaleButton in 
+let Tooltip := GtkTooltip in 
+let VolumeButton := GtkVolumeButton in 
+let EntryBuffer := GtkEntryBuffer in 
+let HBox := GtkHBox in 
+let InfoBar := GtkInfoBar in 
+let AboutDialog := GtkAboutDialog in 
+let AccelGroup := GtkAccelGroup in 
+let Misc := GtkMisc in 
+let Label := GtkLabel in 
+let AccelLabel := GtkAccelLabel in 
+let AccelMap := GtkAccelMap in 
+let Accessible := GtkAccessible in 
+let ActionGroup := GtkActionGroup in 
+let Adjustment := GtkAdjustment in 
+let Alignment := GtkAlignment in 
+let Arrow := GtkArrow in 
+let Frame := GtkFrame in 
+let AspectFrame := GtkAspectFrame in 
+let ButtonBox := GtkButtonBox in 
+let Calendar := GtkCalendar in 
+let CellRendererCombo := GtkCellRendererCombo in 
+let CellRendererPixbuf := GtkCellRendererPixbuf in 
+let CellRendererProgress := GtkCellRendererProgress in 
+let CellRendererToggle := GtkCellRendererToggle in 
+let CellView := GtkCellView in 
+let ToggleButton := GtkToggleButton in 
+let CheckButton := GtkCheckButton in 
+let MenuItem := GtkMenuItem in 
+let CheckMenuItem := GtkCheckMenuItem in 
+let Clipboard := GtkClipboard in 
+let ColorButton := GtkColorButton in 
+let ColorSelection := GtkColorSelection in 
+let ColorSelectionDialog := GtkColorSelectionDialog in 
+let Entry := GtkEntry in 
+let EntryCompletion := GtkEntryCompletion in 
+let EventBox := GtkEventBox in 
+let Expander := GtkExpander in 
+let FileChooserButton := GtkFileChooserButton in 
+let FileChooserDialog := GtkFileChooserDialog in 
+let FileChooserWidget := GtkFileChooserWidget in 
+let FileFilter := GtkFileFilter in 
+let Fixed := GtkFixed in 
+let FontButton := GtkFontButton in 
+let FontSelection := GtkFontSelection in 
+let FontSelectionDialog := GtkFontSelectionDialog in 
+let HandleBox := GtkHandleBox in 
+let HButtonBox := GtkHButtonBox in 
+let Paned := GtkPaned in 
+let Range := GtkRange in 
+let Scale := GtkScale in 
+let HScale := GtkHScale in 
+let Scrollbar := GtkScrollbar in 
+let Separator := GtkSeparator in 
+let HSeparator := GtkHSeparator in 
+let IconFactory := GtkIconFactory in 
+let IconTheme := GtkIconTheme in 
+let IconView := GtkIconView in 
+let Image := GtkImage in 
+let ImageMenuItem := GtkImageMenuItem in 
+let IMContext := GtkIMContext in 
+let IMContextSimple := GtkIMContextSimple in 
+let IMMulticontext := GtkIMMulticontext in 
+let Invisible := GtkInvisible in 
+let Layout := GtkLayout in 
+let ListStore := GtkListStore in 
+let MenuBar := GtkMenuBar in 
+let ToolItem := GtkToolItem in 
+let ToolButton := GtkToolButton in 
+let MenuToolButton := GtkMenuToolButton in 
+let MessageDialog := GtkMessageDialog in 
+let Notebook := GtkNotebook in 
+let ProgressBar := GtkProgressBar in 
+let ToggleAction := GtkToggleAction in 
+let RadioAction := GtkRadioAction in 
+let RadioButton := GtkRadioButton in 
+let RadioMenuItem := GtkRadioMenuItem in 
+let ToggleToolButton := GtkToggleToolButton in 
+let RadioToolButton := GtkRadioToolButton in 
+let RcStyle := GtkRcStyle in 
+let ScrolledWindow := GtkScrolledWindow in 
+let SeparatorMenuItem := GtkSeparatorMenuItem in 
+let SeparatorToolItem := GtkSeparatorToolItem in 
+let Settings := GtkSettings in 
+let SizeGroup := GtkSizeGroup in 
+let SpinButton := GtkSpinButton in 
+let Statusbar := GtkStatusbar in 
+let Style := GtkStyle in 
+let Table := GtkTable in 
+let TearoffMenuItem := GtkTearoffMenuItem in 
+let TextBuffer := GtkTextBuffer in 
+let TextChildAnchor := GtkTextChildAnchor in 
+let TextMark := GtkTextMark in 
+let TextTag := GtkTextTag in 
+let TextTagTable := GtkTextTagTable in 
+let TextView := GtkTextView in 
+let Toolbar := GtkToolbar in 
+let TreeModelFilter := GtkTreeModelFilter in 
+let TreeModelSort := GtkTreeModelSort in 
+let TreeSelection := GtkTreeSelection in 
+let TreeStore := GtkTreeStore in 
+let TreeView := GtkTreeView in 
+let TreeViewColumn := GtkTreeViewColumn in 
+let UIManager := GtkUIManager in 
+let VButtonBox := GtkVButtonBox in 
+let Viewport := GtkViewport in 
+let VScale := GtkVScale in 
+let VSeparator := GtkVSeparator in 
+let WindowGroup := GtkWindowGroup in 
+let Text := GtkText in 
+let Tree := GtkTree in 
+let PaperSize := GtkPaperSize in 
+let RecentInfo := GtkRecentInfo in 
+let TargetList := GtkTargetList in 
+let Border := GtkBorder in 
+let IconInfo := GtkIconInfo in 
+let IconSet := GtkIconSet in 
+let IconSource := GtkIconSource in 
+let Requisition := GtkRequisition in 
+let SelectionData := GtkSelectionData in 
+let TextAttributes := GtkTextAttributes in 
+let TextIter := GtkTextIter in 
+let TreeIter := GtkTreeIter in 
+let TreeRowReference := GtkTreeRowReference in 
+let TreePath := GtkTreePath in 
+let PrintOperationPreview := GtkPrintOperationPreview in 
+let RecentChooser := GtkRecentChooser in 
+let ToolShell := GtkToolShell in 
+let Activatable := GtkActivatable in 
+let Orientable := GtkOrientable in 
+let Buildable := GtkBuildable in 
+let CellEditable := GtkCellEditable in 
+let CellLayout := GtkCellLayout in 
+let Editable := GtkEditable in 
+let FileChooser := GtkFileChooser in 
+let TreeDragDest := GtkTreeDragDest in 
+let TreeDragSource := GtkTreeDragSource in 
+let TreeModel := GtkTreeModel in 
+let TreeSortable := GtkTreeSortable in 
+(requireModule "Composition").dispatch1 #exports[
+cssSectionGetStartLine!
+cssProviderLoadFromData!
+OffscreenWindow
+appChooserButtonSetHeading!
+cellAreaClassFindCellProperty!
+testCreateSimpleWindow!
+themingEngineHasRegion!
+symbolicColorResolve!
+cornerTypeGetType!
+TreeSelection
+packTypeGetType!
+RecentManager
+showUri!
+appChooserWidgetSetShowFallback!
+cellAreaContextPushPreferredHeight!
+numerableIconGetLabel!
+renderFrameGap!
+renderHandle!
+rcTokenTypeGetType!
+rcGetDefaultFiles!
+fontChooserWidgetGetType!
+appChooserWidgetGetShowDefault!
+Fixed
+ButtonBox
+cssSectionGetParent!
+cellAreaGetPreferredHeightForWidth!
+TreeModelFilter
+RecentAction
+dragDestGetTargetList!
+cellAreaBoxPackStart!
+Statusbar
+paintArrow!
+MenuItem
+fontChooserGetShowPreviewEntry!
+TreeIter
+switchGetType!
+themingEngineGetDirection!
+targetTableNewFromList!
+getMinorVersion!
+Label
+cellAreaAdd!
+dragDestAddUriTargets!
+ToolItem
+renderFocus!
+gradientNewRadial!
+gridSetColumnHomogeneous!
+RecentFilter
+acceleratorGetLabel!
+cssProviderErrorGetType!
+hsvToRgb!
+appChooserWidgetSetShowAll!
+buttonsTypeGetType!
+printStatusGetType!
+paintExpander!
+eventsPending!
+Builder
+acceleratorSetDefaultModMask!
+printQualityGetType!
+IconSource
+renderIconPixbuf!
+dragSourceSetIconGicon!
+unitGetType!
+dragDestGetTrackMotion!
+numerableIconGetCount!
+sensitivityTypeGetType!
+scrollableGetVadjustment!
+paintFlatBox!
+paintShadowGap!
+getEventWidget!
+cellAreaApplyAttributes!
+scrollableGetVscrollPolicy!
+appChooserWidgetSetShowOther!
+appChooserButtonGetShowDefaultItem!
+Accessible
+keySnooperRemove!
+CellLayout
+numerableIconSetStyleContext!
+cellAreaRemoveFocusSibling!
+testListAllTypes!
+getDefaultLanguage!
+Border
+Style
+appChooserWidgetGetDefaultText!
+renderOption!
+TextIter
+propagateEvent!
+Spinner
+LinkButton
+fontChooserSetFilterFunc!
+destDefaultsGetType!
+gridAttachNextTo!
+fontChooserSetFont!
+stateTypeGetType!
+stockAddStatic!
+MenuShell
+Buildable
+gridSetColumnSpacing!
+paintSlider!
+iconSizeGetType!
+fontChooserGetType!
+actionableGetType!
+CellRendererSpinner
+actionableGetActionTargetValue!
+gradientResolveForContext!
+gridSetRowHomogeneous!
+PrintSettings
+appChooserDialogNewForContentType!
+themingEngineRegisterProperty!
+cssSectionTypeGetType!
+numerableIconGetBackgroundIconName!
+TreeRowReference
+numerableIconSetBackgroundGicon!
+cellAreaBoxSetSpacing!
+symbolicColorNewWin32!
+messageTypeGetType!
+fontChooserGetFontFace!
+CellRendererProgress
+cclasses
+appChooserGetType!
+getCurrentEvent!
+IMContext
+switchSetActive!
+Text
+Frame
+scrollStepGetType!
+dragDestSet!
+cellAreaGetRequestMode!
+acceleratorNameWithKeycode!
+gridGetType!
+printErrorQuark!
+appChooserDialogGetWidget!
+Tooltip
+cairoTransformToWindow!
+themingEngineHasClass!
+TreeModelSort
+cellAreaClassListCellProperties!
+junctionSidesGetType!
+RecentInfo
+deviceGrabRemove!
+cellAreaContextGetPreferredHeight!
+cssSectionGetEndLine!
+pageOrientationGetType!
+cellAreaActivate!
+cssProviderErrorQuark!
+rcSetDefaultFiles!
+getCurrentEventState!
+cairoShouldDrawWindow!
+vpanedGetType!
+cssSectionGetFile!
+themingEngineGetPath!
+RadioAction
+DrawingArea
+gradientToString!
+bindingsActivate!
+cellAreaCreateContext!
+positionTypeGetType!
+RadioButton
+movementStepGetType!
+symbolicColorToString!
+cellAreaCellSetValist!
+cellAreaGetPreferredWidth!
+renderArrow!
+cssProviderLoadFromFile!
+renderInsertionCursor!
+overlayAddOverlay!
+appChooserWidgetGetShowRecommended!
+gridInsertNextTo!
+rcGetImModulePath!
+iconLookupFlagsGetType!
+justificationGetType!
+iconSizeRegister!
+dragSourceAddUriTargets!
+accelGroupsActivate!
+TreeStore
+cellAreaGetCurrentPathString!
+SizeGroup
+distributeNaturalAllocation!
+init!
+dragFinish!
+acceleratorGetDefaultModMask!
+rcPropertyParseFlags!
+getMicroVersion!
+colorChooserDialogGetType!
+getOptionGroup!
+reliefStyleGetType!
+dragSourceSetTargetList!
+FontButton
+cssProviderGetNamed!
+ActionGroup
+appChooserDialogNew!
+pathPriorityTypeGetType!
+numerableIconGetType!
+bindingsActivateEvent!
+fontChooserGetPreviewText!
+applicationRemoveWindow!
+applicationAddWindow!
+dragGetData!
+themingEngineGetScreen!
+getCurrentEventTime!
+mainIteration!
+applicationSetMenubar!
+Scale
+resizeModeGetType!
+iconSizeGetName!
+applicationAddAccelerator!
+alignGetType!
+MessageDialog
+paintBox!
+disableSetlocale!
+cellAreaContextGetPreferredWidth!
+cellAreaHasRenderer!
+targetEntryGetType!
+ColorButton
+applicationGetAppMenu!
+fontChooserSetPreviewText!
+rcReparseAllForSettings!
+TextTagTable
+cellAreaForeach!
+applicationGetWindows!
+themingEngineGetJunctionSides!
+themingEngineGetType!
+scrollablePolicyGetType!
+Adjustment
+CellEditable
+AspectFrame
+selectionAddTarget!
+appChooserDialogGetHeading!
+applicationWindowSetShowMenubar!
+testSliderGetValue!
+IconTheme
+bindingSetActivate!
+bindingEntryRemove!
+gradientNewLinear!
+RcStyle
+ComboBox
+initWithArgs!
+Editable
+printDuplexGetType!
+dragDestAddTextTargets!
+scrollTypeGetType!
+selectionOwnerSetForDisplay!
+VSeparator
+stockAdd!
+FontSelectionDialog
+dragSetIconDefault!
+hsvSetMetrics!
+switchNew!
+applicationInhibitFlagsGetType!
+renderCheck!
+cellAreaCopyContext!
+cellAreaRemove!
+numerableIconNew!
+applicationRemoveAccelerator!
+acceleratorParseWithKeycode!
+cellAreaContextGetPreferredWidthForHeight!
+cssSectionGetStartPosition!
+fontChooserWidgetNew!
+renderIcon!
+gradientResolve!
+rcPropertyParseRequisition!
+AccelLabel
+recentSortTypeGetType!
+hsvGetColor!
+TreeDragDest
+hsvSetColor!
+cssSectionGetSectionType!
+getMajorVersion!
+stockItemCopy!
+fontChooserSetFontDesc!
+cellAreaBoxGetType!
+Alignment
+paintLayout!
+scrollableGetHscrollPolicy!
+appChooserWidgetNew!
+colorChooserAddPalette!
+TextMark
+symbolicColorNewShade!
+PaperSize
+rcScannerNew!
+deviceGrabAdd!
+gradientGetType!
+paintHandle!
+actionableSetActionTargetValue!
+stockSetTranslateFunc!
+EntryCompletion
+symbolicColorRef!
+ColorSelection
+cellAreaContextGetPreferredHeightForWidth!
+Notebook
+scrollableGetHadjustment!
+fontChooserGetFontSize!
+CellRendererPixbuf
+FileChooserDialog
+overlayNew!
+CheckMenuItem
+IconFactory
+renderSlider!
+cellAreaGetCellAllocation!
+CheckButton
+ComboBoxText
+MenuToolButton
+TreeViewColumn
+IconSet
+renderLine!
+hsvGetType!
+mainQuit!
+ToolPalette
+dragSourceSet!
+actionableGetActionName!
+gridGetRowHomogeneous!
+paintVline!
+targetEntryCopy!
+testFindWidget!
+cssSectionGetType!
+VScale
+parseArgs!
+Container
+policyTypeGetType!
+rcFlagsGetType!
+rcGetThemeDir!
+responseTypeGetType!
+cellAreaGetFocusCell!
+dragResultGetType!
+Window
+appChooserButtonAppendCustomItem!
+RecentChooserDialog
+rcReparseAll!
+dragSetIconSurface!
+symbolicColorNewAlpha!
+gradientUnref!
+dragSourceSetIconName!
+WindowGroup
+Invisible
+ColorSelectionDialog
+appChooserButtonGetType!
+getCurrentEventDevice!
+applicationInhibit!
+numerableIconGetStyleContext!
+directionTypeGetType!
+dragDestUnset!
+Button
+HBox
+numerableIconSetLabel!
+cssSectionGetEndPosition!
+symbolicColorGetType!
+FontSelection
+lockButtonSetPermission!
+appChooserWidgetGetType!
+symbolicColorNewMix!
+TreeSortable
+cellAreaContextAllocate!
+mainIterationDo!
+cellAreaGetPreferredHeight!
+applicationIsInhibited!
+acceleratorValid!
+dragSetIconWidget!
+rcParseColor!
+stockLookup!
+TargetList
+applicationWindowGetShowMenubar!
+iconSizeFromName!
+cellAreaBoxPackEnd!
+renderBackground!
+targetsIncludeImage!
+cellAreaAttributeDisconnect!
+cellAreaStopEditing!
+cellAreaAttributeConnect!
+rcParseString!
+TreePath
+dragSetIconGicon!
+testTextSet!
+MenuBar
+Bin
+licenseGetType!
+FileFilter
+HandleBox
+themingEngineStateIsRunning!
+cellAreaCellGetProperty!
+colorChooserSetUseAlpha!
+gradientAddColorStop!
+CellRendererCombo
+cssProviderGetDefault!
+cellAreaGetPreferredWidthForHeight!
+Scrollbar
+paintOption!
+main!
+dragCheckThreshold!
+rcPropertyParseBorder!
+mainLevel!
+ToolItemGroup
+hpanedNew!
+bindingEntryAddSignall!
+packDirectionGetType!
+sizeRequestModeGetType!
+appChooserButtonGetHeading!
+VButtonBox
+colorChooserGetRgba!
+TextTag
+targetsIncludeUri!
+cellAreaIsFocusSibling!
+vscrollbarGetType!
+CellRendererSpin
+TextView
+cellAreaContextGetAllocation!
+dragSourceAddTextTargets!
+rcResetStyles!
+pathTypeGetType!
+RecentChooserMenu
+VolumeButton
+orientationGetType!
+cellAreaIsActivatable!
+testWidgetSendKey!
+bindingEntrySkip!
+themingEngineGetFont!
+mainDoEvent!
+ListStore
+alternativeDialogButtonOrder!
+cellAreaContextGetType!
+filename
+ScrolledWindow
+ToggleAction
+grabAdd!
+appChooserWidgetSetShowRecommended!
+ToolShell
+printErrorGetType!
+acceleratorGetLabelWithKeycode!
+EntryBuffer
+appChooserWidgetGetShowFallback!
+TreeDragSource
+applicationNew!
+Settings
+accelGroupsFromObject!
+themingEngineGetState!
+Tree
+Widget
+bindingEntryAddSignalFromString!
+colorChooserGetType!
+Requisition
+cssSectionRef!
+rcGetImModuleFile!
+scrollableSetVadjustment!
+targetsIncludeRichText!
+themingEngineGetStyleProperty!
+rcPropertyParseColor!
+RecentChooser
+cellAreaGetEditedCell!
+TearoffMenuItem
+gridGetColumnHomogeneous!
+IconView
+appChooserDialogSetHeading!
+Separator
+Layout
+attachOptionsGetType!
+renderLayout!
+CellRenderer
+themingEngineGetBackgroundColor!
+colorChooserSetRgba!
+printPagesGetType!
+acceleratorParse!
+paintSpinner!
+vpanedNew!
+colorChooserGetUseAlpha!
+renderExpander!
+scrollableSetHscrollPolicy!
+rcAddDefaultFile!
+HSeparator
+ToolButton
+actionableSetActionName!
+stockListIds!
+TextChildAnchor
+cellAreaContextReset!
+colorChooserDialogNew!
+symbolicColorNewLiteral!
+iconSizeRegisterAlias!
+targetsIncludeText!
+StatusIcon
+TextAttributes
+VBox
+spinTypeGetType!
+appChooserButtonNew!
+cellAreaCellGetValist!
+numerableIconSetCount!
+rcGetStyleByPaths!
+gridSetRowSpacing!
+Viewport
+scrollableSetHadjustment!
+Dialog
+Action
+vscrollbarNew!
+gridAttach!
+AccelGroup
+getInterfaceAge!
+cellAreaSetFocusCell!
+iconSizeLookupForSettings!
+Misc
+appChooserButtonSetShowDialogItem!
+cellAreaContextPushPreferredWidth!
+appChooserButtonAppendSeparator!
+actionableSetDetailedActionName!
+Menu
+dragUnhighlight!
+printRunPageSetupDialogAsync!
+SpinButton
+fontChooserGetFontDesc!
+bindingSetFind!
+cellAreaFocus!
+hsvNew!
+rcParseState!
+rcParseColorFull!
+testSpinButtonClick!
+themingEngineGetPadding!
+dragGetSourceWidget!
+lockButtonGetType!
+RadioToolButton
+themingEngineLookupColor!
+hscrollbarNew!
+setDebugFlags!
+debugFlagGetType!
+PrintContext
+rcParsePriority!
+targetEntryNew!
+rcGetStyle!
+cellAreaGetFocusFromSibling!
+selectionOwnerSet!
+fontChooserSetShowPreviewEntry!
+deleteTypeGetType!
+dragDestSetTargetList!
+pageSetGetType!
+scrollableGetType!
+stateFlagsGetType!
+RadioMenuItem
+appChooserGetContentType!
+FileChooser
+gridNew!
+appChooserGetAppInfo!
+dragBegin!
+numerableIconSetBackgroundIconName!
+ProgressBar
+paintShadow!
+HButtonBox
+cssProviderLoadFromPath!
+stockItemFree!
+colorChooserWidgetNew!
+paintFocus!
+testFindLabel!
+PrintOperation
+AboutDialog
+applicationGetMenubar!
+CellRendererAccel
+Table
+cellAreaGetFocusSiblings!
+selectionModeGetType!
+PrintOperationPreview
+cellAreaActivateCell!
+grabRemove!
+Arrow
+lockButtonGetPermission!
+cellAreaEvent!
+dragHighlight!
+paintBoxGap!
+gridInsertRow!
+Toolbar
+applicationWindowNew!
+SeparatorToolItem
+selectionConvert!
+renderFrame!
+applicationSetAppMenu!
+appChooserWidgetSetDefaultText!
+selectionClearTargets!
+rgbToHsv!
+paintDiamond!
+TreeView
+hpanedGetType!
+dragSourceSetIconPixbuf!
+appChooserButtonSetActiveCustomItem!
+IMContextSimple
+gridInsertColumn!
+dragSourceUnset!
+Paned
+sortTypeGetType!
+symbolicColorNewName!
+paintExtension!
+IMMulticontext
+cellAreaClassInstallCellProperty!
+getBinaryAge!
+testFindSibling!
+cellAreaInnerCellArea!
+symbolicColorUnref!
+ScaleButton
+cellAreaForeachAlloc!
+targetFlagsGetType!
+dragDestFindTarget!
+cellAreaRender!
+fontChooserDialogNew!
+gradientRef!
+appChooserButtonGetShowDialogItem!
+Clipboard
+targetEntryFree!
+TreeModel
+applicationWindowGetType!
+regionFlagsGetType!
+renderExtension!
+cssProviderGetType!
+printRunPageSetupDialog!
+gridGetColumnSpacing!
+cellAreaBoxNew!
+testTextGet!
+targetTableFree!
+numerableIconGetBackgroundGicon!
+themingEngineGetColor!
+MountOperation
+cellAreaCellSetProperty!
+cellAreaBoxGetSpacing!
+Box
+appChooserDialogGetType!
+AccelMap
+imPreeditStyleGetType!
+hsvIsAdjusting!
+hscrollbarGetType!
+Range
+CellRendererText
+Expander
+themingEngineGetMargin!
+testRegisterAllTypes!
+HScale
+Image
+CellRendererToggle
+bindingSetAddPath!
+renderActivity!
+cellAreaGetType!
+dragSourceSetIconStock!
+Calendar
+dragSourceGetTargetList!
+appChooserButtonSetShowDefaultItem!
+dragSourceAddImageTargets!
+FileChooserButton
+overlayGetType!
+cssProviderNew!
+numerableIconNewWithStyleContext!
+switchGetActive!
+EventBox
+acceleratorName!
+initCheck!
+rcGetModuleDir!
+Assistant
+TextBuffer
+themingEngineLoad!
+paintResizeGrip!
+selectionAddTargets!
+dragDestSetTrackMotion!
+accelFlagsGetType!
+CellView
+dragSetIconStock!
+rcFindModuleInPath!
+bindingSetNew!
+rcParse!
+themingEngineGetBorder!
+bindingSetByClass!
+selectionRemoveAll!
+InfoBar
+themingEngineGetProperty!
+UIManager
+getDebugFlags!
+Orientable
+cssProviderToString!
+numberUpLayoutGetType!
+lockButtonNew!
+gridGetRowSpacing!
+appChooserWidgetSetShowDefault!
+dragDestSetProxy!
+cellAreaContextGetArea!
+grabGetCurrent!
+ToggleToolButton
+RecentChooserWidget
+applicationGetType!
+IconInfo
+appChooserRefresh!
+cellAreaRequestRenderer!
+fontChooserDialogGetType!
+FileChooserWidget
+testWidgetClick!
+Activatable
+appChooserWidgetGetShowOther!
+dragSetIconPixbuf!
+cellAreaAddFocusSibling!
+applicationUninhibit!
+fontChooserGetFontFamily!
+themingEngineGetBorderColor!
+scrollableSetVscrollPolicy!
+dragSetIconName!
+paintTab!
+ToggleButton
+drawInsertionCursor!
+cellAreaGetCellAtPosition!
+themingEngineGetValist!
+SeparatorMenuItem
+appChooserWidgetGetShowAll!
+checkVersion!
+keySnooperInstall!
+cssSectionUnref!
+ImageMenuItem
+paintCheck!
+rcPropertyParseEnum!
+iconSizeLookup!
+Entry
+colorChooserWidgetGetType!
+shadowTypeGetType!
+cellAreaGetEditWidget!
+SelectionData
+PageSetup
+gridGetChildAt!
+rcFindPixmapInPath!
+paintHline!
+themingEngineGetStyleValist!
+hsvGetMetrics!
+wrapModeGetType!
+fontChooserGetFont!
+testSliderSetPerc!
+dragDestAddImageTargets!
+imStatusStyleGetType!])

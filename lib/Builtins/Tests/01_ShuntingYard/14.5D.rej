@@ -1,0 +1,4 @@
+--- lib/Builtins/Tests/01_ShuntingYard/14.5D	(revision 4434)
++++ lib/Builtins/Tests/01_ShuntingYard/14.5D	(nonexistent)
+@@ -1 +0,0 @@
+-#exports[a b c]Index: lib/Builtins/Tests/01_ShuntingYard/e.5D
