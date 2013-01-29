@@ -132,14 +132,14 @@ $(PACKAGE)-$(VERSION)/Formatters/TExpression \
 $(PACKAGE)-$(VERSION)/Formatters/SExpression \
 $(PACKAGE)-$(VERSION)/Formatters/TExpression.cc \
 $(PACKAGE)-$(VERSION)/Formatters/GenericFormatter.inc \
-$(PACKAGE)-$(VERSION)/Scanners/Lang5D.cc \
-$(PACKAGE)-$(VERSION)/Scanners/ShuntingYardParser \
-$(PACKAGE)-$(VERSION)/Scanners/LangForth.cc \
+$(PACKAGE)-$(VERSION)/Parsers/Lang5D.cc \
+$(PACKAGE)-$(VERSION)/Parsers/ShuntingYardParser \
+$(PACKAGE)-$(VERSION)/Parsers/LangForth.cc \
 $(PACKAGE)-$(VERSION)/Scanners/Scanner \
-$(PACKAGE)-$(VERSION)/Scanners/Lang5D \
-$(PACKAGE)-$(VERSION)/Scanners/LangForth \
+$(PACKAGE)-$(VERSION)/Parsers/Lang5D \
+$(PACKAGE)-$(VERSION)/Parsers/LangForth \
 $(PACKAGE)-$(VERSION)/Scanners/Scanner.cc \
-$(PACKAGE)-$(VERSION)/Scanners/ShuntingYardParser.cc \
+$(PACKAGE)-$(VERSION)/Parsers/ShuntingYardParser.cc \
 $(PACKAGE)-$(VERSION)/Values/Values.cc \
 $(PACKAGE)-$(VERSION)/Values/wstrings.cc \
 $(PACKAGE)-$(VERSION)/Values/Symbol \
@@ -200,9 +200,9 @@ Numbers/Ratio.o
 OBJECTS = Formatters/Math.o \
 Formatters/SExpression.o \
 Formatters/TExpression.o \
-Scanners/Lang5D.o \
+Parsers/Lang5D.o \
 Scanners/Scanner.o \
-Scanners/ShuntingYardParser.o \
+Parsers/ShuntingYardParser.o \
 Values/Values.o \
 Values/Keyword.o \
 Values/Symbol.o \
@@ -236,16 +236,16 @@ Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJE
 Formatters/Math.o: Formatters/Math.cc Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
 Formatters/SExpression.o: Formatters/SExpression.cc Formatters/SExpression Values/Values include/6D/Values 
 Formatters/TExpression.o: Formatters/TExpression.cc Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms
-Scanners/Lang5D.o: Scanners/Lang5D.cc Scanners/Scanner Scanners/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer
+Parsers/Lang5D.o: Parsers/Lang5D.cc Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer
 Scanners/Scanner.o: Scanners/Scanner.cc Scanners/Scanner 
-Scanners/ShuntingYardParser.o: Scanners/ShuntingYardParser.cc Scanners/ShuntingYardParser 
+Parsers/ShuntingYardParser.o: Parsers/ShuntingYardParser.cc Parsers/ShuntingYardParser 
 Values/Values.o: Values/Values.cc Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values
 Values/Keyword.o: Values/Keyword.cc Values/Keyword Values/Hashtable
 Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
 Allocators/Allocators.o: Allocators/Allocators.cc Allocators/Allocators include/6D/Allocators
-Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Values include/6D/Allocators
-Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins
-Tests/03_Numbers/main.o: Tests/03_Numbers/main.cc Scanners/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
+Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Values include/6D/Allocators
+Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins
+Tests/03_Numbers/main.o: Tests/03_Numbers/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
 Numbers/Integer.o: Numbers/Integer.cc Numbers/Integer Numbers/Small include/6D/FFIs include/6D/Values

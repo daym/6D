@@ -205,7 +205,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Scanners\Lang5D.cc"
+				RelativePath="..\Parsers\Lang5D.cc"
 				>
 			</File>
 			<File
@@ -237,7 +237,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Scanners\ShuntingYardParser.cc"
+				RelativePath="..\Parsers\ShuntingYardParser.cc"
 				>
 			</File>
 			<File
@@ -319,7 +319,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Scanners\Lang5D"
+				RelativePath="..\Parsers\Lang5D"
 				>
 			</File>
 			<File
@@ -355,7 +355,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Scanners\ShuntingYardParser"
+				RelativePath="..\Parsers\ShuntingYardParser"
 				>
 			</File>
 			<File

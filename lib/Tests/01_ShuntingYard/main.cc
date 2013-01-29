@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "6D/Allocators"
-#include "Scanners/Lang5D"
+#include "Parsers/Lang5D"
 #include "Formatters/TExpression"
 int main(int argc, char* argv[]) {
 	Allocators::initAllocators();
