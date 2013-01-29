@@ -8,11 +8,14 @@ using namespace Values;
 using namespace FFIs;
 static NodeT SConstanter;
 static NodeT Srem;
+static NodeT Sexports;
 static NodeT builtin(NodeT node) {
 	if(node == SConstanter)
 		return SpecialForms::Constanter;
 	else if(node == Srem)
 		return SpecialForms::Identer;
+	else if(node == Sexports)
+		return cons(SConstanter, cons(Srem, nil));
 	else
 		return nil; // FIXME error
 }

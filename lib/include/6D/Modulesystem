@@ -1,0 +1,13 @@
+#ifndef __6D_MODULESYSTEM_H
+#define __6D_MODULESYSTEM_H
+#include "6D/Values"
+#include "6D/Operations"
+namespace Modulesystem {
+
+NodeT makeExportsQ(const char* names, ...);
+NodeT makeExportsFQ(const char* fmt, const char* names, ...);
+#define exports(...) Modulesystem::makeExportsQ(""#__VA_ARGS__, __VA_ARGS__)
+#define exportsf(fmt, ...) Modulesystem::makeExportsFQ(fmt, ""#__VA_ARGS__, __VA_ARGS__)
+
+};
+#endif /* ndef __6D_MODULESYSTEM_H */

@@ -109,6 +109,7 @@ $(PACKAGE)-$(VERSION)/include/6D/Evaluators \
 $(PACKAGE)-$(VERSION)/include/6D/wstrings \
 $(PACKAGE)-$(VERSION)/include/6D/Values \
 $(PACKAGE)-$(VERSION)/include/6D/Builtins \
+$(PACKAGE)-$(VERSION)/include/6D/Modulesystem \
 $(PACKAGE)-$(VERSION)/Allocators/Allocators.cc \
 $(PACKAGE)-$(VERSION)/Allocators/Allocators \
 $(PACKAGE)-$(VERSION)/Combinators/Combinators.cc \
@@ -176,10 +177,10 @@ $(PACKAGE)-$(VERSION)/design/shuntingyard.py \
 $(PACKAGE)-$(VERSION)/design/generate \
 $(PACKAGE)-$(VERSION)/Builtins/Builtins.cc \
 $(PACKAGE)-$(VERSION)/Builtins/Builtins \
-$(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer.cc \
-$(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer \
-$(PACKAGE)-$(VERSION)/ModuleSystem/ModuleSystem \
-$(PACKAGE)-$(VERSION)/ModuleSystem/Exports.cc \
+$(PACKAGE)-$(VERSION)/Modulesystem/Memoizer.cc \
+$(PACKAGE)-$(VERSION)/Modulesystem/Memoizer \
+$(PACKAGE)-$(VERSION)/Modulesystem/Modulesystem \
+$(PACKAGE)-$(VERSION)/Modulesystem/Exports.cc \
 $(PACKAGE)-$(VERSION)/GCs/SillyGC \
 $(PACKAGE)-$(VERSION)/GCs/SillyGC.cc
 
@@ -213,7 +214,7 @@ Values/Hashtable.o \
 $(STRICT_OBJECTS) \
 $(EVAL_OBJECTS) \
 $(NUMBERS) \
-ModuleSystem/Exports.o \
+Modulesystem/Exports.o \
 Builtins/Builtins.o
 
 SILLY_GC_OBJECTS = GCs/SillyGC.o
@@ -259,8 +260,8 @@ strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.cc strict/Speci
 lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs
 strict/Logic/Logic.o: strict/Logic/Logic.cc strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators include/6D/Operations include/6D/Evaluators
-ModuleSystem/Memoizer.o: ModuleSystem/Memoizer.cc ModuleSystem/Memoizer Values/Values Values/Hashtable
-ModuleSystem/Exports.o: ModuleSystem/Exports.cc include/6D/Operations include/6D/FFIs include/6D/Values
+Modulesystem/Memoizer.o: Modulesystem/Memoizer.cc Modulesystem/Memoizer Values/Values Values/Hashtable
+Modulesystem/Exports.o: Modulesystem/Exports.cc include/6D/Operations include/6D/FFIs include/6D/Values include/6D/Modulesystem
 Builtins/Builtins.o: Builtins/Builtins.cc Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run

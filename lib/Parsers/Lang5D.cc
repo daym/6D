@@ -10,7 +10,7 @@
 #include "Formatters/TExpression"
 #include "Parsers/ShuntingYardParser"
 #include "SpecialForms/SpecialForms"
-#include "ModuleSystem/ModuleSystem"
+#include "Modulesystem/Modulesystem"
 #include "Combinators/Combinators"
 #include "Numbers/Integer"
 #include "6D/FFIs"
