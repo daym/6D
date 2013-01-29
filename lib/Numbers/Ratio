@@ -1,0 +1,21 @@
+#ifndef __NUMBERS_RATIO_H
+#define __NUMBERS_RATIO_H
+#include "Values/Values"
+#include "6D/Operations"
+namespace Values {
+	struct Ratio : Values::Node {
+		Values::NodeT a; /* numerator */
+		Values::NodeT b; /* denominator */
+	};
+	Ratio* ratio(Values::NodeT aa, Values::NodeT bb);
+	bool ratioP(Values::NodeT n);
+	Values::NodeT getRatioA(Values::NodeT n) G_5D_PURE;
+	Values::NodeT getRatioB(Values::NodeT n) G_5D_PURE;
+DECLARE_FFI_FN(RatioMaker)
+DECLARE_FFI_FN(RatioP)
+DECLARE_FFI_FN(RatioNumeratorGetter)
+DECLARE_FFI_FN(RatioDenominatorGetter)
+
+};
+
+#endif /* ndef __NUMBERS_RATIO_H */

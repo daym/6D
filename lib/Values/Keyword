@@ -1,0 +1,19 @@
+#ifndef __VALUES_KEYWORD_H
+#define __VALUES_KEYWORD_H
+#include <string>
+#include "Values/Values"
+
+namespace Values {
+struct Keyword : Node {
+private:
+	std::string text;
+	friend const char* getKeyword1Name(NodeT node);
+public:
+	Keyword(const char* name) {
+		this->text = text;
+	}
+	virtual void str(FILE* destination) const;
+};
+}
+
+#endif /* ndef __VALUES_KEYWORD_H */

@@ -1,0 +1,27 @@
+#ifndef __NUMBERS_REAL_H
+#define __NUMBERS_REAL_H
+#include <sstream>
+#include "Numbers/Small"
+#include "Values/Values"
+#include "6D/Operations"
+#include "6D/FFIs"
+
+namespace Numbers {
+
+DECLARE_SMALL_VALUE(Float, FFIs::NativeFloat)   
+DECLARE_FFI_FN(FloatP)
+
+Values::NodeT operator+(const Float& a, const Float& b);
+Values::NodeT operator-(const Float& a, const Float& b);
+Values::NodeT operator*(const Float& a, const Float& b);
+Values::NodeT operator/(const Float& a, const Float& b);
+Values::NodeT operator<=(const Float& a, const Float& b);
+
+bool toNativeFloat(Values::NodeT node, FFIs::NativeFloat& result);
+bool float_P(Values::NodeT node);
+Values::NodeT nan(void);
+Values::NodeT infinity(void);
+
+};
+
+#endif /* ndef __NUMBERS_REAL_H */

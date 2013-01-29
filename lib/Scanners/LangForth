@@ -1,0 +1,80 @@
+#ifndef __LANG_FORTH_H
+#define __LANG_FORTH_H
+#include <stdio.h>
+#include <string>
+#include <vector>
+#include "Values/Values"
+#include "Scanners/Scanner"
+#include "Allocators/Allocators"
+namespace Scanners {
+
+class LangForth {
+protected:
+	Values::NodeT collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const;
+	Values::NodeT collect1(FILE* file, int& linenumber, bool (*continueP)(int input)) const;
+	Values::NodeT collectC(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const;
+	Values::NodeT collect1C(FILE* file, int& linenumber, bool (*continueP)(int input)) const;
+	Values::NodeT collectNumeric2(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const;
+	int collectNumeric3(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const;
+	Values::NodeT collectUnicodeID(FILE* file, int& linenumber, int prefix, const std::string& prev) const;
+	Values::NodeT readDigits(FILE* file, int& linenumber, int c) const;
+	Values::NodeT readOperator(FILE* file, int& linenumber, int c) const;
+	Values::NodeT readUnicodeOperator3(FILE* file, int& linenumber, int c) const;
+	Values::NodeT readSpecialCoding(FILE* file, int& linenumber, int c) const;
+	Values::NodeT readString(FILE* file, int& linenumber, int c) const;
+	Values::NodeT readKeyword(FILE* file, int& linenumber, int c) const;
+public:
+	LangForth(void);
+	static Values::NodeT SLF;
+	static Values::NodeT Sindent;
+	static Values::NodeT Sdedent;
+	static Values::NodeT SopeningParen;
+	static Values::NodeT Sapply;
+	static Values::NodeT Sdash;
+	static Values::NodeT Szero;
+	static Values::NodeT Sunderscore;
+	static Values::NodeT Scircumflex;
+	static Values::NodeT Sstarstar;
+	static Values::NodeT Scross;
+	static Values::NodeT Scolon;
+	static Values::NodeT Squote;
+	static Values::NodeT Scomma;
+	static Values::NodeT Sdollar;
+	static Values::NodeT Selif;
+	static Values::NodeT Selse;
+	static Values::NodeT Ssemicolon;
+	static Values::NodeT Sbackslash;
+	static Values::NodeT Slet;
+	static Values::NodeT Sletexclam;
+	static Values::NodeT Simport;
+	static Values::NodeT Sleftparen;
+	static Values::NodeT Sleftcurly;
+	static Values::NodeT Sleftbracket;
+	static Values::NodeT Srightparen;
+	static Values::NodeT Srightcurly;
+	static Values::NodeT Srightbracket;
+	static Values::NodeT SEOF;
+	static Values::NodeT Serror;
+	Values::NodeT readToken(FILE* f, int& linenumber) const;
+	Values::NodeT error(std::string expectedPart, std::string gotPart) const;
+	Values::NodeT error(Values::NodeT expectedPart, Values::NodeT gotPart) const;
+	bool errorP(Values::NodeT node) const;
+	bool openingParenP(Values::NodeT node) const;
+	bool operatorP(Values::NodeT node) const;
+	int operatorArgcount(Values::NodeT node) const;
+	//bool operatorPrefixNeutralP(Values::NodeT node) const;
+	Values::NodeT operatorPrefixNeutral(Values::NodeT node) const;
+	bool macroStarterP(Values::NodeT node) const;
+	Values::NodeT startMacro(Values::NodeT node, Scanner<LangForth>& tokenizer) const;
+	bool closingParenP(Values::NodeT node) const;
+	Values::NodeT openingParenOf(Values::NodeT node) const;
+	bool operatorLE(Values::NodeT a, Values::NodeT b) const;
+	Values::NodeT readShebang(FILE* file, int& linenumber, int c) const;
+	Values::NodeT astFromRpn(const std::vector<Values::NodeT ALLOCATOR_VECTOR>& list) const;
+	void callRpnOperator(Values::NodeT operator_, std::vector<Values::NodeT ALLOCATOR_VECTOR>& /*ref*/values) const;
+	Values::NodeT parse(Scanner<LangForth>& scanner) const;
+	Values::NodeT parse1(FILE* f, const char* name) const;
+};
+
+}
+#endif /* ndef __LANG_FORTH_H */
