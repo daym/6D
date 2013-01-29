@@ -7,7 +7,7 @@ namespace Values {
 using namespace Allocators;
 /* it doesn't matter to me what exactly Node is, I'm just using struct here so it shuts up */
 
-struct Node : public gc {
+struct Node GC_BASECLASS {
 	virtual ~Node(void);
 	virtual void str(FILE* destination) const;
 };

@@ -56,7 +56,7 @@ void efree(void* beginning);
 #define ALLOCATOR_STACK
 #define ALLOCATOR_VECTOR
 #define ALLOCATOR_VECTOR2(t) 
-#define GC_BASECLASS 
+#define GC_BASECLASS : public gc
 #endif
 }
 #endif /* ndef __6D_ALLOCATORS_H */
