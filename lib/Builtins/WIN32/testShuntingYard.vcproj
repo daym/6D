@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(ProjectDir)\..\strict;$(ProjectDir)\..;$(ProjectDir)\..\include;."
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;STRICT_EVAL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -116,7 +116,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="$(ProjectDir)\..\strict;$(ProjectDir)\..;$(ProjectDir)\..\include;."
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;STRICT_EVAL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -177,11 +177,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Combinators\Combinators.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\strict\SpecialForms\Constanter.cc"
+				>
+			</File>
+			<File
 				RelativePath="..\Evaluators\Evaluators.cc"
 				>
 			</File>
 			<File
 				RelativePath="..\Values\Hashtable.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\strict\SpecialForms\Identer.cc"
 				>
 			</File>
 			<File
@@ -197,7 +209,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Scanners\LangForth.cc"
+				RelativePath="..\strict\Logic\Logic.cc"
 				>
 			</File>
 			<File
@@ -255,6 +267,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\include\6D\Allocators"
+				>
+			</File>
+			<File
 				RelativePath="..\Numbers\BigUnsigned"
 				>
 			</File>
@@ -263,7 +279,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Combinators\Combinators"
+				>
+			</File>
+			<File
+				RelativePath="..\strict\SpecialForms\Constanter"
+				>
+			</File>
+			<File
 				RelativePath="..\Evaluators\Evaluators"
+				>
+			</File>
+			<File
+				RelativePath="..\include\6D\Evaluators"
+				>
+			</File>
+			<File
+				RelativePath="..\include\6D\FFIs"
 				>
 			</File>
 			<File
@@ -272,6 +304,10 @@
 			</File>
 			<File
 				RelativePath="..\Values\Hashtable"
+				>
+			</File>
+			<File
+				RelativePath="..\strict\SpecialForms\Identer"
 				>
 			</File>
 			<File
@@ -287,11 +323,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Scanners\LangForth"
+				RelativePath="..\strict\Logic\Logic"
 				>
 			</File>
 			<File
 				RelativePath="..\Formatters\Math"
+				>
+			</File>
+			<File
+				RelativePath="..\include\6D\Operations"
+				>
+			</File>
+			<File
+				RelativePath="..\strict\SpecialForms\Quoter"
 				>
 			</File>
 			<File
@@ -319,6 +363,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\strict\SpecialForms\SpecialForms"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
@@ -340,6 +388,10 @@
 			</File>
 			<File
 				RelativePath="..\include\6D\Values"
+				>
+			</File>
+			<File
+				RelativePath="..\include\6D\wstrings"
 				>
 			</File>
 		</Filter>

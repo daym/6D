@@ -13,7 +13,7 @@ int _tmain(int argc, _TCHAR* argv[]) {
 	using namespace Values;
 	Lang5D lang;
 	//FILE* f = (argc > 1) ? _wfopen(argv[1], _T("rb")) : stdin;
-	FILE* f = (argc > 1) ? _wfopen(argv[1], _T("rb")) : _wfopen(_T("..\\Tests\\01_ShuntingYard\\14.5D"), _T("r"));
+	FILE* f = (argc > 1) ? _wfopen(argv[1], _T("rb")) : _wfopen(_T("..\\Tests\\01_ShuntingYard\\25.5D"), _T("r"));
 	NodeT value = lang.parse1(f, "<input file>");
 	Formatters::TExpression::print(stdout, value);
 	fflush(stdout);

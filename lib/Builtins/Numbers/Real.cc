@@ -75,8 +75,23 @@ bool toNativeFloat(NodeT node, NativeFloat& result) {
 static Float nanFloat(__builtin_nanf(""));
 static Float infinityFloat(__builtin_inff());
 #else
+#ifdef _MSC_VER
+static inline double nanxx(void) {
+	uint32_t nan[2]={0xffffffff, 0x7fffffff};
+	double g = *( double* )nan;
+	return g;
+}
+static inline double infxx(void) {
+	uint32_t inf[2]={0x7FF00000, 0};
+	double g = *( double* )inf;
+	return g;
+}
+static Float nanFloat(nanxx());
+static Float infinityFloat(infxx());
+#else
 static Float nanFloat(0.0/0.0);
 static Float infinityFloat(1.0/0.0);
+#endif
 #endif
 
 NodeT nan(void) {
