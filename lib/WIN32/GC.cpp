@@ -17,6 +17,10 @@ void gc::operator delete(void* obj) {
 	free(obj);
 	arena.erase((gc*)obj);
 }
+void gc::operator delete(void* obj, enum GCPlacement) { // if initializer throws exception
+	operator delete(obj);
+}
+
 void zap(void) {
 	for(std::set<gc*>::const_iterator iter = arena.begin(); iter != arena.end(); ++iter) {
 		gc* p = *iter;

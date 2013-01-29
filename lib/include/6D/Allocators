@@ -24,6 +24,7 @@ struct gc { /* user-provided */
 	void* operator new(size_t size, enum GCPlacement);
 	void* operator new(size_t size, void* p);
 	void operator delete(void*);
+	void operator delete(void*, enum GCPlacement);
 };
 }
 #endif
