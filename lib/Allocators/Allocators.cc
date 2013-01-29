@@ -4,10 +4,11 @@
 #elif defined(__linux__) || defined(__APPLE__)
 #include <sys/mman.h>
 #endif
+#ifdef GC_THREADS
 #include <gc/gc.h>
+#endif
 #ifndef WIN32
 #include <glib.h>
-#include <libxml/xmlmemory.h>
 #endif
 #include <string.h>
 #include "Allocators/Allocators"
