@@ -167,13 +167,13 @@ $(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Quoter.cc \
 $(PACKAGE)-$(VERSION)/strict/Logic/Logic \
 $(PACKAGE)-$(VERSION)/strict/Logic/Logic.cc \
-$(PACKAGE)-$(VERSION)/Builtins/design/symbols.py \
-$(PACKAGE)-$(VERSION)/Builtins/design/scanner.py \
-$(PACKAGE)-$(VERSION)/Builtins/design/shuntingyard.py.simple \
-$(PACKAGE)-$(VERSION)/Builtins/design/shuntingyard.py \
-$(PACKAGE)-$(VERSION)/Builtins/design/generate \
-$(PACKAGE)-$(VERSION)/Builtins/Builtins/Builtins.cc \
-$(PACKAGE)-$(VERSION)/Builtins/Builtins/Builtins \
+$(PACKAGE)-$(VERSION)/design/symbols.py \
+$(PACKAGE)-$(VERSION)/design/scanner.py \
+$(PACKAGE)-$(VERSION)/design/shuntingyard.py.simple \
+$(PACKAGE)-$(VERSION)/design/shuntingyard.py \
+$(PACKAGE)-$(VERSION)/design/generate \
+$(PACKAGE)-$(VERSION)/Builtins/Builtins.cc \
+$(PACKAGE)-$(VERSION)/Builtins/Builtins \
 $(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer.cc \
 $(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer \
 $(PACKAGE)-$(VERSION)/ModuleSystem/ModuleSystem
