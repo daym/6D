@@ -1,8 +1,0 @@
-#ifndef __6D_SPECIAL_FORMS_CONSTANTER_H
-#define __6D_SPECIAL_FORMS_CONSTANTER_H
-#include "6D/Values"
-#include "6D/Operations"
-namespace SpecialForms {
-Values::NodeT constanter2(Values::NodeT argument);
-}
-#endif /* ndef __6D_SPECIAL_FORMS_CONSTANTER_H */

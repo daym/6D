@@ -1,9 +1,0 @@
-#ifndef __6D_SPECIAL_FORMS_IDENTER_H
-#define __6D_SPECIAL_FORMS_IDENTER_H
-#include "6D/Values"
-#include "6D/Operations"
-/* like Constanter, just prefers the other argument */
-namespace SpecialForms {
-Values::NodeT identer2(Values::NodeT argument);
-}
-#endif /* ndef __6D_SPECIAL_FORMS_IDENTER_H */

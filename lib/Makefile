@@ -1,6 +1,184 @@
 
-BUILTINS_LIB = lib6dbuiltins.so.1
+PACKAGE = 6d
+VERSION = 0.0.1
+DISTFILES = \
+$(PACKAGE)-$(VERSION)/Tests/03_Numbers/02.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/03_Numbers/02.5D \
+$(PACKAGE)-$(VERSION)/Tests/03_Numbers/03.5D \
+$(PACKAGE)-$(VERSION)/Tests/03_Numbers/main.cc \
+$(PACKAGE)-$(VERSION)/Tests/03_Numbers/01.5D \
+$(PACKAGE)-$(VERSION)/Tests/03_Numbers/03.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/03_Numbers/01.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/02.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/05.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/2.gotResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/23.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/21.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/02.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/20.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/10.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/25.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/f.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/04.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/06.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/call2.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/07.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/17.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/15.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/1.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/11.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/12.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/6.gotResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/19.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/b.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/a.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/21.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/c.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/10.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/25.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/e.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/03.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/14.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/f.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/13.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/04.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/15.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/05.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/22.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/d.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/14.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/18.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/main.cc \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/12.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/18.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/03.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/5.gotResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/01.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/11.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/d.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/4.gotResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/c.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/07.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/1.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/e.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/b.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/1.gotResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/22.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/call2.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/24.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/a.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/run \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/13.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/3.gotResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/19.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/24.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/16.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/06.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/23.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/17.5D \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/16.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/02.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/05.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/02.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/10.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/04.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/06.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/07.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/08.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/09.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/10.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/08.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/03.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/04.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/05.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/09.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/main.cc \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/01.5D \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/03.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/01.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/07.expectedResult \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/run \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/06.5D \
+$(PACKAGE)-$(VERSION)/include/6D/Operations \
+$(PACKAGE)-$(VERSION)/include/6D/FFIs \
+$(PACKAGE)-$(VERSION)/include/6D/Allocators \
+$(PACKAGE)-$(VERSION)/include/6D/Evaluators \
+$(PACKAGE)-$(VERSION)/include/6D/wstrings \
+$(PACKAGE)-$(VERSION)/include/6D/Values \
+$(PACKAGE)-$(VERSION)/include/6D/Builtins \
+$(PACKAGE)-$(VERSION)/Allocators/Allocators.cc \
+$(PACKAGE)-$(VERSION)/Allocators/Allocators \
+$(PACKAGE)-$(VERSION)/Combinators/Combinators.cc \
+$(PACKAGE)-$(VERSION)/Combinators/Combinators \
+$(PACKAGE)-$(VERSION)/Evaluators/Evaluators.cc \
+$(PACKAGE)-$(VERSION)/Evaluators/Evaluators \
+$(PACKAGE)-$(VERSION)/Makefile \
+$(PACKAGE)-$(VERSION)/D \
+$(PACKAGE)-$(VERSION)/Numbers/BigUnsigned \
+$(PACKAGE)-$(VERSION)/Numbers/Integer.cc \
+$(PACKAGE)-$(VERSION)/Numbers/Real.cc \
+$(PACKAGE)-$(VERSION)/Numbers/BigUnsigned.cc \
+$(PACKAGE)-$(VERSION)/Numbers/Small \
+$(PACKAGE)-$(VERSION)/Numbers/Integer \
+$(PACKAGE)-$(VERSION)/Numbers/Ratio \
+$(PACKAGE)-$(VERSION)/Numbers/Ratio.cc \
+$(PACKAGE)-$(VERSION)/Numbers/Real \
+$(PACKAGE)-$(VERSION)/Formatters/Math.cc \
+$(PACKAGE)-$(VERSION)/Formatters/Math \
+$(PACKAGE)-$(VERSION)/Formatters/SExpression.cc \
+$(PACKAGE)-$(VERSION)/Formatters/TExpression \
+$(PACKAGE)-$(VERSION)/Formatters/SExpression \
+$(PACKAGE)-$(VERSION)/Formatters/TExpression.cc \
+$(PACKAGE)-$(VERSION)/Formatters/GenericFormatter.inc \
+$(PACKAGE)-$(VERSION)/Scanners/Lang5D.cc \
+$(PACKAGE)-$(VERSION)/Scanners/ShuntingYardParser \
+$(PACKAGE)-$(VERSION)/Scanners/LangForth.cc \
+$(PACKAGE)-$(VERSION)/Scanners/Scanner \
+$(PACKAGE)-$(VERSION)/Scanners/Lang5D \
+$(PACKAGE)-$(VERSION)/Scanners/LangForth \
+$(PACKAGE)-$(VERSION)/Scanners/Scanner.cc \
+$(PACKAGE)-$(VERSION)/Scanners/ShuntingYardParser.cc \
+$(PACKAGE)-$(VERSION)/Values/Values.cc \
+$(PACKAGE)-$(VERSION)/Values/wstrings.cc \
+$(PACKAGE)-$(VERSION)/Values/Symbol \
+$(PACKAGE)-$(VERSION)/Values/Keyword \
+$(PACKAGE)-$(VERSION)/Values/Hashtable.cc \
+$(PACKAGE)-$(VERSION)/Values/Keyword.cc \
+$(PACKAGE)-$(VERSION)/Values/Hashtable \
+$(PACKAGE)-$(VERSION)/Values/Symbol.cc \
+$(PACKAGE)-$(VERSION)/Values/Values \
+$(PACKAGE)-$(VERSION)/WIN32/wstrings.cc \
+$(PACKAGE)-$(VERSION)/WIN32/testShuntingYard.cpp \
+$(PACKAGE)-$(VERSION)/WIN32/targetver.h \
+$(PACKAGE)-$(VERSION)/WIN32/stdafx.h \
+$(PACKAGE)-$(VERSION)/WIN32/ReadMe.txt \
+$(PACKAGE)-$(VERSION)/WIN32/testShuntingYard.sln \
+$(PACKAGE)-$(VERSION)/WIN32/stdafx.cpp \
+$(PACKAGE)-$(VERSION)/WIN32/testShuntingYard.vcproj \
+$(PACKAGE)-$(VERSION)/lazy/SpecialForms/SpecialForms \
+$(PACKAGE)-$(VERSION)/lazy/Logic/Logic \
+$(PACKAGE)-$(VERSION)/lazy/Logic/Logic.cc \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/SpecialForms \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Quoter \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Constanter \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Constanter.cc \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer.cc \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Quoter.cc \
+$(PACKAGE)-$(VERSION)/strict/Logic/Logic \
+$(PACKAGE)-$(VERSION)/strict/Logic/Logic.cc \
+$(PACKAGE)-$(VERSION)/Builtins/design/symbols.py \
+$(PACKAGE)-$(VERSION)/Builtins/design/scanner.py \
+$(PACKAGE)-$(VERSION)/Builtins/design/shuntingyard.py.simple \
+$(PACKAGE)-$(VERSION)/Builtins/design/shuntingyard.py \
+$(PACKAGE)-$(VERSION)/Builtins/design/generate \
+$(PACKAGE)-$(VERSION)/Builtins/Builtins/Builtins.cc \
+$(PACKAGE)-$(VERSION)/Builtins/Builtins/Builtins \
+$(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer.cc \
+$(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer \
+$(PACKAGE)-$(VERSION)/ModuleSystem/ModuleSystem
 
+BUILTINS_LIB = lib6dbuiltins.so.1
 LIBGC_LD_WRAP_CFLAGS = -D_REENTRANT -DGC_THREADS -DUSE_LD_WRAP
 #LIBGC_LD_WRAP_LDFLAGS = -Wl,--wrap -Wl,read -Wl,--wrap -Wl,dlopen -Wl,--wrap -Wl,pthread_create -Wl,--wrap -Wl,pthread_join -Wl,--wrap -Wl,pthread_detach -Wl,--wrap -Wl,pthread_sigmask -Wl,--wrap -Wl,sleep
 CXXFLAGS += -Wall -fPIC -O0 -g3 -Wall -Istrict -I. -Iinclude -fno-strict-overflow -Wno-deprecated -Wno-div-by-zero `pkg-config --cflags glib-2.0 gthread-2.0 libxml-2.0 libffi` $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include -DSTRICT_EVAL
@@ -185,3 +363,7 @@ install:
 	$(MAKE) -C Formatters install
 
 dist:
+	rm -f $(PACKAGE)-$(VERSION)
+	ln -s . $(PACKAGE)-$(VERSION)
+	tar cvf $(PACKAGE)-$(VERSION).tar $(DISTFILES)
+	rm -f $(PACKAGE)-$(VERSION)
