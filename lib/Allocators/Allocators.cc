@@ -15,7 +15,10 @@
 namespace Allocators {
 void initAllocators(void) {
 	g_thread_init(NULL);
+#ifdef _G_NEW
+	/* Solaris doesn't have that for some reason */
 	g_mem_gc_friendly = TRUE;
+#endif
 }
 /* allocate executable block, then (try to) make it read-only */
 void* ealloc(size_t size, void* source) {
