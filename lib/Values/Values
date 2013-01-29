@@ -7,11 +7,7 @@ namespace Values {
 
 /* it doesn't matter to me what exactly Node is, I'm just using struct here so it shuts up */
 
-struct Node 
-#ifdef GC_THREADS
- : public gc
-#endif
-{
+struct Node : public gc {
 	virtual ~Node(void);
 	virtual void str(FILE* destination) const;
 };

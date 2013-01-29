@@ -10,7 +10,19 @@
 #include <gc/gc_allocator.h>
 #include <gc/gc_cpp.h>
 #else
-#define GC_MALLOC_ATOMIC malloc
+void* GC_malloc_atomic(size_t sz); /* user-provided */
+#define GC_MALLOC_ATOMIC GC_malloc_atomic
+namespace ewrjhjehwtw {
+struct gc { /* user-provided */
+	virtual ~gc(void) {
+	}
+	void* operator new(size_t size);
+	void* operator new(size_t size, enum GCPlacement);
+	void* operator new(size_t size, void* p);
+	void operator delete(void*);
+};
+}
+using namespace ewrjhjehwtw;
 #endif
 namespace Allocators {
 void initAllocators(void);
