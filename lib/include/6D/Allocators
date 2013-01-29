@@ -31,9 +31,6 @@ struct gc { /* user-provided */
 namespace Allocators {
 void initAllocators(void);
 static inline char* GCx_strdup(const char* value) {
-//#ifdef USE_LD_WRAP
-//	return(strdup(value));
-//#else
 #ifdef GC_STRDUP
 	return(GC_STRDUP(value));
 #else
@@ -42,6 +39,12 @@ static inline char* GCx_strdup(const char* value) {
 	memcpy(result, value, strlen(value) + 1);
 	return(result);
 #endif
+}
+static inline char* GCx_strdupNoGC(const char* value) {  
+	char* result;
+	result = (char*) malloc(strlen(value) + 1);
+	memcpy(result, value, strlen(value) + 1);
+	return(result);
 }
 /* Executable Memory */
 void* ealloc(size_t size, void* source);

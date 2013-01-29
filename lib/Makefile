@@ -179,6 +179,7 @@ $(PACKAGE)-$(VERSION)/Builtins/Builtins \
 $(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer.cc \
 $(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer \
 $(PACKAGE)-$(VERSION)/ModuleSystem/ModuleSystem \
+$(PACKAGE)-$(VERSION)/ModuleSystem/Exports.cc \
 $(PACKAGE)-$(VERSION)/GCs/SillyGC \
 $(PACKAGE)-$(VERSION)/GCs/SillyGC.cc
 
@@ -212,6 +213,7 @@ Values/Hashtable.o \
 $(STRICT_OBJECTS) \
 $(EVAL_OBJECTS) \
 $(NUMBERS) \
+ModuleSystem/Exports.o \
 Builtins/Builtins.o
 
 SILLY_GC_OBJECTS = GCs/SillyGC.o
@@ -258,6 +260,7 @@ lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values inclu
 strict/Logic/Logic.o: strict/Logic/Logic.cc strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators include/6D/Operations include/6D/Evaluators
 ModuleSystem/Memoizer.o: ModuleSystem/Memoizer.cc ModuleSystem/Memoizer Values/Values Values/Hashtable
+ModuleSystem/Exports.o: ModuleSystem/Exports.cc include/6D/Operations include/6D/FFIs include/6D/Values
 Builtins/Builtins.o: Builtins/Builtins.cc Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
