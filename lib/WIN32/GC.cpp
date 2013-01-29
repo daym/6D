@@ -1,3 +1,4 @@
+#include <set>
 #include "6D/Allocators"
 namespace Allocators {
 static std::set<gc*> arena;
