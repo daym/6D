@@ -222,7 +222,7 @@ static NodeT symbolreferences[200];
 Values::NodeT symbolreference(int index) {
 	if(index >= 0 && index < 200) {
 		if(!symbolreferences[index])
-			symbolreferences[index] = new Symbolreference(index);
+			symbolreferences[index] = new (NoGC) Symbolreference(index); /* Note: could also just stack-allocate them */
 		return symbolreferences[index];
 	} else
 		return new Symbolreference(index);

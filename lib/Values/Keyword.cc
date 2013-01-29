@@ -24,7 +24,7 @@ NodeT keywordFromStr(const char* name) {
 	Hashtable2::const_iterator iter = keywords.find(name);
 	if(iter != keywords.end())
 		return iter->second;
-	keywords[name] = new Keyword(name);
+	keywords[name] = new (NoGC) Keyword(name);
 	return keywords[name];
 	
 }

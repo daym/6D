@@ -24,7 +24,7 @@ NodeT symbolFromStr(const char* name) {
 	Hashtable2::const_iterator iter = symbols.find(name);
 	if(iter != symbols.end())
 		return iter->second;
-	symbols[name] = new Symbol(name);
+	symbols[name] = new (NoGC) Symbol(name);
 	return symbols[name];
 }
 
