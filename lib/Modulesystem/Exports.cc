@@ -2,11 +2,14 @@
 #include "6D/Values"
 #include "6D/Allocators"
 #include "6D/Modulesystem"
+#include "6D/FFIs"
 namespace Modulesystem {
 using namespace Values;
 using namespace Allocators;
-static NodeT entry(NodeT name, void* fn) {
-	NodeT entry = pair(name, box(fn, name/*TODO replicate the entire accessor */));
+using namespace FFIs;
+static NodeT entry(NodeT name, NodeT fn) {
+	// TODO FFIFnNoGC(FFIFnCallbackT callback, NodeT aData, const char* name) G_5D_PURE; ??
+	NodeT entry = pair(name, fn); // box(fn, name/*TODO replicate the entire accessor */));
 	return(entry);
 }
 static NodeT exportsFVA(const char* fmt, char* names, va_list ap) {
@@ -15,17 +18,27 @@ static NodeT exportsFVA(const char* fmt, char* names, va_list ap) {
 		++names;
 	if(*names && *names != ',') {
 		char* x;
+		char* y;
 		NodeT name;
 		x = strchr(names, ',');
+		y = strchr(names, ' ');
+		if(y && (!x || y < x))
+			x = y;
 		if(!x)
 			x = names + strlen(names);
 		else
 			*x = 0;
+		if((x = strrchr(names, ':'))) 
+			names = x + 1;
+		if((x = strrchr(names, '_'))) 
+			names = x + 1;
+		if(names[strlen(names) - 1] == 'M')
+			names[strlen(names) - 1] = '!';
 		if(snprintf(buf, 2048, fmt, names) == -1)
 			abort();
 		name = symbolFromStr(buf); // makeStr(buf);
 		names = x;
-		void* fn = va_arg(ap, void*);
+		NodeT fn = (NodeT) va_arg(ap, void*);
 		return(cons(entry(name, fn), exportsFVA(fmt, names, ap)));
 	} else
 		return(NULL);
@@ -38,13 +51,39 @@ NodeT exportsQ(const char* names, ...) {
 	va_end(ap);
 	return(result);
 }
+static NodeT reflector(NodeT entries) {
+	NodeT entry = getConsHead(entries);
+	NodeT name = getPairFst(entry);
+	return(cons(name, reflector(getConsTail(entries))));
+}
 NodeT exportsFQ(const char* fmt, const char* names, ...) {
 	NodeT result;
+	NodeT Sexports = symbolFromStr("exports");
 	va_list ap;
 	va_start(ap, names);
 	result = exportsFVA(fmt, GCx_strdupNoGC(names), ap);
 	va_end(ap);
-	//result = makeCons(makePair(Sexports, makeCons(Sexports, makeReflector(result))), result); // exports are automatcially added by Modulesystem dispatcher
+	// TODO sort?
+	result = cons(pair(Sexports, cons(Sexports, reflector(result))), result); // exports are automatcially added by Modulesystem dispatcher
 	return(result);
 }
+Values::NodeT dispatch42(Values::NodeT key, Values::NodeT list) {
+	if(nilP(list)) {
+		/* TODO error */
+		return nil;
+	} else {
+		NodeT hd = getConsHead(list);
+		NodeT xkey = getPairFst(hd);
+		if(key == xkey)
+			return getPairSnd(hd);
+		NodeT tl = getConsTail(list);
+		return dispatch42(key, tl);
+	}
+}
+/* TODO memoize! */
+Values::NodeT dispatch1(Values::NodeT key, Values::NodeT list) {
+	return dispatch42(key, list);
+}
+DEFINE_STRICT_FN(Dispatch, dispatch1(argument, env))
+
 }

@@ -4,10 +4,11 @@
 #include "6D/Operations"
 namespace Modulesystem {
 
-Values::NodeT makeExportsQ(const char* names, ...);
-Values::NodeT makeExportsFQ(const char* fmt, const char* names, ...);
-#define exports(...) Modulesystem::makeExportsQ(""#__VA_ARGS__, __VA_ARGS__)
-#define exportsf(fmt, ...) Modulesystem::makeExportsFQ(fmt, ""#__VA_ARGS__, __VA_ARGS__)
-
+Values::NodeT exportsQ(const char* names, ...);
+Values::NodeT exportsFQ(const char* fmt, const char* names, ...);
+#define exports(...) Modulesystem::exportsQ(""#__VA_ARGS__, __VA_ARGS__)
+#define exportsf(fmt, ...) Modulesystem::exportsFQ(fmt, ""#__VA_ARGS__, __VA_ARGS__)
+DECLARE_FFI_FN(Dispatch)
+#define DEFINE_MODULE(modname, exp) Values::NodeT modname = CLOSED_FFI_FN_NO_GC(Modulesystem::Dispatch, (exp));
 };
 #endif /* ndef __6D_MODULESYSTEM_H */

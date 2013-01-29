@@ -4,6 +4,7 @@
 #include "6D/FFIs"
 #include "SpecialForms/SpecialForms"
 #include "Modulesystem/Memoizer"
+#include "6D/Modulesystem"
 namespace Builtins {
 using namespace Values;
 using namespace FFIs;
@@ -12,6 +13,7 @@ static NodeT Srem;
 static NodeT Sexports;
 static NodeT Smemoize;
 static NodeT builtin(NodeT node) {
+	//Modulesystem::exportsQ("Constanter rem memoize", SpecialForms::Constanter, SpecialForms::Identer, Modulesystem::Memoizer);
 	if(node == SConstanter)
 		return SpecialForms::Constanter;
 	else if(node == Srem)
@@ -23,7 +25,8 @@ static NodeT builtin(NodeT node) {
 	else
 		return nil; // FIXME error
 }
-DEFINE_STRICT_FN(Builtins, builtin(argument))
+// TODO Modulesystem::memoize
+//DEFINE_STRICT_FN(Builtins, dispatch(Modulesystem::exportsQ("Constanter rem memoize", SpecialForms::Constanter, SpecialForms::Identer, Modulesystem::Memoizer)))
 NodeT initBuiltins(void) {
 	SConstanter = symbolFromStr("Constanter");
 	Srem = symbolFromStr("rem");

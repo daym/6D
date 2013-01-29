@@ -14,6 +14,7 @@
 #include "Combinators/Combinators"
 #include "Numbers/Integer"
 #include "6D/FFIs"
+#include "6D/Modulesystem"
 #undef GETC
 #undef UNGETC
 #define GETC fgetc(file)
@@ -889,6 +890,11 @@ NodeT Lang5D::withDefaultEnv(NodeT body) const {
 	       body);
 }
 
+static Lang5D lang5D;
+using namespace FFIs;
+DEFINE_STRICT_MONADIC_FN(parse1, lang5D.parse1((FILE*) pointerFromNode(argument), NULL)) /* FIXME more args */
+DEFINE_STRICT_FN(withDefaultEnv, lang5D.withDefaultEnv(argument))
+DEFINE_MODULE(Lang5D, exports(parse1, withDefaultEnv))
 /* FFI:
 Lang5DWrapper non-monadic
         Values::NodeT parse1(FILE* f, const char* name) const; monadic

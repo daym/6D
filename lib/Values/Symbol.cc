@@ -6,7 +6,7 @@
 namespace Values {
 
 bool symbolP(NodeT node) {
-	return tagFromNode(node) == TAG_SYMBOL; // || tagFromNode(node) == TAG_SYMBOLREFERENCE/*ugh*/;
+	return tagOfNode(node) == TAG_SYMBOL; // || tagOfNode(node) == TAG_SYMBOLREFERENCE/*ugh*/;
 }
 struct hashstr2 {
 	unsigned long operator()(const char* str) const {

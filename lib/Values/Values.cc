@@ -188,6 +188,12 @@ void Str::str(FILE* destination) const {
 NodeT pair(NodeT a, NodeT b) {
 	return cons(a, b);
 }
+NodeT getPairFst(NodeT p) {
+	return getConsHead(p);
+}
+NodeT getPairSnd(NodeT p) {
+	return getConsTail(p);
+}
 struct CFFIFn : Box {
 	NodeT env;
 	CFFIFn(NodeT aEnv, FFIFnCallbackT aCallback) : 
@@ -208,7 +214,7 @@ NodeT FFIFnNoGC(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	return new (NoGC) CFFIFn(aEnv, callback);
 }
 bool FFIFnP(NodeT node) {
-	return tagFromNode(node) == TAG_FFI_FN;
+	return tagOfNode(node) == TAG_FFI_FN;
 }
 NodeT execFFIFn(NodeT node, NodeT argument) {
 	CFFIFn* f = (CFFIFn*) node;
@@ -216,12 +222,12 @@ NodeT execFFIFn(NodeT node, NodeT argument) {
 	return (*callback)(argument, f->env);
 }
 /* FIXME Numbers (especially Int, Float) */
-int tagFromNode(NodeT node) {
+int tagOfNode(NodeT node) {
 	return dynamic_cast<const Symbol*>(node) ? TAG_SYMBOL : 
 	       dynamic_cast<const Keyword*>(node) ? TAG_KEYWORD :
-		   dynamic_cast<const Symbolreference*>(node) ? TAG_SYMBOLREFERENCE : 
-		   dynamic_cast<const CFFIFn*>(node) ? TAG_FFI_FN : 
-		   TAG_OPAQUE;
+	       dynamic_cast<const Symbolreference*>(node) ? TAG_SYMBOLREFERENCE : 
+	       dynamic_cast<const CFFIFn*>(node) ? TAG_FFI_FN : 
+	       TAG_OPAQUE;
 }
 static NodeT symbolreferences[200];
 Values::NodeT symbolreference(int index) {

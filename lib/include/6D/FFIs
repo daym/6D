@@ -50,5 +50,30 @@ Values::NodeT internNative(NativeInt value);
 Values::NodeT internNativeU(NativeUInt value);
 Values::NodeT internNative(NativeFloat value);
 
+int intFromNode(Values::NodeT root);
+int nearestIntFromNode(Values::NodeT root);
+long longFromNode(Values::NodeT root);
+long long longLongFromNode(Values::NodeT root);
+short shortFromNode(Values::NodeT root);
+void* pointerFromNode(const Values::NodeT root);
+bool booleanFromNode(Values::NodeT root); /* evaluates! */
+char* stringFromNode(Values::NodeT root);
+char* stringOrNilFromNode(Values::NodeT root);
+size_t stringSizeFromNode(Values::NodeT root);
+float floatFromNode(Values::NodeT root);
+long double longDoubleFromNode(Values::NodeT root);
+double doubleFromNode(Values::NodeT root);
+long long sizedIntFromNode(int bitCount, Values::NodeT root);
+/* this will eventually be used to force the entire lazy cons (one level) to be evaluated. Use with care (infinite lists aren't gonna like that). */
+static inline Values::NodeT consFromNode(Values::NodeT root) {
+	return(root);
+}
+static inline Values::NodeT pairFromNode(Values::NodeT root) {
+	return(root);
+}
+static inline Values::NodeT nodeFromNode(Values::NodeT root) {
+	return root;
+}
+
 };
 #endif

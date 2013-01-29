@@ -21,7 +21,7 @@ enum {
 	TAG_FFI_FN,
 	TAG_OPAQUE,
 };
-int tagFromNode(NodeT node);
+int tagOfNode(NodeT node);
 //typedef std::map<std::string, NodeT> Hashtable;
 
 struct Call : Node {
