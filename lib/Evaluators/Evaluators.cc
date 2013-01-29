@@ -148,6 +148,9 @@ static inline NodeT remember(NodeT app, NodeT result) {
 	((Call*) app)->resultGeneration = fGeneration;
 	return(result);
 }
+void increaseGeneration(void) {
+	++fGeneration;
+}
 NodeT eval1(NodeT term) {
 	//Formatters::TExpression::print(stderr, term);
 	//fprintf(stderr, "\n");

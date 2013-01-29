@@ -6,7 +6,8 @@
 #include "Values/Values"
 #include "Scanners/Scanner"
 #include "Allocators/Allocators"
-namespace Scanners {
+#include "6D/Operations"
+namespace Parsers {
 
 class Lang5D {
 private:
@@ -29,8 +30,8 @@ protected:
 	Values::NodeT moperation(Values::NodeT operator_, Values::NodeT a, Values::NodeT b) const;
 	Values::NodeT replaceIN(Values::NodeT equation, Values::NodeT body) const;
 	Values::NodeT readHashExports(FILE* file, int& linenumber, int c) const;
-	Values::NodeT parseValue(Scanner<Lang5D>& scanner) const;
-	Values::NodeT parseListLiteral(Values::NodeT endToken, Scanner<Lang5D>& tokenizer) const;
+	Values::NodeT parseValue(Scanners::Scanner<Lang5D>& scanner) const;
+	Values::NodeT parseListLiteral(Values::NodeT endToken, Scanners::Scanner<Lang5D>& tokenizer) const;
 	Values::NodeT replaceIMPORT(Values::NodeT body, Values::NodeT source, Values::NodeT symlist) const;
 	Values::NodeT mcons(Values::NodeT hd, Values::NodeT tl) const;
 	Values::NodeT mpair(Values::NodeT hd, Values::NodeT tl) const;
@@ -100,13 +101,14 @@ public:
 	Values::NodeT readShebang(FILE* file, int& linenumber, int c) const;
 	Values::NodeT astFromRpn(const std::vector<Values::NodeT ALLOCATOR_VECTOR>& list) const;
 	int callRpnOperator(Values::NodeT operator_, std::vector<Values::NodeT ALLOCATOR_VECTOR>& /*ref*/values) const;
-	Values::NodeT parse(Scanner<Lang5D>& scanner) const;
-	Values::NodeT parse0(Scanner<Lang5D>& scanner, Values::NodeT endToken) const;
+	Values::NodeT parse(Scanners::Scanner<Lang5D>& scanner) const;
+	Values::NodeT parse0(Scanners::Scanner<Lang5D>& scanner, Values::NodeT endToken) const;
 	Values::NodeT parse1(FILE* f, const char* name) const;
-	Values::NodeT startMacro(Values::NodeT node, Scanner<Lang5D>& tokenizer) const;
+	Values::NodeT startMacro(Values::NodeT node, Scanners::Scanner<Lang5D>& tokenizer) const;
 	Values::NodeT macroStandin(Values::NodeT operator_, Values::NodeT operand) const;
 	Values::NodeT withDefaultEnv(Values::NodeT node) const;
 };
+DECLARE_FFI_FN(Lang5DWrapper)
 
 }
 #endif /* ndef __LANG5_D_H */

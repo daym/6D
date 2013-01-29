@@ -18,7 +18,7 @@
 #undef UNGETC
 #define GETC fgetc(file)
 #define UNGETC(c) ungetc(c, file)
-namespace Scanners {
+namespace Parsers {
 using namespace Values;
 using namespace FFIs;
 using namespace Allocators;
@@ -396,7 +396,7 @@ NodeT Lang5D::macroStandin(NodeT operator_, NodeT operand) const {
 static bool macroStandinP(NodeT c) {
 	return(consP(c));
 }
-NodeT Lang5D::parseListLiteral(NodeT endToken, Scanner<Lang5D>& tokenizer) const {
+NodeT Lang5D::parseListLiteral(NodeT endToken, Scanners::Scanner<Lang5D>& tokenizer) const {
 	if(tokenizer.getToken() == endToken)
 		return nil;
 	else {
@@ -409,7 +409,7 @@ NodeT Lang5D::parseListLiteral(NodeT endToken, Scanner<Lang5D>& tokenizer) const
 		return mcons(hd, tl); // it is NOT allowed to construct these directly. The annotator won't see them.
 	}
 }
-NodeT Lang5D::startMacro(NodeT node, Scanner<Lang5D>& tokenizer) const {
+NodeT Lang5D::startMacro(NodeT node, Scanners::Scanner<Lang5D>& tokenizer) const {
 	if(node == Sbackslash) {
 		return macroStandin(node, parseValue(tokenizer));
 	} else if(node == Sleftbracket) {
@@ -839,14 +839,14 @@ int Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>
 		return 1 - 2;
 	}
 }
-NodeT Lang5D::parseValue(Scanner<Lang5D>& scanner) const {
+NodeT Lang5D::parseValue(Scanners::Scanner<Lang5D>& scanner) const {
 	NodeT token = scanner.getToken();
 	if(token == Sleftparen) {
 		return parse0(scanner, Srightparen);
 	} else
 		return scanner.consume();
 }
-NodeT Lang5D::parse0(Scanner<Lang5D>& scanner, NodeT endToken) const {
+NodeT Lang5D::parse0(Scanners::Scanner<Lang5D>& scanner, NodeT endToken) const {
 	NodeT result;
 	std::vector<NodeT ALLOCATOR_VECTOR> prog;
 	prog = Scanners::parse(scanner, *this, endToken);
@@ -865,12 +865,12 @@ NodeT Lang5D::parse0(Scanner<Lang5D>& scanner, NodeT endToken) const {
 	} else
 		return error("<something>", "<nothing>");
 }
-NodeT Lang5D::parse(Scanner<Lang5D>& scanner) const {
+NodeT Lang5D::parse(Scanners::Scanner<Lang5D>& scanner) const {
 	return parse0(scanner, SEOF);
 }
 NodeT Lang5D::parse1(FILE* f, const char* name) const {
 	NodeT result;
-	Scanner<Lang5D> scanner(*this);
+	Scanners::Scanner<Lang5D> scanner(*this);
 	scanner.push(f, 1, name);
 	scanner.consume();
 	result = parse(scanner);
@@ -888,5 +888,12 @@ NodeT Lang5D::withDefaultEnv(NodeT body) const {
 	       close(Shashexports, Combinators::Identity, 
 	       body);
 }
+
+/* FFI:
+Lang5DWrapper non-monadic
+        Values::NodeT parse1(FILE* f, const char* name) const; monadic
+	withDefaultEnv non-monadic
+*/
+
 
 }

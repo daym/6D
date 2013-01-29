@@ -7,6 +7,7 @@
 #include <stack>
 #include "Values/Values"
 
+namespace Scanners {
 #define GETC fgetc(this->file)
 #define UNGETC(c) ungetc(c, this->file)
 template<typename T>
@@ -121,4 +122,5 @@ public:
 		return this->linenumber;
 	}
 };
+}
 #endif /* ndef __SCANNERS_SCANNER_H */
