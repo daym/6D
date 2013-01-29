@@ -4,8 +4,8 @@
 #include "6D/Operations"
 namespace Modulesystem {
 
-NodeT makeExportsQ(const char* names, ...);
-NodeT makeExportsFQ(const char* fmt, const char* names, ...);
+Values::NodeT makeExportsQ(const char* names, ...);
+Values::NodeT makeExportsFQ(const char* fmt, const char* names, ...);
 #define exports(...) Modulesystem::makeExportsQ(""#__VA_ARGS__, __VA_ARGS__)
 #define exportsf(fmt, ...) Modulesystem::makeExportsFQ(fmt, ""#__VA_ARGS__, __VA_ARGS__)
 

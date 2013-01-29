@@ -1,5 +1,7 @@
 #ifndef __6D_MODULE_SYSTEM_MEMOIZER_H
 #define __6D_MODULE_SYSTEM_MEMOIZER_H
+#include "6D/Operations"
+#include "6D/Values"
 namespace Modulesystem {
 /* TODO more than 1 argument */
 DECLARE_FFI_FN(Memoizer)

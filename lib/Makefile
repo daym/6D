@@ -262,7 +262,7 @@ strict/Logic/Logic.o: strict/Logic/Logic.cc strict/Logic/Logic include/6D/Values
 Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators include/6D/Operations include/6D/Evaluators
 Modulesystem/Memoizer.o: Modulesystem/Memoizer.cc Modulesystem/Memoizer Values/Values Values/Hashtable
 Modulesystem/Exports.o: Modulesystem/Exports.cc include/6D/Operations include/6D/FFIs include/6D/Values include/6D/Modulesystem
-Builtins/Builtins.o: Builtins/Builtins.cc Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins
+Builtins/Builtins.o: Builtins/Builtins.cc Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins Modulesystem/Memoizer
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
 	Tests/03_Numbers/run
