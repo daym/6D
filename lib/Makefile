@@ -180,15 +180,11 @@ $(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer \
 $(PACKAGE)-$(VERSION)/ModuleSystem/ModuleSystem
 
 BUILTINS_LIB = lib6dbuiltins.so.1
-CXXFLAGS += $(shell pkg-config --cflags glib-2.0)
-LDFLAGS += $(shell pkg-config --libs glib-2.0)
-ifdef HAVE_GTHREAD_H
 CXXFLAGS += $(shell pkg-config --cflags glib-2.0 gthread-2.0)
 LDFLAGS += $(shell pkg-config --libs glib-2.0 gthread-2.0)
-endif
 LIBGC_LD_WRAP_CFLAGS = -D_REENTRANT -DGC_THREADS -DUSE_LD_WRAP
 #LIBGC_LD_WRAP_LDFLAGS = -Wl,--wrap -Wl,read -Wl,--wrap -Wl,dlopen -Wl,--wrap -Wl,pthread_create -Wl,--wrap -Wl,pthread_join -Wl,--wrap -Wl,pthread_detach -Wl,--wrap -Wl,pthread_sigmask -Wl,--wrap -Wl,sleep
-CXXFLAGS += -Wall -fPIC -O0 -g3 -Wall -Istrict -I. -Iinclude -fno-strict-overflow -Wno-deprecated -Wno-div-by-zero $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include -DSTRICT_EVAL
+CXXFLAGS += -Wall -fPIC -O0 -g3 -Wall -Istrict -I. -Iinclude -fno-strict-overflow -Wno-deprecated $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include -DSTRICT_EVAL
 ifdef LIBGC_LD_WRAP_CFLAGS
 LDFLAGS += -lgc
 endif
