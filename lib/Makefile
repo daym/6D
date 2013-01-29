@@ -113,7 +113,6 @@ $(PACKAGE)-$(VERSION)/Combinators/Combinators \
 $(PACKAGE)-$(VERSION)/Evaluators/Evaluators.cc \
 $(PACKAGE)-$(VERSION)/Evaluators/Evaluators \
 $(PACKAGE)-$(VERSION)/Makefile \
-$(PACKAGE)-$(VERSION)/D \
 $(PACKAGE)-$(VERSION)/Numbers/BigUnsigned \
 $(PACKAGE)-$(VERSION)/Numbers/Integer.cc \
 $(PACKAGE)-$(VERSION)/Numbers/Real.cc \
