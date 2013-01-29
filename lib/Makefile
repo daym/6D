@@ -178,7 +178,9 @@ $(PACKAGE)-$(VERSION)/Builtins/Builtins.cc \
 $(PACKAGE)-$(VERSION)/Builtins/Builtins \
 $(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer.cc \
 $(PACKAGE)-$(VERSION)/ModuleSystem/Memoizer \
-$(PACKAGE)-$(VERSION)/ModuleSystem/ModuleSystem
+$(PACKAGE)-$(VERSION)/ModuleSystem/ModuleSystem \
+$(PACKAGE)-$(VERSION)/GCs/SillyGC \
+$(PACKAGE)-$(VERSION)/GCs/SillyGC.cc
 
 BUILTINS_LIB = lib6dbuiltins.so.1
 CXXFLAGS += $(shell pkg-config --cflags glib-2.0 gthread-2.0)
