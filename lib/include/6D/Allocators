@@ -12,7 +12,7 @@
 #else
 void* GC_malloc_atomic(size_t sz); /* user-provided */
 #define GC_MALLOC_ATOMIC GC_malloc_atomic
-namespace ClientGC6D {
+namespace Allocators {
 struct gc { /* user-provided */
 	virtual ~gc(void) {
 	}
