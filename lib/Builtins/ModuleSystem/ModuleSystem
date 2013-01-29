@@ -1,4 +1,0 @@
-#ifndef __6D_MODULE_SYSTEM_MODULE_SYSTEM_H
-#define __6D_MODULE_SYSTEM_MODULE_SYSTEM_H
-#include "ModuleSystem/Memoizer"
-#endif /* ndef __6D_MODULE_SYSTEM_MODULE_SYSTEM_H */
