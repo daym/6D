@@ -1,0 +1,46 @@
+#ifndef __6D_ALLOCATORS_H
+#define __6D_ALLOCATORS_H
+#include <string.h>
+#include <stdlib.h>
+#ifndef WIN32
+#include <sys/types.h>
+#endif
+#ifdef GC_THREADS
+#include <gc/gc.h>
+#include <gc/gc_allocator.h>
+#include <gc/gc_cpp.h>
+#else
+#define GC_MALLOC_ATOMIC malloc
+#endif
+namespace Allocators {
+void initAllocators(void);
+static inline char* GCx_strdup(const char* value) {
+//#ifdef USE_LD_WRAP
+//	return(strdup(value));
+//#else
+#ifdef GC_STRDUP
+	return(GC_STRDUP(value));
+#else
+	char* result;
+	result = (char*) GC_MALLOC_ATOMIC(strlen(value) + 1);
+	memcpy(result, value, strlen(value) + 1);
+	return(result);
+#endif
+}
+/* Executable Memory */
+void* ealloc(size_t size, void* source);
+void efree(void* beginning);
+
+#ifdef GC_THREADS
+#define ALLOCATOR_STACK , std::deque<NodeT, gc_allocator<Values::NodeT> > 
+#define ALLOCATOR_VECTOR , gc_allocator<Values::NodeT>
+#define ALLOCATOR_VECTOR2(t) , gc_allocator<t>
+#define GC_BASECLASS : public gc
+#else
+#define ALLOCATOR_STACK
+#define ALLOCATOR_VECTOR
+#define ALLOCATOR_VECTOR2(t) 
+#define GC_BASECLASS 
+#endif
+}
+#endif /* ndef __6D_ALLOCATORS_H */
