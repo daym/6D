@@ -10,13 +10,13 @@
 #include <gc/gc_allocator.h>
 #include <gc/gc_cpp.h>
 #else
-void* GC_malloc_atomic(size_t sz); /* user-provided */
 #define GC_MALLOC_ATOMIC Allocators::GC_malloc_atomic
 enum GCPlacement {
 	UseGC,
 	NoGC,
 };
 namespace Allocators {
+void* GC_malloc_atomic(size_t sz); /* user-provided */
 struct gc { /* user-provided */
 	virtual ~gc(void) {
 	}
