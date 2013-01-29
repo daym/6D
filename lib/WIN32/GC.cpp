@@ -2,14 +2,17 @@
 #include <set>
 #include "6D/Allocators"
 namespace Allocators {
-static std::set<gc*> arena;
+static std::set<gc*>* arena;
 void* gc::operator new(size_t size) {
 	return operator new(size, UseGC);
 }
 void* gc::operator new(size_t size, enum GCPlacement placement) {
 	void* result = malloc(size);
-	if(placement == UseGC)
-		arena.insert((gc*)result);
+	if(placement == UseGC) {
+		if(!arena)
+			arena = new std::set<gc*>;
+		arena->insert((gc*)result);
+	}
 	return(result);
 }
 void* gc::operator new(size_t size, void* p) {
@@ -18,7 +21,7 @@ void* gc::operator new(size_t size, void* p) {
 }
 void gc::operator delete(void* obj) {
 	free(obj);
-	arena.erase((gc*)obj);
+	arena->erase((gc*)obj);
 }
 void gc::operator delete(void* obj, enum GCPlacement) { // if initializer throws exception
 	operator delete(obj);
@@ -37,7 +40,8 @@ void* GC_malloc_atomic(size_t size) {
 	return result->native;
 }
 void zap(void) {
-	for(std::set<gc*>::const_iterator iter = arena.begin(); iter != arena.end(); ++iter) {
+	if(arena)
+	for(std::set<gc*>::const_iterator iter = arena->begin(); iter != arena->end(); ++iter) {
 		gc* p = *iter;
 		delete p;
 	}
