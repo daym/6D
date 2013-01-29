@@ -202,6 +202,11 @@ NodeT FFIFn(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	// TODO not necessarily new
 	return new CFFIFn(aEnv, callback);
 }
+NodeT FFIFnNoGC(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
+	/* TODO put name => this into some reflection hideout */
+	// TODO not necessarily new
+	return new (NoGC) CFFIFn(aEnv, callback);
+}
 bool FFIFnP(NodeT node) {
 	return tagFromNode(node) == TAG_FFI_FN;
 }

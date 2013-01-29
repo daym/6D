@@ -90,6 +90,7 @@ Values::NodeT symbolreference(int index) G_5D_PURE;
 
 typedef NodeT (*FFIFnCallbackT)(NodeT, NodeT data);
 NodeT FFIFn(FFIFnCallbackT callback, NodeT aData, const char* name) G_5D_PURE;
+NodeT FFIFnNoGC(FFIFnCallbackT callback, NodeT aData, const char* name) G_5D_PURE;
 bool FFIFnP(NodeT node) G_5D_PURE;
 NodeT execFFIFn(NodeT node, NodeT argument) /*impure*/;
 bool FFIFnWithCallbackP(NodeT n, FFIFnCallbackT callback) G_5D_PURE; /* used "internally" only */

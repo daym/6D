@@ -5,7 +5,7 @@
 #define DECLARE_ENV_SPECIAL_FORM(name) Values::NodeT name##_exec(Values::NodeT uargument, Values::NodeT env);
 #define DECLARE_FFI_FN(name) extern Values::NodeT name; Values::NodeT name##_exec(Values::NodeT uargument, Values::NodeT env);
 #define DECLARE_SPECIAL_FORM(name) DECLARE_FFI_FN(name) DECLARE_ENV_SPECIAL_FORM(name)
-#define DEFINE_FFI_FN(name) Values::NodeT name = Values::FFIFn(name##_exec, nil, ""#name);
+#define DEFINE_FFI_FN(name) Values::NodeT name = Values::FFIFnNoGC(name##_exec, nil, ""#name);
 #define CLOSED_FFI_FN(name, argument) Values::FFIFn(name##_exec, argument, ""#name)
 #ifdef STRICT_EVAL
 /* if the evaluator is already strict then we don't need to evaluate it ourselves again. */
