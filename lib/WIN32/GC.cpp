@@ -23,7 +23,19 @@ void gc::operator delete(void* obj) {
 void gc::operator delete(void* obj, enum GCPlacement) { // if initializer throws exception
 	operator delete(obj);
 }
-
+struct BigBlock : gc {
+	void* native;
+	BigBlock(size_t size) {
+		native = malloc(size);
+	}
+	virtual ~BigBlock(void) {
+		free(native);
+	}
+};
+void* GC_malloc_atomic(size_t size) {
+	BigBlock* result = new (useGC) BigBlock(size);
+	return result->native;
+}
 void zap(void) {
 	for(std::set<gc*>::const_iterator iter = arena.begin(); iter != arena.end(); ++iter) {
 		gc* p = *iter;
