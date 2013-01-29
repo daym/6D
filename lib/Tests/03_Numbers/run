@@ -1,11 +1,12 @@
 #!/bin/bash
 
 set -e
-cd Tests/01_ShuntingYard
+cd Tests/03_Numbers
 for s in *.5D
 do
+	echo "= $s"
 	er="${s%.5D}.expectedResult"
 	gr="${s%.5D}.gotResult" 
-	./testShuntingYard "${s}" >"${gr}" || (echo "failed: $s">&2 ; false)
+	./testEvaluator "${s}" >"${gr}" || (echo "failed: $s">&2 ; false)
 	diff -ur "${gr}" "${er}"
 done
