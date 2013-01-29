@@ -26,7 +26,6 @@ struct gc { /* user-provided */
 	void operator delete(void*);
 };
 }
-using namespace ewrjhjehwtw;
 #endif
 namespace Allocators {
 void initAllocators(void);
