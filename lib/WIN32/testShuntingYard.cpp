@@ -2,10 +2,9 @@
 //
 
 #include "stdafx.h"
-#include "Scanners/ShuntingYardParser"
+#include "Parsers/ShuntingYardParser"
 #include "Scanners/Scanner"
-#include "Scanners/Lang5D"
-#include "Scanners/LangForth"
+#include "Parsers/Lang5D"
 #include "Formatters/TExpression"
 #include "Formatters/Math"
 int _tmain(int argc, _TCHAR* argv[]) {
