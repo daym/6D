@@ -216,6 +216,7 @@ $(STRICT_OBJECTS) \
 $(EVAL_OBJECTS) \
 $(NUMBERS) \
 Modulesystem/Exports.o \
+Modulesystem/Memoizer.o \
 Builtins/Builtins.o
 
 SILLY_GC_OBJECTS = GCs/SillyGC.o
