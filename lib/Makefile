@@ -213,6 +213,8 @@ $(STRICT_OBJECTS) \
 $(EVAL_OBJECTS) \
 $(NUMBERS) \
 Builtins/Builtins.o
+
+SILLY_GC_OBJECTS = GCs/SillyGC.o
 LIB = lib6dbuiltins.so.1
 STATIC_LIB = lib6dbuiltins1.a  
 
@@ -225,11 +227,11 @@ $(LIB): $(OBJECTS)
 	$(CXX) -shared -o $(LIB) $(OBJECTS) $(LDFLAGS)
 $(STATIC_LIB): $(OBJECTS)
 	$(AR) rcs $(STATIC_LIB) $(OBJECTS)
-Tests/01_ShuntingYard/testShuntingYard: Tests/01_ShuntingYard/main.o $(OBJECTS)
+Tests/01_ShuntingYard/testShuntingYard: Tests/01_ShuntingYard/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
-Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS)
+Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
-Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS)
+Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
 Formatters/Math.o: Formatters/Math.cc Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
 Formatters/SExpression.o: Formatters/SExpression.cc Formatters/SExpression Values/Values include/6D/Values 
