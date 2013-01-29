@@ -33,7 +33,7 @@ struct BigBlock : gc {
 	}
 };
 void* GC_malloc_atomic(size_t size) {
-	BigBlock* result = new (useGC) BigBlock(size);
+	BigBlock* result = new (UseGC) BigBlock(size);
 	return result->native;
 }
 void zap(void) {
