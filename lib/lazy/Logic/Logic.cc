@@ -3,9 +3,9 @@
 #include "6D/Evaluators"
 #include "Logic/Logic"
 
-namespace Logic {
-using namespace Values;
-using namespace Evaluators;
+BEGIN_NAMESPACE_6D(Logic)
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(Evaluators)
 NodeT trueN;
 NodeT falseN;
 NodeT Disjunction;
@@ -26,10 +26,10 @@ void initLogic(void) {
 	Negation = annotate(fn(a, wrapL(call2(a, f, t)))); // \a \t \f a f t
 }
 
-}
-namespace FFIs {
-using namespace Logic;
+END_NAMESPACE_6D(Logic)
+BEGIN_NAMESPACE_6D(FFIs)
+USE_NAMESPACE_6D(Logic)
 NodeT internNative(bool value) {
         return value ? t : f;   
 }
-}
+END_NAMESPACE_6D(FFIs)

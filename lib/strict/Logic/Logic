@@ -3,7 +3,7 @@
 #include "6D/Values"
 #include "6D/Operations"
 
-namespace Logic {
+BEGIN_NAMESPACE_6D(Logic)
 extern Values::NodeT trueN;
 extern Values::NodeT falseN;
 extern Values::NodeT Disjunction;
@@ -11,5 +11,5 @@ extern Values::NodeT Conjunction;
 extern Values::NodeT Negation;
 bool booleanFromNode(Values::NodeT n) G_5D_PURE;
 void initLogic(void);
-}
+END_NAMESPACE_6D(Logic)
 #endif /* ndef __6D_LAZY_LOGIC_H */

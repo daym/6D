@@ -5,11 +5,11 @@
 #include "SpecialForms/SpecialForms"
 #include "Combinators/Combinators"
 
-namespace Logic {
-using namespace Values;
-using namespace SpecialForms;
-using namespace Combinators;
-using namespace FFIs;
+BEGIN_NAMESPACE_6D(Logic)
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(SpecialForms)
+USE_NAMESPACE_6D(Combinators)
+USE_NAMESPACE_6D(FFIs)
 NodeT trueN;
 NodeT falseN;
 static NodeT t;
@@ -31,13 +31,13 @@ void initLogic(void) {
 	falseN = wrapL(f);
 }
 
-}
-namespace FFIs {
-using namespace Logic;
+END_NAMESPACE_6D(Logic)
+BEGIN_NAMESPACE_6D(FFIs)
+USE_NAMESPACE_6D(Logic)
 NodeT internNative(bool value) {
 	return value ? t : f;
 }
 bool booleanFromNode(Values::NodeT n) {
 	return(n != f);
 }
-}
+END_NAMESPACE_6D(FFIs)

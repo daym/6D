@@ -16,7 +16,7 @@
 #endif
 #define DEFINE_STRICT_FN(name, body) \
 	Values::NodeT name##_exec(Values::NodeT uargument, Values::NodeT env) { \
-		using namespace Values; \
+		USE_NAMESPACE_6D(Values) \
 		Values::NodeT argument = PREPARE(uargument); \
 		return internNative(body); \
 	} \

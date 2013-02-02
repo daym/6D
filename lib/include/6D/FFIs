@@ -2,7 +2,7 @@
 #define __5D_FFI
 #include "6D/Values"
 
-namespace FFIs {
+BEGIN_NAMESPACE_6D(FFIs)
 /* conversions */
 static inline Values::NodeT internNative(Values::NodeT value) {
 	return value;
@@ -75,5 +75,5 @@ static inline Values::NodeT nodeFromNode(Values::NodeT root) {
 	return root;
 }
 
-};
+END_NAMESPACE_6D(FFIs)
 #endif

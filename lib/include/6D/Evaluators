@@ -2,12 +2,12 @@
 #define __6D_EVALUATORS_H
 #include "6D/Values"
 
-namespace Evaluators {
+BEGIN_NAMESPACE_6D(Evaluators)
 void initEvaluator(void);
 Values::NodeT annotate(Values::NodeT environment, Values::NodeT node);
 Values::NodeT eval(Values::NodeT node);
 Values::NodeT execute(Values::NodeT term);
 void increaseGeneration(void);
-}
+END_NAMESPACE_6D(Evaluators)
 
 #endif /* ndef __6D_EVALUATORS_H */

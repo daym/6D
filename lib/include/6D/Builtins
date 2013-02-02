@@ -2,8 +2,8 @@
 #define __6D_BUILTINS_H
 #include "6D/Values"
 #include "6D/Operations"
-namespace Builtins {
+BEGIN_NAMESPACE_6D(Builtins)
 DECLARE_FFI_FN(Builtins)
 Values::NodeT initBuiltins(void);
-}
+END_NAMESPACE_6D(Builtins)
 #endif /* ndef __6D_BUILTINS_H */

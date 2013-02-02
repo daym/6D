@@ -18,7 +18,7 @@
 #else
 #define G_5D_PURE
 #endif
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 
 /* this is used as the "result" of the parser (one of it is the result) */
 typedef const struct Node* NodeT;
@@ -123,5 +123,5 @@ NodeT parseError(NodeT aExpectedInput, NodeT aGotInput) G_5D_PURE;
 NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) G_5D_PURE;
 bool errorP(NodeT n) G_5D_PURE;
 
-}
+END_NAMESPACE_6D(Values)
 #endif /* ndef __6D_VALUES_H */

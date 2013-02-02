@@ -16,7 +16,7 @@ enum GCPlacement {
 	UseGC,
 	NoGC,
 };
-namespace Allocators {
+BEGIN_NAMESPACE_6D(Allocators)
 void* GC_malloc_atomic(size_t sz); /* user-provided */
 struct gc { /* user-provided */
 	virtual ~gc(void) {
@@ -27,9 +27,9 @@ struct gc { /* user-provided */
 	void operator delete(void*);
 	void operator delete(void*, enum GCPlacement);
 };
-}
+END_NAMESPACE_6D(Allocators)
 #endif
-namespace Allocators {
+BEGIN_NAMESPACE_6D(Allocators)
 void initAllocators(void);
 static inline char* GCx_strdup(const char* value) {
 #ifdef GC_STRDUP
@@ -62,5 +62,5 @@ void efree(void* beginning);
 #define ALLOCATOR_VECTOR2(t) 
 #define GC_BASECLASS : public Allocators::gc
 #endif
-}
+END_NAMESPACE_6D(Allocators)
 #endif /* ndef __6D_ALLOCATORS_H */

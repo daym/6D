@@ -4,8 +4,8 @@
 #include "6D/Values"
 #include "6D/Evaluators"
 #include "6D/Builtins"
+USE_NAMESPACE_6D(Values)
 int main(int argc, char* argv[]) {
-	using namespace Values;
 	Allocators::initAllocators();
 	Parsers::Lang5D lang5D;
 	Evaluators::initEvaluator();
