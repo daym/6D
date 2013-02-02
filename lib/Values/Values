@@ -55,10 +55,11 @@ static inline int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundName
 	else
 		return(indexOfSymbol(needle, startingIndex + 1, getConsTail(boundNames)));
 }
-NodeT setCallResult(NodeT call, NodeT result);
-static inline void* getCXXInstance(NodeT n) G_5D_PURE {
+void setCallResult(NodeT call, NodeT result);
+static inline const void* getCXXInstance(NodeT n) {
 	return n;
 }
-
+void increaseGeneration(void);
+int getGeneration(void) G_5D_PURE;
 }
 #endif /* ndef __VALUES_H */

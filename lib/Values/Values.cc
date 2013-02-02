@@ -264,9 +264,16 @@ int getSymbolreferenceIndex(Values::NodeT n) {
 bool FFIFnWithCallbackP(NodeT n, FFIFnCallbackT callback) { /* used "internally" only */
 	return ((const Box*) getCXXInstance(n))->nativePointer == callback;
 }
+static int fGeneration = 0;
 void setCallResult(NodeT call, NodeT result) {
 	Call* app = (Call*) getCXXInstance(call);
 	app->result = result;
 	app->resultGeneration = fGeneration;
+}
+void increaseGeneration(void) {
+	++fGeneration;
+}
+int getGeneration(void) {
+	return fGeneration;
 }
 };
