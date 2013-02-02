@@ -86,7 +86,7 @@ static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashta
 			boundNamesSet.removeByKey(parameterSymbolNode);
 		} else // already bound to something else: make sure not to get rid of it.
 			result = annotateImpl(dynEnv, cons(parameterSymbolNode, boundNames), boundNamesSet, body);
-		return (result == body) ? root : errorP(result) ? result : fn(parameterNode, result);
+		return REUSE_6D((result == body) ? root : )errorP(result) ? result : fn(parameterNode, result);
 	} else if(callP(root)) {
 		NodeT operator_ = getCallCallable(root);
 		NodeT operand = getCallArgument(root);
@@ -95,7 +95,7 @@ static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashta
 		}*/
 		NodeT newOperatorNode = annotateImpl(dynEnv, boundNames, boundNamesSet, operator_);
 		NodeT newOperandNode = SpecialForms::quoteP(newOperatorNode) ? operand : annotateImpl(dynEnv, boundNames, boundNamesSet, operand);
-		return (operator_ == newOperatorNode && operand == newOperandNode) ? root : errorP(newOperatorNode) ? newOperatorNode : errorP(newOperandNode) ? newOperandNode : call(newOperatorNode, newOperandNode);
+		return REUSE_6D((operator_ == newOperatorNode && operand == newOperandNode) ? root : )errorP(newOperatorNode) ? newOperatorNode : errorP(newOperandNode) ? newOperandNode : call(newOperatorNode, newOperandNode);
 	} else if(symbolP(root)) {
 		int i = indexOfSymbol(root, 0, boundNames);
 		if(i != -1) { /* found */
@@ -116,7 +116,7 @@ NodeT annotate(NodeT dynEnv, NodeT root) {
 	return(annotateImpl(dynEnv, nil, boundNamesSet, root));
 }
 static inline NodeT ensureCall(NodeT term, NodeT fn, NodeT argument) {
-	return (getCallCallable(term) == fn && getCallArgument(term) == argument) ? term : call(fn, argument);
+	return REUSE_6D((getCallCallable(term) == fn && getCallArgument(term) == argument) ? term : )call(fn, argument);
 }
 static NodeT shift(NodeT argument, int index, NodeT term) {
 	int x_index = getSymbolreferenceIndex(term);
@@ -132,12 +132,12 @@ static NodeT shift(NodeT argument, int index, NodeT term) {
 		NodeT x_argument = getCallArgument(term);
 		NodeT new_fn = shift(argument, index, x_fn);
 		NodeT new_argument = shift(argument, index, x_argument);
-		return (new_fn == x_fn && new_argument == x_argument) ? term : call(new_fn, new_argument);
+		return REUSE_6D((new_fn == x_fn && new_argument == x_argument) ? term :) call(new_fn, new_argument);
 	} else if(fnP(term)) {
 		NodeT body = getFnBody(term);
 		NodeT parameter = getFnParameter(term);
 		NodeT new_body = shift(argument, index + 1, body);
-		return (body == new_body) ? term : fn(parameter, new_body);
+		return REUSE_6D((body == new_body) ? term :) fn(parameter, new_body);
 	} else 
 		return(term);
 }
