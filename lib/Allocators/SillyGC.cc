@@ -2,6 +2,7 @@
 #include <set>
 #include "6D/Allocators"
 #include "6D/Values"
+#ifndef GC_THREADS
 BEGIN_NAMESPACE_6D(Allocators)
 static std::set<gc*>* arena;
 void* gc::operator new(size_t size) {
@@ -50,3 +51,4 @@ void zap(void) {
 	}
 }
 END_NAMESPACE_6D(Allocators)
+#endif
