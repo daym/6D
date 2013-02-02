@@ -108,8 +108,6 @@ static inline NodeT getDynEnvEntry(NodeT sym) {
 }
 DEFINE_STRICT_FN(DynEnv, getDynEnvEntry(argument))
 
-/* TODO just use a function */
-static std::map<NodeT, int> levels;
 static bool mathUnicodeOperatorInRangeP(int codepoint) {
 	return (codepoint >= 0x2200 && codepoint < 0x2300) ||
 	       (codepoint >= 0x27C0 && codepoint < 0x27F0) || 
@@ -274,77 +272,83 @@ Lang5D::Lang5D(void) {
 		Sdot = symbolFromStr(".");
 		Shasht = symbolFromStr("#t");
 		Shashf = symbolFromStr("#f");
-		levels[symbolFromStr("(")] = -1,
-		levels[symbolFromStr("{")] = -1, // pseudo-operators
-		levels[symbolFromStr("[")] = -1,
-		levels[symbolFromStr("<indent>")] = -1,
-		levels[SLF] = 41,
-		levels[symbolFromStr("#exports")] = 40,
-		levels[symbolFromStr(".")] = 33,
-		levels[symbolFromStr("_")] = 32,
-		levels[symbolFromStr("^")] = 32,
-		levels[symbolFromStr("!")] = 31,
-		levels[symbolFromStr("**")] = 30,
-		levels[symbolFromStr("*")] = 29,
-		levels[symbolFromStr("⋅")] = 29,
-		levels[symbolFromStr("/")] = 29,
-		levels[symbolFromStr("⨯")] = 28,
-		levels[symbolFromStr(":")] = 27,
-		levels[symbolFromStr("'")] = 26,
-		levels[symbolFromStr("if")] = 25,
-		levels[symbolFromStr(" ")] = 24,
-		levels[symbolFromStr("++")] = 23,
-		levels[symbolFromStr("+")] = 22,
-		levels[symbolFromStr("‒")] = 22,
-		levels[symbolFromStr("-")] = 22,
-		levels[symbolFromStr("%")] = 21,
-		levels[symbolFromStr("∪")] = 17,
-		levels[symbolFromStr("∩")] = 16,
-		levels[symbolFromStr("∈")] = 16,
-		levels[symbolFromStr("⊂")] = 16,
-		levels[symbolFromStr("⊃")] = 16,
-		levels[symbolFromStr("⊆")] = 16,
-		levels[symbolFromStr("⊇")] = 16,
-		levels[symbolFromStr("=")] = 14,
-		levels[symbolFromStr("≟")] = 14,
-		levels[symbolFromStr("/=")] = 14,
-		levels[symbolFromStr("<")] = 13,
-		levels[symbolFromStr("<=")] = 13,
-		levels[symbolFromStr(">")] = 13,
-		levels[symbolFromStr(">=")] = 13,
-		levels[symbolFromStr("≤")] = 13,
-		levels[symbolFromStr("≥")] = 13,
-		levels[symbolFromStr("&&")] = 12,
-		levels[symbolFromStr("∧")] = 12,
-		levels[symbolFromStr("||")] = 11,
-		levels[symbolFromStr("∨")] = 11,
-		levels[symbolFromStr(",")] = 10,
-		levels[symbolFromStr("$")] = 9,
-		levels[symbolFromStr("elif")] = 8,
-		levels[symbolFromStr("else")] = 8,
-		levels[symbolFromStr("|")] = 6,
-		levels[symbolFromStr("=>")] = 5,
-		levels[symbolFromStr(";")] = 5,
-		levels[symbolFromStr("?;")] = 5,
-		levels[symbolFromStr("\\")] = 4,
-		levels[symbolFromStr(":=")] = 3,
-		levels[symbolFromStr("import")] = 2,
-		levels[symbolFromStr("from")] = 3,
-		levels[symbolFromStr("let")] = 1,
-		levels[symbolFromStr("in")] = 1,
-		levels[symbolFromStr("let!")] = 0,
-		levels[symbolFromStr(")")] = -1,
-		levels[symbolFromStr("}")] = -1,
-		levels[symbolFromStr("]")] = -1,
-		levels[symbolFromStr("<dedent>")] = -1;
+		assert(operatorP(symbolFromStr("+")));
+		printf("%p\n", symbolFromStr("+"));
 		defaultDynEnv = DynEnv;
 	}
 }
 NodeT Lang5D::error(std::string expectedPart, std::string gotPart) const {
 	return merror(expectedPart, gotPart);
 }
+#define NO_OPERATOR (-2)
+static int level(NodeT n) {
+	return n == symbolFromStr("(") ? -1 :
+	       n == symbolFromStr("{") ? -1 :  // pseudo-operators
+	       n == symbolFromStr("[") ? -1 : 
+	       n == symbolFromStr("<indent>") ? -1 : 
+	       n == symbolFromStr("<LF>") ? 41 : 
+	       n == symbolFromStr("#exports") ? 40 : 
+	       n == symbolFromStr(".") ? 33 : 
+	       n == symbolFromStr("_") ? 32 : 
+	       n == symbolFromStr("^") ? 32 : 
+	       n == symbolFromStr("!") ? 31 : 
+	       n == symbolFromStr("**") ? 30 : 
+	       n == symbolFromStr("*") ? 29 : 
+	       n == symbolFromStr("⋅") ? 29 : 
+	       n == symbolFromStr("/") ? 29 : 
+	       n == symbolFromStr("⨯") ? 28 : 
+	       n == symbolFromStr(":") ? 27 : 
+	       n == symbolFromStr("'") ? 26 : 
+	       n == symbolFromStr("if") ? 25 : 
+	       n == symbolFromStr(" ") ? 24 : 
+	       n == symbolFromStr("++") ? 23 : 
+	       n == symbolFromStr("+") ? 22 : 
+	       n == symbolFromStr("‒") ? 22 : 
+	       n == symbolFromStr("-") ? 22 : 
+	       n == symbolFromStr("%") ? 21 : 
+	       n == symbolFromStr("∪") ? 17 : 
+	       n == symbolFromStr("∩") ? 16 : 
+	       n == symbolFromStr("∈") ? 16 : 
+	       n == symbolFromStr("⊂") ? 16 : 
+	       n == symbolFromStr("⊃") ? 16 : 
+	       n == symbolFromStr("⊆") ? 16 : 
+	       n == symbolFromStr("⊇") ? 16 : 
+	       n == symbolFromStr("=") ? 14 : 
+	       n == symbolFromStr("≟") ? 14 : 
+	       n == symbolFromStr("/=") ? 14 : 
+	       n == symbolFromStr("<") ? 13 : 
+	       n == symbolFromStr("<=") ? 13 : 
+	       n == symbolFromStr(">") ? 13 : 
+	       n == symbolFromStr(">=") ? 13 : 
+	       n == symbolFromStr("≤") ? 13 : 
+	       n == symbolFromStr("≥") ? 13 : 
+	       n == symbolFromStr("&&") ? 12 : 
+	       n == symbolFromStr("∧") ? 12 : 
+	       n == symbolFromStr("||") ? 11 : 
+	       n == symbolFromStr("∨") ? 11 : 
+	       n == symbolFromStr(",") ? 10 : 
+	       n == symbolFromStr("$") ? 9 : 
+	       n == symbolFromStr("elif") ? 8 : 
+	       n == symbolFromStr("else") ? 8 : 
+	       n == symbolFromStr("|") ? 6 : 
+	       n == symbolFromStr("=>") ? 5 : 
+	       n == symbolFromStr(";") ? 5 : 
+	       n == symbolFromStr("?;") ? 5 : 
+	       n == symbolFromStr("\\") ? 4 : 
+	       n == symbolFromStr(":=") ? 3 : 
+	       n == symbolFromStr("import") ? 2 : 
+	       n == symbolFromStr("from") ? 3 : 
+	       n == symbolFromStr("let") ? 1 : 
+	       n == symbolFromStr("in") ? 1 : 
+	       n == symbolFromStr("let!") ? 0 : 
+	       n == symbolFromStr(")") ? -1 : 
+	       n == symbolFromStr("}") ? -1 : 
+	       n == symbolFromStr("]") ? -1 : 
+	       n == symbolFromStr("<dedent>") ? -1 :
+	       NO_OPERATOR;
+}
 bool Lang5D::operatorP(NodeT node) const {
-	return levels.find(node) != levels.end();
+	return level(node) != NO_OPERATOR;
 }
 int Lang5D::operatorArgcount(NodeT node) const {
 	int R = -2;
@@ -431,7 +435,7 @@ bool Lang5D::operatorLE(NodeT a, NodeT b) const {
 	if(a == b) { /* speed optimization */
 		return operatorArgcount(b) > 1;
 	} else {
-		return levels[a] < levels[b] || (levels[a] == levels[b] && operatorArgcount(b) > 1); // latter: leave right-associative operators on stack if in doubt.
+		return level(a) < level(b) || (level(a) == level(b) && operatorArgcount(b) > 1); // latter: leave right-associative operators on stack if in doubt.
 	}
 }
 NodeT Lang5D::collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const {
