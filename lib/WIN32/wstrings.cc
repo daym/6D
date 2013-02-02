@@ -59,3 +59,11 @@ std::wstring GetWIN32Diagnostics(void) {
 	return(result);
 }
 */
+/* TODO nicer way would be: 
+std::wstring_convert::from_bytes (codecvt)
+std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
+std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> utf32conv;
+std::u32string utf32 = utf32conv.from_bytes(utf8); (!!!!)
+<locale>
+
+*/
