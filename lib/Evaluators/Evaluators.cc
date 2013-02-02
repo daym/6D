@@ -21,13 +21,6 @@
 namespace Evaluators {
 using namespace Values;
 
-/* BEGIN Binary Operations (see Operation) */
-
-bool builtinCallP(Values::NodeT node);
-Values::NodeT callBuiltin(Values::NodeT fn, Values::NodeT argument);
-
-/* END Binary Operations */
-
 void initEvaluator(void) {
 	Combinators::initCombinators();
 	Logic::initLogic();
@@ -63,14 +56,8 @@ int getFreeVariables(Hashtable& freeNames, NodeT root) {
 	getFreeVariablesImpl(boundNames, 0, freeNames, freeNamesCount, root);
 	return freeNamesCount;
 }
-static inline NodeT error(NodeT context, const char* expectedText, const char* gotText) {
-	std::stringstream sst;
-	sst << "error: expected \"" << expectedText << "\" but got \"" << gotText << "\"";
-	return cons(cons(symbolFromStr("error"), strCXX(sst.str())), nil);
-}
-static inline bool errorP(NodeT term) {
-	// FIXME
-	return false;
+static inline NodeT error(const char* expectedText, const char* gotText, NodeT context) {
+	return evalError(strCXX(expectedText), strCXX(gotText), context);
 }
 static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashtable& boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.
@@ -106,7 +93,6 @@ static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashta
 			// can be error.
 			NodeT v = annotate(nil, call(dynEnv, SpecialForms::quote(root)));
 			return eval(v); // make very VERY sure that that is not annotated again.
-			//return error(root, "<bound-identifier>", getSymbol1Name(root));
 		}
 	} // else other stuff.
 	return(root);
@@ -156,7 +142,7 @@ NodeT eval1(NodeT term) {
 	//fprintf(stderr, "\n");
 	//fflush(stderr);
 	if(!callP(term))
-		return term; //return error(term, "<call>", "<noncall>"); // term;
+		return term;
 	Call* call = (Call*)(term);
 	if(call->resultGeneration == fGeneration)
 		return call->result;
@@ -183,7 +169,7 @@ NodeT eval1(NodeT term) {
 	} else { // TODO builtins
 		if(errorP(x_fn))
 			return x_fn;
-		return error(x_fn, "<function>", "<junk>");
+		return error("<callable>", "<junk>", x_fn);
 	}
 }
 
@@ -192,7 +178,7 @@ Values::NodeT eval(Values::NodeT node) {
 	try {
 		return(eval1(node));
 	} catch(std::exception& exception) {
-		return(error(node, "<valid-expr>", exception.what()));
+		return(error("<valid-expr>", exception.what(), node));
 	}
 }
 

@@ -68,8 +68,7 @@ NodeT Lang5D::Shashf;
 using namespace SpecialForms;
 //NodeT Lang5D::Sdot;
 static inline NodeT merror(const std::string& expectedPart, const std::string& gotPart) {
-	// FIXME nicer
-	return cons(symbolFromStr("<error>"), cons(strCXX(expectedPart), cons(strCXX(gotPart), nil)));
+	return parseError(strCXX(expectedPart), strCXX(gotPart));
 }
 static inline std::string nvl(const char* a, const char* b) {
 	return a ? a : b;
@@ -343,9 +342,6 @@ Lang5D::Lang5D(void) {
 }
 NodeT Lang5D::error(std::string expectedPart, std::string gotPart) const {
 	return merror(expectedPart, gotPart);
-}
-bool Lang5D::errorP(NodeT node) const {
-	return consP(node) && getConsHead(node) == Serror;
 }
 bool Lang5D::operatorP(NodeT node) const {
 	return levels.find(node) != levels.end();

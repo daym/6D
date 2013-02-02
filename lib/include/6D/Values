@@ -102,5 +102,11 @@ bool ratioP(NodeT n) G_5D_PURE;
 Values::NodeT getRatioA(Values::NodeT n) G_5D_PURE;
 Values::NodeT getRatioB(Values::NodeT n) G_5D_PURE;
 
+/* errors */
+
+NodeT parseError(NodeT aExpectedInput, NodeT aGotInput) G_5D_PURE;
+NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) G_5D_PURE;
+bool errorP(NodeT n) G_5D_PURE;
+
 }
 #endif /* ndef __6D_VALUES_H */

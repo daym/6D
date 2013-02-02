@@ -209,6 +209,7 @@ Parsers/ShuntingYardParser.o \
 Values/Values.o \
 Values/Keyword.o \
 Values/Symbol.o \
+Values/Error.o \
 Allocators/Allocators.o \
 Values/wstrings.o \
 Values/Hashtable.o \
@@ -247,6 +248,7 @@ Parsers/ShuntingYardParser.o: Parsers/ShuntingYardParser.cc Parsers/ShuntingYard
 Values/Values.o: Values/Values.cc Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values
 Values/Keyword.o: Values/Keyword.cc Values/Keyword Values/Hashtable
 Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
+Values/Error.o: Values/Error.cc Values/Error Values/Values include/6D/Values
 Allocators/Allocators.o: Allocators/Allocators.cc Allocators/Allocators include/6D/Allocators
 Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Values include/6D/Allocators
 Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins

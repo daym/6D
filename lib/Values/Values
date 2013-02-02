@@ -20,6 +20,7 @@ enum {
 	/* convenience */
 	TAG_KEYWORD,
 	TAG_SYMBOL,
+	TAG_ERROR,
 	TAG_OPAQUE,
 };
 int tagOfNode(NodeT node);

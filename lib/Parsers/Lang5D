@@ -87,7 +87,7 @@ public:
 	Values::NodeT readToken(FILE* f, int& linenumber) const;
 	Values::NodeT error(std::string expectedPart, std::string gotPart) const;
 	Values::NodeT error(Values::NodeT expectedPart, Values::NodeT gotPart) const;
-	bool errorP(Values::NodeT node) const;
+	bool errorP(Values::NodeT n) const { return Values::errorP(n); }
 	bool openingParenP(Values::NodeT node) const;
 	bool operatorP(Values::NodeT node) const;
 	int operatorArgcount(Values::NodeT node) const;

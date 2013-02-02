@@ -1,0 +1,23 @@
+#ifndef __6D_VALUES_ERROR_H
+#define __6D_VALUES_ERROR_H
+#include "6D/Values"
+#include "Values/Values"
+namespace Values {
+	struct Error : public Node {
+	};
+	struct ParseError : public Error {
+		NodeT expectedInput;
+		NodeT gotInput;
+		ParseError(NodeT aExpectedInput, NodeT aGotInput) : expectedInput(aExpectedInput), gotInput(aGotInput) {}
+	};
+	struct EvalError : public Error {
+		NodeT expectedInput;
+		NodeT gotInput;
+		NodeT context;
+		EvalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) : expectedInput(aExpectedInput), gotInput(aGotInput), context(aContext) {}
+	};
+	NodeT parseError(NodeT aExpectedInput, NodeT aGotInput) G_5D_PURE;
+	bool errorP(NodeT n) G_5D_PURE;
+	NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) G_5D_PURE;
+}
+#endif /* ndef __6D_VALUES_ERROR_H */

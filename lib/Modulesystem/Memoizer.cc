@@ -13,7 +13,8 @@ static NodeT memoized(NodeT env, NodeT key) {
 	NodeT fn = getPairSnd(env);
 	NodeT result = getHashtableEntryByKey(hashtable, key, dummy);
 	if(result == dummy) {
-		result = Evaluators::eval(fn, key);
+		result = Evaluators::eval(call(fn, key)); /* XXX is this closed over all variables? */
+		/* check for error? makes no difference, just cache the error, too. */
 		setHashtableEntry(hashtable, key, result);
 	}
 	return result;
