@@ -15,10 +15,11 @@ struct Node GC_BASECLASS {
 
 /* semi-private */
 enum {
-	TAG_SYMBOLREFERENCE,
+	TAG_SYMBOLREFERENCE /* very VERY often used */,
+	TAG_FFI_FN /* quite important */,
+	/* convenience */
 	TAG_KEYWORD,
 	TAG_SYMBOL,
-	TAG_FFI_FN,
 	TAG_OPAQUE,
 };
 int tagOfNode(NodeT node);

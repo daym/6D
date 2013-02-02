@@ -6,7 +6,7 @@
 namespace Values {
 
 bool keywordP(NodeT node) {
-	return tagOfNode(node) == TAG_SYMBOL;
+	return tagOfNode(node) == TAG_KEYWORD;
 }
 struct hashstr2 {
 	unsigned long operator()(const char* str) const {
