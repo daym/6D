@@ -506,9 +506,10 @@ bool operator<=(const Int& a, const Int& b) {
         return(Evaluators::internNative(a.compareTo(b) != Integer::greater));
 }*/
 static Integer xinteger1(1);
+/* TODO just return an error.  maybe... */
 static inline NodeT intASucc(NodeT argument) {
-	const Int* int1 = dynamic_cast<const Int*>(argument);
-	if(int1) {
+	if(intP(argument)) {
+		const Int* int1 = (const Int*) getCXXInstance(argument);
 		NativeInt value = int1->value;
 		if(value + 1 < value) /* overflow */
 			return new Integer(Integer(value) + xinteger1);
@@ -518,16 +519,15 @@ static inline NodeT intASucc(NodeT argument) {
 }
 DEFINE_STRICT_FN(IntSucc, intASucc(argument))
 static inline NodeT integerASucc(NodeT argument) {
-	const Integer* integer1 = dynamic_cast<const Integer*>(argument);
-	if(integer1) {
-		return(new Integer((*integer1) + xinteger1));
-	}
-	const Int* int1 = dynamic_cast<const Int*>(argument);
-	if(int1) {
+	if(intP(argument)) {
+		const Int* int1 = (const Int*) getCXXInstance(argument);
 		NativeInt value = int1->value;
 		if(value + 1 < value) /* overflow */
 			return new Integer(Integer(value) + xinteger1);
 		return(internNative(value + 1));
+	} else if(integerP(argument)) {
+		const Integer* integer1 = (const Integer*) getCXXInstance(argument);
+		return(new Integer((*integer1) + xinteger1));
 	} else
 		throw std::invalid_argument("integerASucc invalid argument");
 }
@@ -849,11 +849,11 @@ bool toNativeInt(NodeT node, NativeInt& result) {
 	if(node == NULL)
 		return(false);
 	else if(intP(node)) {
-		const Int* intNode = (const Int*) node;
+		const Int* intNode = (const Int*) getCXXInstance(node);
 		result = intNode->value;
 		return(true);
 	} else if(integerP(node)) {
-		const Integer* integerNode = (const Integer*) node;
+		const Integer* integerNode = (const Integer*) getCXXInstance(node);
 		try {
 			result = integerNode->toNativeInt();
 		} catch(std::exception& exception) { /* too big etc */
@@ -868,11 +868,11 @@ bool toNearestNativeInt(NodeT node, NativeInt& result) {
 	if(node == NULL)
 		return(false);
 	else if(intP(node)) {
-		const Int* intNode = (const Int*) node;
+		const Int* intNode = (const Int*) getCXXInstance(node);
 		result = intNode->value;
 		return(true);
 	} else if(integerP(node)) {
-		const Integer* integerNode = (const Integer*) node;
+		const Integer* integerNode = (const Integer*) getCXXInstance(node);
 		try {
 			result = integerNode->toNativeInt();
 		} catch(std::exception& exception) { /* too big etc */

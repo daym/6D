@@ -16,7 +16,7 @@ bool toNativeFloat(NodeT node, NativeFloat& result) {
 	if(node == NULL)
 		return(false);
 	else if(floatP(node)) {
-		const Float* floatNode = (const Float*)node;
+		const Float* floatNode = (const Float*) getCXXInstance(node);
 		result = floatNode->value;
 		return(true);
 	} else {

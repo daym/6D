@@ -22,10 +22,12 @@ static inline NodeT ensureRatio(NodeT node) {
 	return(node);
 }
 Values::NodeT getRatioA(Values::NodeT n) {
-	return(((Ratio*)n)->a);
+	const Ratio* r = (const Ratio*) getCXXInstance(n);
+	return r->a;
 }
 Values::NodeT getRatioB(Values::NodeT n) {
-	return(((Ratio*)n)->b);
+	const Ratio* r = (const Ratio*) getCXXInstance(n);
+	return r->b;
 }
 
 DEFINE_STRICT_FN(RatioP, ratioP(argument))

@@ -273,7 +273,7 @@ Lang5D::Lang5D(void) {
 		Shasht = symbolFromStr("#t");
 		Shashf = symbolFromStr("#f");
 		assert(operatorP(symbolFromStr("+")));
-		printf("%p\n", symbolFromStr("+"));
+		assert(operatorP(symbolFromStr("(")));
 		defaultDynEnv = DynEnv;
 	}
 }
@@ -727,8 +727,6 @@ NodeT Lang5D::mcall(NodeT a, NodeT b) const {
 NodeT Lang5D::replaceIMPORT(NodeT body, NodeT source, NodeT symlist) const {
 	// these replace IMPORTS on a only-after-parsing level. At this point, the list is not constructed yet (otherwise the annotator wouldn't find it).
 	if(symlist) {
-		//NodeT close(NodeT /* symbol */ parameter, NodeT argument, NodeT body) {
-		//NodeT accessor = operation(Sdot, source, quote(getConsHead(symlist))); /* technically this is bad since it captures the (.) that is in scope. */
 		NodeT hd = mgetConsHead(symlist);
 		NodeT accessor = call(source, mquote(hd)); /* better? */
 		return Values::close(hd, accessor, replaceIMPORT(body, source, mgetConsTail(symlist)));
@@ -772,7 +770,8 @@ NodeT Lang5D::replaceIN(NodeT equation, NodeT body) const {
 		NodeT fr, c2;
 		if(macroStandinP(equation) && macroStandinOperator(equation) == Simport && (fr = macroStandinOperand(equation)) && (c2 = getCallCallable(fr))) {
 			//consP(tl) && (tl2 = getConsTail(tl)) && consP(tl2)) {
-			return replaceIMPORT(body, getCallArgument(fr), getCallArgument(c2));
+			NodeT source = getCallArgument(fr);
+			return replaceIMPORT(body, source, getCallArgument(c2));
 		} else
 			return error("<equation>", "<junk>");
 	}

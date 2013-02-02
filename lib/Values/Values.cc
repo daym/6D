@@ -121,7 +121,8 @@ bool boxP(NodeT node) {
 	return dynamic_cast<const Box*>(node) != NULL;
 }
 void* getBoxValue(NodeT node) {
-	return ((Box*) node)->nativePointer;
+	const Box* box = (const Box*) getCXXInstance(node);
+	return box->nativePointer;
 }
 char* getStrValue(NodeT node) {
 	return (char*) getBoxValue(node);
@@ -150,7 +151,8 @@ NodeT strCXX(const std::string& value) {
 	return new Str(value);
 }
 size_t getStrSize(NodeT n) {
-	return ((Str*)n)->size;
+	const Str* s = (const Str*) getCXXInstance(n);
+	return s->size;
 }
 /* given a Cons, returns its head */
 NodeT getConsHead(NodeT node) {
@@ -231,7 +233,7 @@ bool FFIFnP(NodeT node) {
 	return tagOfNode(node) == TAG_FFI_FN;
 }
 NodeT execFFIFn(NodeT node, NodeT argument) {
-	CFFIFn* f = (CFFIFn*) node;
+	CFFIFn* f = (CFFIFn*) getCXXInstance(node);
 	FFIFnCallbackT callback = (FFIFnCallbackT) f->nativePointer;
 	return (*callback)(argument, f->env);
 }
@@ -260,6 +262,11 @@ int getSymbolreferenceIndex(Values::NodeT n) {
 	return sr  ? sr->index : -1;
 }
 bool FFIFnWithCallbackP(NodeT n, FFIFnCallbackT callback) { /* used "internally" only */
-	return ((const Box*) n)->nativePointer == callback;
+	return ((const Box*) getCXXInstance(n))->nativePointer == callback;
+}
+void setCallResult(NodeT call, NodeT result) {
+	Call* app = (Call*) getCXXInstance(call);
+	app->result = result;
+	app->resultGeneration = fGeneration;
 }
 };

@@ -1,4 +1,5 @@
 #include "6D/Allocators"
+#include "Values/Values"
 #include "Values/Hashtable"
 namespace Values {
 
@@ -22,7 +23,7 @@ NodeT keysOfHashtable(Hashtable::const_iterator iter, Hashtable::const_iterator 
 	}
 }
 NodeT getHashtableEntryByKey(NodeT hashtableP, NodeT key, NodeT fallback) {
-	const Hashtable* hashtable = (const Hashtable*) hashtableP;
+	const Hashtable* hashtable = (const Hashtable*) getCXXInstance(hashtableP);
 	const Hashtable::const_iterator iter = hashtable->find(key);
 	if(iter != hashtable->end())
 		return iter->second;
@@ -30,7 +31,7 @@ NodeT getHashtableEntryByKey(NodeT hashtableP, NodeT key, NodeT fallback) {
 		return fallback;
 }
 void setHashtableEntry(NodeT hashtableP, NodeT key, NodeT value) {
-	Hashtable* hashtable = (Hashtable*) hashtableP; /* const incorrect */
+	Hashtable* hashtable = (Hashtable*) getCXXInstance(hashtableP); /* const incorrect */
 	(*hashtable)[key] = value;
 }
 

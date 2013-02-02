@@ -130,9 +130,8 @@ static NodeT shift(NodeT argument, int index, NodeT term) {
 static int fGeneration = 0;
 static int recursionLevel = 0;
 static inline NodeT remember(NodeT app, NodeT result) {
-	((Call*) app)->result = result;
-	((Call*) app)->resultGeneration = fGeneration;
-	return(result);
+	setCallResult(app, result);
+	return(app);
 }
 void increaseGeneration(void) {
 	++fGeneration;
@@ -143,7 +142,7 @@ NodeT eval1(NodeT term) {
 	//fflush(stderr);
 	if(!callP(term))
 		return term;
-	Call* call = (Call*)(term);
+	Call* call = (Call*)getCXXInstance(term);
 	if(call->resultGeneration == fGeneration)
 		return call->result;
 	NodeT fn = getCallCallable(term);
