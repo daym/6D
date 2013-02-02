@@ -28,10 +28,10 @@ static NodeT exportsFVA(const char* fmt, char* names, va_list ap) {
 			x = names + strlen(names);
 		else
 			*x = 0;
-		if((x = strrchr(names, ':'))) 
-			names = x + 1;
-		if((x = strrchr(names, '_'))) 
-			names = x + 1;
+		if((y = strrchr(names, ':'))) 
+			names = y + 1;
+		if((y = strrchr(names, '_'))) 
+			names = y + 1;
 		if(names[strlen(names) - 1] == 'M')
 			names[strlen(names) - 1] = '!';
 		if(snprintf(buf, 2048, fmt, names) == -1)
