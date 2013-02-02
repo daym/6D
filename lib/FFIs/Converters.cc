@@ -1,14 +1,20 @@
+#include <limits>
 #include "6D/Values"
 #include "6D/FFIs"
+#include "Numbers/Integer"
+#include "Numbers/Real"
+#include "Numbers/Ratio"
+#include "Logic/Logic"
 namespace FFIs {
+using namespace Values;
 typedef long long longLong;
 typedef long double longDouble;
 #define IMPLEMENT_NATIVE_INT_GETTER(typ) \
 typ typ##FromNode(NodeT root) { \
 	NativeInt result2 = 0; \
 	typ result = 0; \
-	if(!Numbers::toNativeInt(root, result2) || (result = result2) != result2) \
-		throw Evaluators::EvaluationException("value out of range for " #typ); \
+	if(!FFIs::toNativeInt(root, result2) || (result = result2) != result2) \
+		throw std::range_error("value out of range for " #typ); \
 	return(result); \
 }
 // TODO support Ratio - at least for the floats, maybe.
@@ -16,19 +22,19 @@ typ typ##FromNode(NodeT root) { \
 typ typ##FromNode(NodeT root) { \
 	NativeFloat result2 = 0.0; \
 	typ result = 0; \
-	if(Numbers::ratio_P(root)) \
-		root = Evaluators::divideA(Ratio_getA(root), Ratio_getB(root), NULL); \
-	if(!Numbers::toNativeFloat(root, result2) || (result = result2) != result2) \
-		throw Evaluators::EvaluationException("value out of range for " #typ); \
+	if(ratioP(root)) \
+		/* FIXME root = Evaluators::divideA(getRatioA(root), getRatioB(root), NULL)*/; \
+	if(!FFIs::toNativeFloat(root, result2) || (result = result2) != result2) \
+		throw std::range_error("value out of range for " #typ); \
 	return(result); \
 }
 int nearestIntFromNode(NodeT root) {
 	NativeInt result2 = 0;
 	int result = 0;
-	if(!Numbers::toNearestNativeInt(root, result2))
-		throw Evaluators::EvaluationException("cannot convert to int");
+	if(!FFIs::toNearestNativeInt(root, result2))
+		throw std::range_error("cannot convert to int");
 	if((result = result2) != result2) { /* doesn't fit */
-		return (result2 < 0) ? INT_MIN : INT_MAX;
+		return (result2 < 0) ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
 	}
 	return(result);
 }
@@ -45,44 +51,23 @@ long long sizedIntFromNode(int bitCount, NodeT root) {
 	if(result & ~((1 << bitCount) - 1)) {
 		std::stringstream sst;
 		sst << "value out of range for " << "bits";
-		throw Evaluators::EvaluationException(GCx_strdup(sst.str().c_str()));
+		throw std::range_error(GCx_strdup(sst.str().c_str()));
 	}
 	return(result);
 }
-
-
 void* pointerFromNode(const NodeT root) {
-	Box* rootBox = dynamic_cast<Box*>(root);
-	if(rootBox)
-		return(rootBox->value);
-	else {
-		std::stringstream sst;
-		sst << "cannot get native pointer for " << str(root);
-		std::string v = sst.str();
-		throw Evaluators::EvaluationException(v.c_str());
-	}
-}
-static Int int01(1);
-static Int int00(0);
-bool booleanFromNode(NodeT root) {
-	NodeT result = Evaluators::reduce(makeApplication(makeApplication(root, &int01), &int00));
-	if(result == NULL)
-		throw Evaluators::EvaluationException("that cannot be reduced to a boolean");
-	return(result == &int01);
+	if(boxP(root))
+		return getBoxValue(root);
+	else
+		throw std::logic_error("not a Box");
 }
 char* stringFromNode(NodeT root) {
-	Str* rootString = dynamic_cast<Str*>(root);
-	if(rootString) {
-		// TODO maybe check terminating zero? Maybe not.
-		return((char*) rootString->value);
-	} else {
-		std::stringstream sst;
-		sst << "cannot get native string for " << str(root);
-		std::string v = sst.str();
-		throw Evaluators::EvaluationException(v.c_str());
-		//Str* v = makeStrCXX(str(root));
-		//return((char*) v->native);
-	}
+	if(strP(root))
+		return getStrValue(root);
+	else if(boxP(root))
+		return (char*) getBoxValue(root);
+	else
+		throw std::range_error("not a Str");
 }
 char* stringOrNilFromNode(NodeT root) {
 	if(root)
@@ -91,17 +76,10 @@ char* stringOrNilFromNode(NodeT root) {
 		return(NULL);
 }
 size_t stringSizeFromNode(NodeT root) {
-	Str* rootString = dynamic_cast<Str*>(root);
-	if(rootString) {
-		return(rootString->size);
-	} else {
-		std::stringstream sst;
-		sst << "cannot get string length of " << str(root);
-		std::string v = sst.str();
-		throw Evaluators::EvaluationException(v.c_str());
-		//Str* v = makeStrCXX(str(root));
-		//return((char*) v->native);
-	}
+	if(strP(root))
+		return getStrSize(root);
+	else
+		throw std::logic_error("not a Str");
 }
 
 }

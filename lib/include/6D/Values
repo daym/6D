@@ -22,6 +22,9 @@ NodeT cons(NodeT head, NodeT tail) G_5D_PURE;
 /* given a std::string, somehow puts it into something resembling a NodeT */
 NodeT strCXX(const std::string& value) G_5D_PURE;
 
+/* given a Str, returns its size */
+size_t getStrSize(NodeT n) G_5D_PURE;
+
 /* given a string, returns a node that can be quickly checked for identicalness (and is not a symbol). */
 NodeT keywordFromStr(const char* name) G_5D_PURE;
 
@@ -71,6 +74,9 @@ bool callP(NodeT) G_5D_PURE;
 bool consP(NodeT) G_5D_PURE;
 bool nilP(NodeT) G_5D_PURE;
 bool boxP(NodeT) G_5D_PURE;
+bool strP(NodeT) G_5D_PURE; /* not necessarily disjunct from int */
+void* getBoxValue(NodeT node) G_5D_PURE;
+char* getStrValue(NodeT node) G_5D_PURE;
 NodeT operation(NodeT callable, NodeT argument1, NodeT argument2) G_5D_PURE;
 NodeT getOperationArgument1(NodeT o) G_5D_PURE;
 NodeT getOperationArgument2(NodeT o) G_5D_PURE;

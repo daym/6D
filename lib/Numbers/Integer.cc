@@ -5,8 +5,16 @@
 #include "Values/Values"
 #include "6D/FFIs"
 
-namespace Numbers {
+namespace FFIs {
 using namespace Values;
+bool intP(NodeT n) {
+	return tagOfNode(n) == TAG_INT;
+}
+bool integerP(NodeT n) {
+	return tagOfNode(n) == TAG_INTEGER;
+}
+}
+namespace Values {
 using namespace FFIs;
 
 void Integer::operator =(const Integer &x) {
@@ -561,17 +569,17 @@ REGISTER_STR(Integer, {
 	return(strInteger(node, destination));
 })
 
-DEFINE_STRICT_FN(IntP, (dynamic_cast<const Int*>(argument) != NULL))
-DEFINE_STRICT_FN(IntegerP, (dynamic_cast<const Int*>(argument) != NULL||dynamic_cast<const Integer*>(argument) != NULL))
+DEFINE_STRICT_FN(IntP, intP(argument))
+DEFINE_STRICT_FN(IntegerP, integerP(argument))
 
 REGISTER_BUILTIN(IntP, 1, 0, symbolFromStr("int?"))
 REGISTER_BUILTIN(IntegerP, 1, 0, symbolFromStr("integer?"))
 REGISTER_BUILTIN(IntSucc, 1, 0, symbolFromStr("intSucc"))
 REGISTER_BUILTIN(IntegerSucc, 1, 0, symbolFromStr("integerSucc"))
 
-}; /* namespace Numbers */
+}; /* namespace Values */
 namespace FFIs {
-using namespace Numbers;
+using namespace Values;
 static Int integers[256] = {
         Int(0),
         Int(1),
@@ -837,15 +845,15 @@ NodeT internNative(NativeInt value) {
 }
 
 bool toNativeInt(NodeT node, NativeInt& result) {
-	const Int* intNode;
-	const Integer* integerNode;
 	result = 0;
 	if(node == NULL)
 		return(false);
-	else if((intNode = dynamic_cast<const Int*>(node)) != NULL) {
+	else if(intP(node)) {
+		const Int* intNode = (const Int*) node;
 		result = intNode->value;
 		return(true);
-	} else if((integerNode = dynamic_cast<const Integer*>(node)) != NULL) {
+	} else if(integerP(node)) {
+		const Integer* integerNode = (const Integer*) node;
 		try {
 			result = integerNode->toNativeInt();
 		} catch(std::exception& exception) { /* too big etc */
@@ -856,15 +864,15 @@ bool toNativeInt(NodeT node, NativeInt& result) {
 		return(false);
 }
 bool toNearestNativeInt(NodeT node, NativeInt& result) {
-	const Int* intNode;
-	const Integer* integerNode;
 	result = 0;
 	if(node == NULL)
 		return(false);
-	else if((intNode = dynamic_cast<const Int*>(node)) != NULL) {
+	else if(intP(node)) {
+		const Int* intNode = (const Int*) node;
 		result = intNode->value;
 		return(true);
-	} else if((integerNode = dynamic_cast<const Integer*>(node)) != NULL) {
+	} else if(integerP(node)) {
+		const Integer* integerNode = (const Integer*) node;
 		try {
 			result = integerNode->toNativeInt();
 		} catch(std::exception& exception) { /* too big etc */

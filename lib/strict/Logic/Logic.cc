@@ -37,4 +37,7 @@ using namespace Logic;
 NodeT internNative(bool value) {
 	return value ? t : f;
 }
+bool booleanFromNode(Values::NodeT n) {
+	return(n != f);
+}
 }

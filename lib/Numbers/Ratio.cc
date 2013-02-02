@@ -14,7 +14,7 @@ Ratio* ratio(NodeT aa, NodeT bb) {
 	return(result);
 }
 bool ratioP(NodeT n) {
-	return(dynamic_cast<const Ratio*>(n) != NULL);
+	return(tagOfNode(n) == TAG_RATIO);
 }
 static inline NodeT ensureRatio(NodeT node) {
 	if(!ratioP(node))
@@ -28,7 +28,7 @@ Values::NodeT getRatioB(Values::NodeT n) {
 	return(((Ratio*)n)->b);
 }
 
-DEFINE_STRICT_FN(RatioP, (dynamic_cast<const Ratio*>(argument) !=NULL||dynamic_cast<const Ratio*>(argument) != NULL))
+DEFINE_STRICT_FN(RatioP, ratioP(argument))
 DEFINE_STRICT_FN(RatioNumeratorGetter, getRatioA(ensureRatio(argument)))
 DEFINE_STRICT_FN(RatioDenominatorGetter, getRatioB(ensureRatio(argument)))
 

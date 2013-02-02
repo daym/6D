@@ -30,6 +30,6 @@ static NodeT builtin(NodeT node) {
 NodeT initBuiltins(void) {
 	SConstanter = symbolFromStr("Constanter");
 	Srem = symbolFromStr("rem");
-	return Builtins;
+	return nil; // Builtins;
 }
 };

@@ -16,7 +16,11 @@ struct Node GC_BASECLASS {
 /* semi-private */
 enum {
 	TAG_SYMBOLREFERENCE /* very VERY often used */,
+	TAG_INT,
 	TAG_FFI_FN /* quite important */,
+	TAG_FLOAT,
+	TAG_INTEGER,
+	TAG_RATIO,
 	/* convenience */
 	TAG_KEYWORD,
 	TAG_SYMBOL,

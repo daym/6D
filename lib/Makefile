@@ -195,7 +195,7 @@ endif
 LDFLAGS += -lpthread $(LIBGC_LD_WRAP_LDFLAGS)
 STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/SpecialForms/Constanter.o strict/SpecialForms/Identer.o
 
-EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o
+EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o FFIs/Converters.o
 NUMBERS = Numbers/Integer.o \
 Numbers/Real.o \
 Numbers/BigUnsigned.o \
@@ -245,7 +245,7 @@ Formatters/TExpression.o: Formatters/TExpression.cc Formatters/TExpression Value
 Parsers/Lang5D.o: Parsers/Lang5D.cc Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer include/6D/Operations
 Scanners/Scanner.o: Scanners/Scanner.cc Scanners/Scanner 
 Parsers/ShuntingYardParser.o: Parsers/ShuntingYardParser.cc Parsers/ShuntingYardParser 
-Values/Values.o: Values/Values.cc Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values
+Values/Values.o: Values/Values.cc Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer Numbers/Real Numbers/Ratio
 Values/Keyword.o: Values/Keyword.cc Values/Keyword Values/Hashtable
 Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
 Values/Error.o: Values/Error.cc Values/Error Values/Values include/6D/Values
@@ -267,6 +267,7 @@ Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators in
 Modulesystem/Memoizer.o: Modulesystem/Memoizer.cc Modulesystem/Memoizer Values/Values Values/Hashtable include/6D/Evaluators include/6D/Values include/6D/FFIs
 Modulesystem/Exports.o: Modulesystem/Exports.cc include/6D/Operations include/6D/FFIs include/6D/Values include/6D/Modulesystem
 Builtins/Builtins.o: Builtins/Builtins.cc Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins Modulesystem/Memoizer include/6D/Modulesystem
+FFIs/Converters.o: FFIs/Converters.cc FFIs/Converters Numbers/Integer Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
 	Tests/03_Numbers/run

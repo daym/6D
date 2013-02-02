@@ -6,13 +6,35 @@
 #include "Values/Values"
 
 namespace FFIs {
+using namespace Values;
 Values::NodeT internNative(NativeFloat value) {
-	return(new Numbers::Float(value));
+	return(new Values::Float(value));
+}
+bool toNativeFloat(NodeT node, NativeFloat& result) {
+	result = 0.0;
+	//node = evaluate(node);
+	if(node == NULL)
+		return(false);
+	else if(floatP(node)) {
+		const Float* floatNode = (const Float*)node;
+		result = floatNode->value;
+		return(true);
+	} else {
+		// only coerce integers to float if there is no information loss
+		NativeInt value = 0;
+		if(!FFIs::toNativeInt(node, value))
+			return(false);
+		result = (NativeFloat) value;
+		return((NativeInt) result == value);
+	}
 }
 }
-namespace Numbers {
+namespace Values {
 using namespace FFIs;
 using namespace Values;
+bool floatP(Values::NodeT node) {
+	return tagOfNode(node) == TAG_FLOAT;
+}
 REGISTER_STR(Float, {
 	std::stringstream sst;
 	sst.precision(std::numeric_limits<NativeFloat>::digits10 + 1);
@@ -28,9 +50,6 @@ REGISTER_STR(Float, {
 	fprintf(destination, "%s", v.c_str());
 })
 
-bool floatP(NodeT node) {
-	return(dynamic_cast<const Float*>(node) != NULL);
-}
 DEFINE_STRICT_FN(FloatP, floatP(argument))
 
 NodeT operator+(const Float& a, const Float& b) {
@@ -51,24 +70,6 @@ NodeT operator<=(const Float& a, const Float& b) {
 
 REGISTER_BUILTIN(FloatP, 1, 0, symbolFromStr("float?"))
 
-bool toNativeFloat(NodeT node, NativeFloat& result) {
-	const Float* floatNode;
-	result = 0.0;
-	//node = evaluate(node);
-	if(node == NULL)
-		return(false);
-	else if((floatNode = dynamic_cast<const Float*>(node)) != NULL) {
-		result = floatNode->value;
-		return(true);
-	} else {
-		// only coerce integers to float if there is no information loss
-		NativeInt value = 0;
-		if(!FFIs::toNativeInt(node, value))
-			return(false);
-		result = (NativeFloat) value;
-		return((NativeInt) result == value);
-	}
-}
 
 #ifdef __GNUC__
 #define LLVM_INF           __builtin_inff()
@@ -101,4 +102,4 @@ NodeT infinity(void) {
 	return(&infinityFloat);
 }
 
-}; /* end namespace Numbers */
+}; /* end namespace Values */

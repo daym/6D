@@ -5,6 +5,9 @@
 #include "Values/Keyword"
 #include "Allocators/Allocators"
 #include "Formatters/TExpression"
+#include "Numbers/Integer"
+#include "Numbers/Real"
+#include "Numbers/Ratio"
 namespace Values {
 using namespace Allocators;
 struct Symbol;
@@ -117,6 +120,12 @@ struct Box : Node {
 bool boxP(NodeT node) {
 	return dynamic_cast<const Box*>(node) != NULL;
 }
+void* getBoxValue(NodeT node) {
+	return ((Box*) node)->nativePointer;
+}
+char* getStrValue(NodeT node) {
+	return (char*) getBoxValue(node);
+}
 struct Str : Box {
 	size_t size;
 	Str(const char* aNativePointer, size_t aSize) : 
@@ -133,10 +142,15 @@ struct Str : Box {
 	}
 	virtual void str(FILE* destination) const;
 };
-
+bool strP(NodeT node) {
+	return dynamic_cast<const Str*>(node) != NULL;
+}
 NodeT strCXX(const std::string& value) {
 	/* TODO not necessarily new. Pool strings? (see Symbols for where it's already done) */
 	return new Str(value);
+}
+size_t getStrSize(NodeT n) {
+	return ((Str*)n)->size;
 }
 /* given a Cons, returns its head */
 NodeT getConsHead(NodeT node) {
@@ -221,12 +235,14 @@ NodeT execFFIFn(NodeT node, NodeT argument) {
 	FFIFnCallbackT callback = (FFIFnCallbackT) f->nativePointer;
 	return (*callback)(argument, f->env);
 }
-/* FIXME Numbers (especially Int, Float) */
 int tagOfNode(NodeT node) {
-	return dynamic_cast<const Symbol*>(node) ? TAG_SYMBOL : 
-	       dynamic_cast<const Keyword*>(node) ? TAG_KEYWORD :
-	       dynamic_cast<const Symbolreference*>(node) ? TAG_SYMBOLREFERENCE : 
+	return dynamic_cast<const Symbolreference*>(node) ? TAG_SYMBOLREFERENCE : 
+	       dynamic_cast<const Int*>(node) ? TAG_INT : 
+	       dynamic_cast<const Integer*>(node) ? TAG_INTEGER : 
+	       dynamic_cast<const Float*>(node) ? TAG_FLOAT : 
 	       dynamic_cast<const CFFIFn*>(node) ? TAG_FFI_FN : 
+	       dynamic_cast<const Symbol*>(node) ? TAG_SYMBOL : 
+	       dynamic_cast<const Keyword*>(node) ? TAG_KEYWORD :
 	       TAG_OPAQUE;
 }
 static NodeT symbolreferences[200];

@@ -9,6 +9,7 @@ extern Values::NodeT falseN;
 extern Values::NodeT Disjunction;
 extern Values::NodeT Conjunction;
 extern Values::NodeT Negation;
+bool booleanFromNode(Values::NodeT n) G_5D_PURE;
 void initLogic(void);
 }
 #endif /* ndef __6D_LAZY_LOGIC_H */
