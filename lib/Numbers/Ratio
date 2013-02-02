@@ -1,8 +1,9 @@
 #ifndef __NUMBERS_RATIO_H
 #define __NUMBERS_RATIO_H
 #include "Values/Values"
+#include "6D/Values"
 #include "6D/Operations"
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 	struct Ratio : Values::Node {
 		Values::NodeT a; /* numerator */
 		Values::NodeT b; /* denominator */
@@ -16,6 +17,6 @@ DECLARE_FFI_FN(RatioP)
 DECLARE_FFI_FN(RatioNumeratorGetter)
 DECLARE_FFI_FN(RatioDenominatorGetter)
 
-};
+END_NAMESPACE_6D(Values)
 
 #endif /* ndef __NUMBERS_RATIO_H */

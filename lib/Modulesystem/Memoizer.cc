@@ -3,9 +3,9 @@
 #include "6D/Evaluators"
 #include "6D/FFIs"
 /* TODO equal FN */
-namespace Modulesystem {
-using namespace Values;
-using namespace FFIs;
+BEGIN_NAMESPACE_6D(Modulesystem)
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(FFIs)
 static NodeT dummy;
 /* memoized: given an environment and argument, tries to find existing memo table entry. If not there, */
 static NodeT memoized(NodeT env, NodeT key) {
@@ -28,4 +28,4 @@ Values::NodeT memoizer(Values::NodeT fn) {
 	return CLOSED_FFI_FN(Memoizer2, pair(new Hashtable, fn));
 }
 DEFINE_STRICT_FN(Memoizer, memoizer(argument))
-}
+END_NAMESPACE_6D(Modulesystem)

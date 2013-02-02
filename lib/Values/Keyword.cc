@@ -1,9 +1,10 @@
 #include <map>
+#include "6D/Values"
 #include "Values/Values"
 #include "Values/Keyword"
 #include "Values/Hashtable"
 
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 
 bool keywordP(NodeT node) {
 	return tagOfNode(node) == TAG_KEYWORD;
@@ -33,10 +34,10 @@ void Keyword::str(FILE* destination) const {
 }
 const char* getKeyword1Name(NodeT node) {
 	if(keywordP(node)) {
-		const Keyword* s = getCXXInstance(node);
+		const Keyword* s = (const Keyword*) getCXXInstance(node);
 		return s->text.c_str();
 	} else
 		return NULL;
 }
 
-};
+END_NAMESPACE_6D(Values)

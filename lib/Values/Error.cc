@@ -1,5 +1,6 @@
+#include "6D/Values"
 #include "Values/Error"
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 NodeT parseError(NodeT aExpectedInput, NodeT aGotInput) {
 	return new ParseError(aExpectedInput, aGotInput);
 }
@@ -10,4 +11,4 @@ NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) {
 	return new EvalError(aExpectedInput, aGotInput, aContext);
 }
 
-}
+END_NAMESPACE_6D(Values)

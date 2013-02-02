@@ -1,9 +1,10 @@
 #ifndef __FORMATTERS_MATH_H
 #define __FORMATTERS_MATH_H
+#include "6D/Values"
 #include "Values/Values"
-namespace Formatters {
-namespace Math {
+BEGIN_NAMESPACE_6D(Formatters)
+BEGIN_NAMESPACE_6D(Math)
 void print(FILE* destination, Values::NodeT node);
-}
-}
+END_NAMESPACE_6D(Math)
+END_NAMESPACE_6D(Formatters)
 #endif /* ndef __FORMATTERS_MATH_H */

@@ -19,10 +19,12 @@
 #undef UNGETC
 #define GETC fgetc(file)
 #define UNGETC(c) ungetc(c, file)
-namespace Parsers {
-using namespace Values;
-using namespace FFIs;
-using namespace Allocators;
+BEGIN_NAMESPACE_6D(Parsers)
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(FFIs)
+USE_NAMESPACE_6D(Allocators)
+USE_NAMESPACE_6D(SpecialForms)
+USE_NAMESPACE_6D(Numbers)
 NodeT Lang5D::SLF;
 NodeT Lang5D::Sindent;
 NodeT Lang5D::Sdedent;
@@ -65,7 +67,6 @@ NodeT Lang5D::Scolonequal;
 NodeT Lang5D::Sdot;
 NodeT Lang5D::Shasht;
 NodeT Lang5D::Shashf;
-using namespace SpecialForms;
 //NodeT Lang5D::Sdot;
 static inline NodeT merror(const std::string& expectedPart, const std::string& gotPart) {
 	return parseError(strCXX(expectedPart), strCXX(gotPart));
@@ -87,7 +88,6 @@ static inline NodeT getDynEnvEntry(NodeT sym) {
 				if(errno == 0)
 					return internNative(value);
 				else {
-					using namespace Numbers;
 					Integer result;
 					for(;isdigit(*name);++name) {
 						char c = *name;
@@ -883,14 +883,12 @@ NodeT Lang5D::error(NodeT expectedPart, NodeT gotPart) const {
 	return error("???", "???");
 }
 NodeT Lang5D::withDefaultEnv(NodeT body) const {
-	using namespace Values;
         return //close(Squote, SpecialForms::Quoter, 
 	       close(Shashexports, Combinators::Identity, 
 	       body);
 }
 
 static Lang5D lang5D;
-using namespace FFIs;
 DEFINE_STRICT_MONADIC_FN(parse1, lang5D.parse1((FILE*) pointerFromNode(argument), NULL)) /* FIXME more args */
 DEFINE_STRICT_FN(withDefaultEnv, lang5D.withDefaultEnv(argument))
 DEFINE_MODULE(Lang5D, exports(parse1, withDefaultEnv))

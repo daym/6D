@@ -1,9 +1,9 @@
 #ifndef __FORMATTERS_SEXPRESSION_H
 #define __FORMATTERS_SEXPRESSION_H
-namespace Formatters {
-namespace SExpression {
+#include "6D/Values"
+BEGIN_NAMESPACE_6D(Formatters)
+BEGIN_NAMESPACE_6D(SExpression)
 void print(FILE* destination, Values::NodeT node);
-}
-}
+END_NAMESPACE_6D(SExpression)
+END_NAMESPACE_6D(Formatters)
 #endif /* ndef __FORMATTERS_SEXPRESSION_H */
-

@@ -1,9 +1,10 @@
 #ifndef __VALUES_SYMBOL_H
 #define __VALUES_SYMBOL_H
 #include <string>
+#include "6D/Values"
 #include "Values/Values"
 
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 
 struct Symbol : Node {
 private:
@@ -24,5 +25,5 @@ struct Symbolreference : Node { /* for (substitution) speed reasons, a Symbolref
 	}
 };
 
-}
+END_NAMESPACE_6D(Values)
 #endif /* ndef __VALUES_SYMBOL_H */

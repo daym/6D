@@ -1,9 +1,10 @@
 #ifndef __VALUES_KEYWORD_H
 #define __VALUES_KEYWORD_H
 #include <string>
+#include "6D/Values"
 #include "Values/Values"
 
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 struct Keyword : Node {
 private:
 	std::string text;
@@ -14,6 +15,6 @@ public:
 	}
 	virtual void str(FILE* destination) const;
 };
-}
+END_NAMESPACE_6D(Values)
 
 #endif /* ndef __VALUES_KEYWORD_H */

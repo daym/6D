@@ -3,10 +3,11 @@
 #include <sstream>
 #include "Numbers/Small"
 #include "Values/Values"
+#include "6D/Values"
 #include "6D/Operations"
 #include "6D/FFIs"
 
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 
 DECLARE_SMALL_VALUE(Float, FFIs::NativeFloat)   
 DECLARE_FFI_FN(FloatP)
@@ -21,9 +22,9 @@ Values::NodeT nan(void) G_5D_PURE;
 Values::NodeT infinity(void) G_5D_PURE;
 bool floatP(Values::NodeT node) G_5D_PURE;
 
-};
-namespace FFIs {
+END_NAMESPACE_6D(Values)
+BEGIN_NAMESPACE_6D(FFIs)
 bool toNativeFloat(Values::NodeT node, FFIs::NativeFloat& result) G_5D_PURE;
-};
+END_NAMESPACE_6D(FFIs)
 
 #endif /* ndef __NUMBERS_REAL_H */

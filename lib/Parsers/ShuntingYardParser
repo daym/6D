@@ -4,8 +4,9 @@
 #include <assert.h>
 #include <vector>
 #include "Values/Values"
-namespace Scanners {
-using namespace Values;
+#include "6D/Values"
+BEGIN_NAMESPACE_6D(Scanners)
+USE_NAMESPACE_6D(Values)
 /* poor man's closure: */
 template<typename S, typename T>
 struct Parser GC_BASECLASS {
@@ -68,7 +69,6 @@ public:
 	}
 	std::vector<NodeT ALLOCATOR_VECTOR> parse(Values::NodeT endToken) {
 		//"\n\tThis works like the following:\n\t\t#operators is a stack of operators. It is always kept in order of ascending precedence. \n\t\t(non-operator) values are just emitted.\n\t\tAn opening parenthesis would just be put on the operator stack (without popping anything off), EVEN THOUGH it is recorded with the lowest precedence ever.\n\t\tAn operator is handled like this: if we try to push a new operator with lower precedence on top, it will keep popping (and emitting) existing operators off the operator stack until the invariant is satisfied. Then the operator is pushed on the operator stack.\n\t\tA closing parenthesis is an " operator     " which is not being put on the operator stack (it would do nothing anyway), otherwise handled like any other operator.\n\t";
-		using namespace Values;
 		Values::NodeT input;
 		prevInput = env.SopeningParen; // intern("(");
 		NodeT SEOF = env.SEOF;
@@ -143,6 +143,6 @@ template<typename S, typename T>
 static inline std::vector<NodeT ALLOCATOR_VECTOR> parse(S& tokenizer, T& env, Values::NodeT endToken) {
 	return Parser<S,T>(tokenizer, env).parse(endToken);
 }
-} /* end namespace Scanners */
+END_NAMESPACE_6D(Scanners)
 
 #endif /* ndef __SCANNERS_SHUNTING_YARD_PARSER_H */

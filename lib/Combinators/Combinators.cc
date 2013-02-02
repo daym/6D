@@ -2,9 +2,9 @@
 #include "6D/Operations"
 #include "6D/Evaluators"
 
-namespace Combinators {
-using namespace Values;
-using namespace Evaluators;
+BEGIN_NAMESPACE_6D(Combinators)
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(Evaluators)
 Values::NodeT Identity;
 Values::NodeT Konstant;
 /* TODO Substitution */
@@ -15,4 +15,4 @@ void initCombinators(void) {
 	Konstant = annotate(nil, fn(a, fn(b, a)));
 }
 
-}
+END_NAMESPACE_6D(Combinators)

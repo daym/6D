@@ -5,9 +5,10 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include "6D/Values"
 #include "Values/Values"
 
-namespace Scanners {
+BEGIN_NAMESPACE_6D(Scanners)
 #define GETC fgetc(this->file)
 #define UNGETC(c) ungetc(c, this->file)
 template<typename T>
@@ -109,7 +110,6 @@ public:
 		return previousValue;
 	}
 	/*Values::NodeT consume1(Values::NodeT expectedToken) {
-		using namespace Values;
 		if(this->value != expectedToken)
 			return env.error(getSymbol1Name(expectedToken), getSymbol1Name(this->value));
 		else
@@ -122,5 +122,5 @@ public:
 		return this->linenumber;
 	}
 };
-}
+END_NAMESPACE_6D(Scanners)
 #endif /* ndef __SCANNERS_SCANNER_H */

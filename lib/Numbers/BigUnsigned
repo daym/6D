@@ -5,7 +5,7 @@
 #include <vector>
 #include <stdexcept>
 
-namespace Numbers {
+BEGIN_NAMESPACE_6D(Numbers)
 /* A BigUnsigned object represents a nonnegative integer of size limited only by
  * available memory.  BigUnsigneds support most mathematical operators and can
  * be converted to and from most primitive integer types.
@@ -419,5 +419,5 @@ X BigUnsigned::convertToSignedPrimitive() const {
 		throw std::range_error("value out of range");
 }
 
-}
+END_NAMESPACE_6D(Numbers)
 #endif

@@ -4,9 +4,8 @@
 #include "Values/Values"
 #include "Numbers/Ratio"
 #include "6D/FFIs"
-namespace Values {
-using namespace Values;
-using namespace FFIs;
+BEGIN_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(FFIs)
 Ratio* ratio(NodeT aa, NodeT bb) {
 	Ratio* result = new Ratio;
 	result->a = aa;
@@ -44,4 +43,4 @@ REGISTER_BUILTIN(RatioMaker, 2, 0, symbolFromStr("makeRatio"))
 REGISTER_BUILTIN(RatioP, 1, 0, symbolFromStr("ratio?"))
 REGISTER_BUILTIN(RatioNumeratorGetter, 1, 0, symbolFromStr("ratioNum"))
 REGISTER_BUILTIN(RatioDenominatorGetter, 1, 0, symbolFromStr("ratioDenom"))
-}; /* end namespace Numbers */
+END_NAMESPACE_6D(Values)

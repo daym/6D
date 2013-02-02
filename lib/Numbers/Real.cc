@@ -5,8 +5,8 @@
 #include "Numbers/Integer"
 #include "Values/Values"
 
-namespace FFIs {
-using namespace Values;
+BEGIN_NAMESPACE_6D(FFIs)
+USE_NAMESPACE_6D(Values)
 Values::NodeT internNative(NativeFloat value) {
 	return(new Values::Float(value));
 }
@@ -28,10 +28,10 @@ bool toNativeFloat(NodeT node, NativeFloat& result) {
 		return((NativeInt) result == value);
 	}
 }
-}
-namespace Values {
-using namespace FFIs;
-using namespace Values;
+END_NAMESPACE_6D(FFIs)
+BEGIN_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(FFIs)
+USE_NAMESPACE_6D(Values)
 bool floatP(Values::NodeT node) {
 	return tagOfNode(node) == TAG_FLOAT;
 }
@@ -102,4 +102,4 @@ NodeT infinity(void) {
 	return(&infinityFloat);
 }
 
-}; /* end namespace Values */
+END_NAMESPACE_6D(Values)

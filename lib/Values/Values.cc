@@ -8,8 +8,8 @@
 #include "Numbers/Integer"
 #include "Numbers/Real"
 #include "Numbers/Ratio"
-namespace Values {
-using namespace Allocators;
+BEGIN_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(Allocators)
 struct Symbol;
 struct Keyword;
 struct CFFIFn;
@@ -239,6 +239,9 @@ Values::NodeT symbolreference(int index) {
 	} else
 		return new Symbolreference(index);
 }
+bool symbolreferenceP(NodeT n) {
+	return tagOfNode(n) == TAG_SYMBOLREFERENCE;
+}
 /* returns the jump index of n if it is a Symbolreference, otherwise (-1) */
 int getSymbolreferenceIndex(Values::NodeT n) {
 	if(symbolreferenceP(n)) {
@@ -281,4 +284,4 @@ bool consP(NodeT node) {
 	return tagOfNode(node) == TAG_CONS;
 }
 
-};
+END_NAMESPACE_6D(Values)

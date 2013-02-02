@@ -2,6 +2,6 @@
 #define __6D_EVALUATORS_EVALUATORS_H
 #include "6D/Values"
 #include "6D/Evaluators"
-namespace Evaluators {
-}
+BEGIN_NAMESPACE_6D(Evaluators)
+END_NAMESPACE_6D(Evaluators)
 #endif /* ndef __6D_EVALUATORS_EVALUATORS_H */

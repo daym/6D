@@ -5,9 +5,9 @@
 #include "SpecialForms/SpecialForms"
 #include "Modulesystem/Memoizer"
 #include "6D/Modulesystem"
-namespace Builtins {
-using namespace Values;
-using namespace FFIs;
+BEGIN_NAMESPACE_6D(Builtins)
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(FFIs)
 static NodeT SConstanter;
 static NodeT Srem;
 static NodeT Sexports;
@@ -32,4 +32,4 @@ NodeT initBuiltins(void) {
 	Srem = symbolFromStr("rem");
 	return nil; // Builtins;
 }
-};
+END_NAMESPACE_6D(Builtins)

@@ -3,8 +3,8 @@
 #include "6D/Values"
 #include "Allocators/Allocators"
 
-namespace Values {
-using namespace Allocators;
+BEGIN_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(Allocators)
 /* it doesn't matter to me what exactly Node is, I'm just using struct here so it shuts up */
 
 struct Node GC_BASECLASS {
@@ -67,5 +67,5 @@ static inline const void* getCXXInstance(NodeT n) {
 void increaseGeneration(void);
 int getGeneration(void) G_5D_PURE;
 
-}
+END_NAMESPACE_6D(Values)
 #endif /* ndef __VALUES_H */

@@ -4,6 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
+#ifdef __cplusplus
+#define BEGIN_NAMESPACE_6D(name) namespace name {
+#define END_NAMESPACE_6D(name) }
+#define USE_NAMESPACE_6D(name) using namespace name;
+#else
+#define BEGIN_NAMESPACE_6D(name) 
+#define END_NAMESPACE_6D(name) 
+#define USE_NAMESPACE_6D
+#endif
 #ifdef __GNUC__
 #define G_5D_PURE __attribute__ ((pure))
 #else

@@ -181,8 +181,8 @@ $(PACKAGE)-$(VERSION)/Modulesystem/Memoizer.cc \
 $(PACKAGE)-$(VERSION)/Modulesystem/Memoizer \
 $(PACKAGE)-$(VERSION)/Modulesystem/Modulesystem \
 $(PACKAGE)-$(VERSION)/Modulesystem/Exports.cc \
-$(PACKAGE)-$(VERSION)/GCs/SillyGC \
-$(PACKAGE)-$(VERSION)/GCs/SillyGC.cc \
+$(PACKAGE)-$(VERSION)/Allocators/SillyGC \
+$(PACKAGE)-$(VERSION)/Allocators/SillyGC.cc \
 $(PACKAGE)-$(VERSION)/FFIs/Converters.cc
 
 BUILTINS_LIB = lib6dbuiltins.so.1
@@ -220,7 +220,7 @@ Modulesystem/Exports.o \
 Modulesystem/Memoizer.o \
 Builtins/Builtins.o
 
-SILLY_GC_OBJECTS = GCs/SillyGC.o
+SILLY_GC_OBJECTS = Allocators/SillyGC.o
 LIB = lib6dbuiltins.so.1
 STATIC_LIB = lib6dbuiltins1.a  
 
@@ -301,7 +301,7 @@ all:
 	$(MAKE) -C Formatters all
 
 clean:
-	rm -f $(OBJECTS)
+	rm -f $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(MAKE) -C OPLs clean
 	$(MAKE) -C Arithmetic clean
 	$(MAKE) -C Trigonometry clean

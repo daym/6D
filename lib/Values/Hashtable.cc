@@ -1,7 +1,7 @@
 #include "6D/Allocators"
 #include "Values/Values"
 #include "Values/Hashtable"
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 
 static inline NodeT listFromHashtable(Hashtable::const_iterator iter, Hashtable::const_iterator endIter) {
 	if(iter == endIter)
@@ -35,4 +35,4 @@ void setHashtableEntry(NodeT hashtableP, NodeT key, NodeT value) {
 	(*hashtable)[key] = value;
 }
 
-}
+END_NAMESPACE_6D(Values)

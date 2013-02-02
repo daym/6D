@@ -3,13 +3,13 @@
 #include "6D/Operations"
 #include "6D/Values"
 
-namespace Combinators {
+BEGIN_NAMESPACE_6D(Combinators)
 extern Values::NodeT Identity;
 extern Values::NodeT Konstant;
 static inline Values::NodeT constanter(Values::NodeT argument) {
 	return call(Konstant, argument);
 }
 void initCombinators(void);
-}
+END_NAMESPACE_6D(Combinators)
 
 #endif /* ndef __6D_COMBINATORS_COMBINATORS_H */

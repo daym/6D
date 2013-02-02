@@ -1,9 +1,10 @@
 #include <map>
+#include "6D/Values"
 #include "Values/Values"
 #include "Values/Symbol"
 #include "Values/Hashtable"
 
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 
 bool symbolP(NodeT node) {
 	return tagOfNode(node) == TAG_SYMBOL; // || tagOfNode(node) == TAG_SYMBOLREFERENCE/*ugh*/;
@@ -38,4 +39,4 @@ void Symbol::str(FILE* destination) const {
 	fputs(this->text.c_str(), destination);
 }
 
-};
+END_NAMESPACE_6D(Values)

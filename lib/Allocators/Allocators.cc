@@ -1,3 +1,4 @@
+#include "6D/Values"
 #if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -12,7 +13,7 @@
 #endif
 #include <string.h>
 #include "Allocators/Allocators"
-namespace Allocators {
+BEGIN_NAMESPACE_6D(Allocators)
 void initAllocators(void) {
 	g_thread_init(NULL);
 #ifdef _G_NEW
@@ -45,4 +46,4 @@ void efree(void* address) {
 	munmap((size_t*)address - 1, *((size_t*)address - 1));
 #endif
 }
-}
+END_NAMESPACE_6D(Allocators)

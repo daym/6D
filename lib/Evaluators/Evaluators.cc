@@ -18,8 +18,8 @@
 #include "Combinators/Combinators"
 #include "Logic/Logic"
 
-namespace Evaluators {
-using namespace Values;
+BEGIN_NAMESPACE_6D(Evaluators)
+USE_NAMESPACE_6D(Values)
 
 void initEvaluator(void) {
 	Combinators::initCombinators();
@@ -185,4 +185,4 @@ Values::NodeT execute(NodeT term) {
 	return(getConsHead(r));
 }
 
-}; // end namespace Evaluators.
+END_NAMESPACE_6D(Evaluators)

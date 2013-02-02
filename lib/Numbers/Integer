@@ -8,8 +8,8 @@
 #include "6D/Operations"
 #include "6D/FFIs"
 
-namespace Values {
-using namespace Numbers;
+BEGIN_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(Numbers)
 
 /* A Integer object represents a signed integer of size limited only by
  * available memory.  BigUnsigneds support most mathematical operators and can
@@ -237,11 +237,11 @@ Values::NodeT operator<=(const Integer& a, const Integer& b);
 bool operator<=(const Int& a, const Int& b);
 
 
-}; /* namespace Values */
-namespace FFIs {
+END_NAMESPACE_6D(Values)
+BEGIN_NAMESPACE_6D(FFIs)
 Values::NodeT internNative(FFIs::NativeInt value);
 Values::NodeT internNativeU(FFIs::NativeUInt value);
 bool toNativeInt(Values::NodeT node, FFIs::NativeInt& result);
 bool toNearestNativeInt(Values::NodeT node, FFIs::NativeInt& result);
-};
+END_NAMESPACE_6D(FFIs)
 #endif

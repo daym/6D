@@ -5,17 +5,17 @@
 #include "Values/Values"
 #include "6D/FFIs"
 
-namespace FFIs {
-using namespace Values;
+BEGIN_NAMESPACE_6D(FFIs)
+USE_NAMESPACE_6D(Values)
 bool intP(NodeT n) {
 	return tagOfNode(n) == TAG_INT;
 }
 bool integerP(NodeT n) {
 	return tagOfNode(n) == TAG_INTEGER;
 }
-}
-namespace Values {
-using namespace FFIs;
+END_NAMESPACE_6D(FFIs)
+BEGIN_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(FFIs)
 
 void Integer::operator =(const Integer &x) {
 	// Calls like a = a have no effect
@@ -577,9 +577,9 @@ REGISTER_BUILTIN(IntegerP, 1, 0, symbolFromStr("integer?"))
 REGISTER_BUILTIN(IntSucc, 1, 0, symbolFromStr("intSucc"))
 REGISTER_BUILTIN(IntegerSucc, 1, 0, symbolFromStr("integerSucc"))
 
-}; /* namespace Values */
-namespace FFIs {
-using namespace Values;
+END_NAMESPACE_6D(Values)
+BEGIN_NAMESPACE_6D(FFIs)
+USE_NAMESPACE_6D(Values)
 static Int integers[256] = {
         Int(0),
         Int(1),
@@ -917,4 +917,4 @@ NodeT internNativeU(unsigned long long value) {
 }
 #endif
 
-};
+END_NAMESPACE_6D(FFIs)

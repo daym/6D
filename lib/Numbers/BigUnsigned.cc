@@ -1,8 +1,8 @@
+#include "6D/Values"
 //#include "Evaluators/Evaluators"
 #include "Numbers/BigUnsigned"
 
-//using namespace Evaluators;
-namespace Numbers {
+BEGIN_NAMESPACE_6D(Numbers)
 // Memory management definitions have moved to the bottom of NumberlikeArray.hh.
 
 // The templates used by these constructors and converters are at the bottom of
@@ -692,4 +692,4 @@ void BigUnsigned::allocate(std::vector<Blk>::size_type sz) {
 	for(std::vector<Blk>::size_type i = 0; i < sz; ++i)
 		push_back(0);
 }
-}
+END_NAMESPACE_6D(Numbers)

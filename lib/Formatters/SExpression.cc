@@ -1,7 +1,7 @@
 #include "Values/Values"
 #include "Formatters/SExpression"
-namespace Formatters {
-	namespace SExpression {
+BEGIN_NAMESPACE_6D(Formatters)
+BEGIN_NAMESPACE_6D(SExpression)
 void print(FILE* destination, Values::NodeT node) {
 	if(symbolP(node)) {
 		fprintf(destination, "%s", getSymbol1Name(node));
@@ -23,5 +23,5 @@ void print(FILE* destination, Values::NodeT node) {
 		Values::str(node, destination);
 	}
 }
-	}
-}
+END_NAMESPACE_6D(SExpression)
+END_NAMESPACE_6D(Formatters)

@@ -2,10 +2,9 @@
 #define __FORMATTERS_TEXPRESSION_H
 #include <stdio.h>
 #include "6D/Values"
-namespace Formatters {
-namespace TExpression {
+BEGIN_NAMESPACE_6D(Formatters)
+BEGIN_NAMESPACE_6D(TExpression)
 void print(FILE* destination, Values::NodeT node);
-}
-}
+END_NAMESPACE_6D(TExpression)
+END_NAMESPACE_6D(Formatters)
 #endif /* ndef __FORMATTERS_TEXPRESSION_H */
-

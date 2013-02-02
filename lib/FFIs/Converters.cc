@@ -5,8 +5,8 @@
 #include "Numbers/Real"
 #include "Numbers/Ratio"
 #include "Logic/Logic"
-namespace FFIs {
-using namespace Values;
+BEGIN_NAMESPACE_6D(FFIs)
+USE_NAMESPACE_6D(Values)
 typedef long long longLong;
 typedef long double longDouble;
 #define IMPLEMENT_NATIVE_INT_GETTER(typ) \
@@ -82,4 +82,4 @@ size_t stringSizeFromNode(NodeT root) {
 		throw std::logic_error("not a Str");
 }
 
-}
+END_NAMESPACE_6D(FFIs)

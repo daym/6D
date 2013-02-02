@@ -1,0 +1,7 @@
+#ifndef __GCS_SILLY_GC_H
+#define __GCS_SILLY_GC_H
+#include "6D/Values"
+BEGIN_NAMESPACE_6D(Allocators)
+void zap(void);
+END_NAMESPACE_6D(Allocators)
+#endif

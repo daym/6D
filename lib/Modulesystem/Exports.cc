@@ -3,10 +3,10 @@
 #include "6D/Allocators"
 #include "6D/Modulesystem"
 #include "6D/FFIs"
-namespace Modulesystem {
-using namespace Values;
-using namespace Allocators;
-using namespace FFIs;
+BEGIN_NAMESPACE_6D(Modulesystem)
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(Allocators)
+USE_NAMESPACE_6D(FFIs)
 static NodeT entry(NodeT name, NodeT fn) {
 	// TODO FFIFnNoGC(FFIFnCallbackT callback, NodeT aData, const char* name) G_5D_PURE; ??
 	NodeT entry = pair(name, fn); // box(fn, name/*TODO replicate the entire accessor */));
@@ -86,4 +86,4 @@ Values::NodeT dispatch1(Values::NodeT key, Values::NodeT list) {
 }
 DEFINE_STRICT_FN(Dispatch, dispatch1(argument, env))
 
-}
+END_NAMESPACE_6D(Modulesystem)

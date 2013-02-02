@@ -1,9 +1,12 @@
+#include "6D/Values"
 #include "Values/Values"
 #include "Formatters/TExpression"
 #include "SpecialForms/SpecialForms"
-namespace Formatters {
-	namespace TExpression {
-using namespace Values;
+BEGIN_NAMESPACE_6D(Formatters)
+BEGIN_NAMESPACE_6D(TExpression)
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(SpecialForms)
 static NodeT getSymbolByIndex(int index, NodeT names) {
 	if(names == nil)
 		return nil;
@@ -17,8 +20,6 @@ static NodeT getSymbolByIndex(int index, NodeT names) {
 	- synthetisize let forms (always or just if the entire thing is smaller than some minimum size?)
 */
 void print0(FILE* destination, NodeT names, NodeT node) {
-	using namespace Values;
-	using namespace SpecialForms;
 	int i;
 	if((i = getSymbolreferenceIndex(node)) != -1) {
 		NodeT node = getSymbolByIndex(i, names);
@@ -92,4 +93,5 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 void print(FILE* destination, NodeT node) {
 	print0(destination, nil, node);
 }
-	}}
+END_NAMESPACE_6D(TExpression)
+END_NAMESPACE_6D(Formatter)

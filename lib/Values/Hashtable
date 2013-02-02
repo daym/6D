@@ -13,11 +13,12 @@ static double log2(double n) {
 }
 #endif
 #include "Values/Values"
+#include "6D/Values"
 #include <map>
 #include <math.h>
 #include <string.h>
 
-namespace Values {
+BEGIN_NAMESPACE_6D(Values)
 
 static inline uint32_t jenkinsOneAtATimeHash(const char* key, size_t len) {
 	uint32_t hash, i;
@@ -248,5 +249,5 @@ NodeT keysOfHashtable(Hashtable::const_iterator iter, Hashtable::const_iterator 
 NodeT getHashtableEntryByKey(NodeT hashtable, NodeT key, NodeT fallback);
 void setHashtableEntry(NodeT hashtable, NodeT key, NodeT value);
 
-};
+END_NAMESPACE_6D(Values)
 #endif /* ndef __6D_HASH_TABLE_H */
