@@ -1,5 +1,6 @@
+#include "6D/Values"
 #include "SpecialForms/Constanter"
-namespace SpecialForms {
+BEGIN_NAMESPACE_6D(SpecialForms)
 
 DEFINE_SPECIAL_FORM(Constanter2, env)
 Values::NodeT constanter2(Values::NodeT argument) {
@@ -8,4 +9,4 @@ Values::NodeT constanter2(Values::NodeT argument) {
 /* mostly for debugging */
 DEFINE_SPECIAL_FORM(Constanter, constanter2(argument))
 
-}
+END_NAMESPACE_6D(SpecialForms)

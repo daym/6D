@@ -2,6 +2,6 @@
 #include "6D/Operations"
 #include "SpecialForms/Quoter"
 
-namespace SpecialForms {
+BEGIN_NAMESPACE_6D(SpecialForms)
 DEFINE_SPECIAL_FORM(Quoter, argument)
-}
+END_NAMESPACE_6D(SpecialForms)

@@ -2,7 +2,7 @@
 #define __6D_SPECIAL_FORMS_CONSTANTER_H
 #include "6D/Values"
 #include "6D/Operations"
-namespace SpecialForms {
+BEGIN_NAMESPACE_6D(SpecialForms)
 Values::NodeT constanter2(Values::NodeT argument);
-}
+END_NAMESPACE_6D(SpecialForms)
 #endif /* ndef __6D_SPECIAL_FORMS_CONSTANTER_H */

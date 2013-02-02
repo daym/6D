@@ -3,7 +3,7 @@
 #include "6D/Operations"
 #include "6D/Values"
 
-namespace SpecialForms {
+BEGIN_NAMESPACE_6D(SpecialForms)
 DECLARE_SPECIAL_FORM(Quoter)
 static inline bool quoteP(Values::NodeT node) {
 	return node == Quoter;
@@ -12,6 +12,5 @@ static inline Values::NodeT quote(Values::NodeT node) {
 	return call(Quoter, node);
 }
 
-}
-
+END_NAMESPACE_6D(SpecialForms)
 #endif /* ndef __6D_SPECIAL_FORMS_QUOTER_H */
