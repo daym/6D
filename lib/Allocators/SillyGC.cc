@@ -51,4 +51,7 @@ void zap(void) {
 	}
 }
 END_NAMESPACE_6D(Allocators)
+#else
+void zap(void) {
+}
 #endif
