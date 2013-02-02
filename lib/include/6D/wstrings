@@ -1,5 +1,6 @@
 #ifndef __6D_WSTRINGS_H
 #define __6D_WSTRINGS_H
+#include "6D/Values"
 #include <stdio.h>
 #include <string>
 BEGIN_NAMESPACE_6D(Values)

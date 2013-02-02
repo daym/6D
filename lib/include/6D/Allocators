@@ -2,6 +2,7 @@
 #define __6D_ALLOCATORS_H
 #include <string.h>
 #include <stdlib.h>
+#include "6D/Values"
 #define REUSE_6D(x) x
 #ifndef WIN32
 #include <sys/types.h>
