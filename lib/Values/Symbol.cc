@@ -27,10 +27,12 @@ NodeT symbolFromStr(const char* name) {
 	symbols[name] = new (NoGC) Symbol(name);
 	return symbols[name];
 }
-
 const char* getSymbol1Name(NodeT node) {
-	const Symbol* s = dynamic_cast<const Symbol*>(node);
-	return s ? s->text.c_str() : NULL;
+	if(symbolP(node)) {
+		const Symbol* s = (const Symbol*) getCXXInstance(node);
+		return s->text.c_str();
+	} else
+		return NULL;
 }
 void Symbol::str(FILE* destination) const {
 	fputs(this->text.c_str(), destination);

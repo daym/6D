@@ -21,6 +21,11 @@ enum {
 	TAG_FLOAT,
 	TAG_INTEGER,
 	TAG_RATIO,
+	TAG_CONS,
+	TAG_CALL,
+	TAG_FN,
+	TAG_BOX,
+	TAG_STR,
 	/* convenience */
 	TAG_KEYWORD,
 	TAG_SYMBOL,
@@ -61,5 +66,6 @@ static inline const void* getCXXInstance(NodeT n) {
 }
 void increaseGeneration(void);
 int getGeneration(void) G_5D_PURE;
+
 }
 #endif /* ndef __VALUES_H */

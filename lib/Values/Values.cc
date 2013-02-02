@@ -45,39 +45,23 @@ bool operationP(NodeT o) {
 struct Fn : Node {
 	NodeT parameter;
 	NodeT body;
-	Fn(NodeT aParameter, NodeT aBody) :
-		parameter(aParameter),
-		body(aBody)
-	{
-	}
 	virtual ~Fn() {
 	}
 };
 struct Cons : Node {
 	NodeT head;
 	NodeT tail;
-	Cons(NodeT aHead, NodeT aTail) :
-		head(aHead),
-		tail(aTail)
-	{
-	}
 	virtual ~Cons() {
 	}
 };
-bool fnP(NodeT node) {
-	return dynamic_cast<const Fn*>(node) != NULL;
-}
-bool callP(NodeT node) {
-	return dynamic_cast<const Call*>(node) != NULL;
-}
-bool consP(NodeT node) {
-	return dynamic_cast<const Cons*>(node) != NULL;
-}
 bool nilP(NodeT node) {
 	return node == NULL;
 }
 NodeT cons(NodeT head, NodeT tail) {
-	return new Cons(head, tail);
+	Cons* result = new Cons;
+	result->head = head;
+	result->tail = tail;
+	return result;
 }
 /* given a Call, returns its callable. */
 NodeT getCallCallable(NodeT node) {
@@ -90,7 +74,10 @@ NodeT getCallArgument(NodeT node) {
 }
 
 NodeT fn(NodeT formalParameter, NodeT body) {
-	return new Fn(formalParameter, body);
+	Fn* result = new Fn;
+	result->parameter = formalParameter;
+	result->body = body;
+	return result;
 }
 
 /* given a callable and argument, returns a node that represents a Call */
@@ -117,9 +104,6 @@ struct Box : Node {
 	virtual ~Box(void) {
 	}
 };
-bool boxP(NodeT node) {
-	return dynamic_cast<const Box*>(node) != NULL;
-}
 void* getBoxValue(NodeT node) {
 	const Box* box = (const Box*) getCXXInstance(node);
 	return box->nativePointer;
@@ -143,9 +127,6 @@ struct Str : Box {
 	}
 	virtual void str(FILE* destination) const;
 };
-bool strP(NodeT node) {
-	return dynamic_cast<const Str*>(node) != NULL;
-}
 NodeT strCXX(const std::string& value) {
 	/* TODO not necessarily new. Pool strings? (see Symbols for where it's already done) */
 	return new Str(value);
@@ -229,9 +210,6 @@ NodeT FFIFnNoGC(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	// TODO not necessarily new
 	return new (NoGC) CFFIFn(aEnv, callback);
 }
-bool FFIFnP(NodeT node) {
-	return tagOfNode(node) == TAG_FFI_FN;
-}
 NodeT execFFIFn(NodeT node, NodeT argument) {
 	CFFIFn* f = (CFFIFn*) getCXXInstance(node);
 	FFIFnCallbackT callback = (FFIFnCallbackT) f->nativePointer;
@@ -243,8 +221,13 @@ int tagOfNode(NodeT node) {
 	       dynamic_cast<const Integer*>(node) ? TAG_INTEGER : 
 	       dynamic_cast<const Float*>(node) ? TAG_FLOAT : 
 	       dynamic_cast<const CFFIFn*>(node) ? TAG_FFI_FN : 
+	       dynamic_cast<const Cons*>(node) ? TAG_CONS : 
+	       dynamic_cast<const Fn*>(node) ? TAG_FN : 
+	       dynamic_cast<const Call*>(node) ? TAG_CALL : 
 	       dynamic_cast<const Symbol*>(node) ? TAG_SYMBOL : 
 	       dynamic_cast<const Keyword*>(node) ? TAG_KEYWORD :
+	       dynamic_cast<const Str*>(node) ? TAG_STR : 
+	       dynamic_cast<const Box*>(node) ? TAG_BOX : 
 	       TAG_OPAQUE;
 }
 static NodeT symbolreferences[200];
@@ -258,8 +241,11 @@ Values::NodeT symbolreference(int index) {
 }
 /* returns the jump index of n if it is a Symbolreference, otherwise (-1) */
 int getSymbolreferenceIndex(Values::NodeT n) {
-	const Symbolreference* sr = dynamic_cast<const Symbolreference*>(n); // dynamic on purpose
-	return sr  ? sr->index : -1;
+	if(symbolreferenceP(n)) {
+		const Symbolreference* sr = (const Symbolreference*) getCXXInstance(n);
+		return sr->index;
+	} else
+		return (-1);
 }
 bool FFIFnWithCallbackP(NodeT n, FFIFnCallbackT callback) { /* used "internally" only */
 	return ((const Box*) getCXXInstance(n))->nativePointer == callback;
@@ -276,4 +262,23 @@ void increaseGeneration(void) {
 int getGeneration(void) {
 	return fGeneration;
 }
+bool boxP(NodeT node) {
+	return tagOfNode(node) == TAG_BOX;
+}
+bool strP(NodeT node) {
+	return tagOfNode(node) == TAG_STR;
+}
+bool FFIFnP(NodeT node) {
+	return tagOfNode(node) == TAG_FFI_FN;
+}
+bool fnP(NodeT node) {
+	return tagOfNode(node) == TAG_FN;
+}
+bool callP(NodeT node) {
+	return tagOfNode(node) == TAG_CALL;
+}
+bool consP(NodeT node) {
+	return tagOfNode(node) == TAG_CONS;
+}
+
 };

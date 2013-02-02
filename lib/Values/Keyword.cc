@@ -32,8 +32,11 @@ void Keyword::str(FILE* destination) const {
 	fputs(this->text.c_str(), destination);
 }
 const char* getKeyword1Name(NodeT node) {
-	const Keyword* s = dynamic_cast<const Keyword*>(node);
-	return s ? s->text.c_str() : NULL;
+	if(keywordP(node)) {
+		const Keyword* s = getCXXInstance(node);
+		return s->text.c_str();
+	} else
+		return NULL;
 }
 
 };
