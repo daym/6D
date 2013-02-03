@@ -23,6 +23,7 @@ int main() {
 	initArithmetic();
 	NodeT defaultDynEnv = initLang5D();
 	initEvaluator();
+	NodeT builtins = initBuiltins();
 	//Values::NodeT annotate(Values::NodeT environment, Values::NodeT node);
 	//Values::NodeT eval(Values::NodeT node);
 	//Values::NodeT execute(Values::NodeT term);
@@ -31,7 +32,7 @@ int main() {
 		FILE* f = fmemopen((char*) s, strlen(s), "r");
 		prog = L_parse1(f, "<stdin>");
 		fclose(f);
-		prog = withArithmetic(L_withDefaultEnv(prog));
+		prog = closeOver(symbolFromStr("Builtins"), builtins, withArithmetic(L_withDefaultEnv(prog)));
 		//print(stderr, prog);
 		//fprintf(stderr, "\n");
 		//fflush(stderr);

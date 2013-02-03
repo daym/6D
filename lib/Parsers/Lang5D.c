@@ -772,7 +772,7 @@ static NodeT replaceIMPORT(NodeT body, NodeT source, NodeT symlist) {
 	if(symlist) {
 		NodeT hd = mgetConsHead(symlist);
 		NodeT accessor = call(source, mquote(hd)); /* better? */
-		return close(hd, accessor, replaceIMPORT(body, source, mgetConsTail(symlist)));
+		return closeOver(hd, accessor, replaceIMPORT(body, source, mgetConsTail(symlist)));
 	} else
 		return body;
 }
@@ -893,8 +893,8 @@ NodeT L_parse1(FILE* f, const char* name) {
 	return result;
 }
 NodeT L_withDefaultEnv(NodeT body) {
-	return close(Squote, /*SpecialForms::*/Quoter, 
-	       close(Shashexports, /*Combinators*/Identity, 
+	return closeOver(Squote, /*SpecialForms::*/Quoter, 
+	       closeOver(Shashexports, /*Combinators*/Identity, 
 	       body));
 }
 

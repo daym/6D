@@ -99,7 +99,7 @@ static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, NodeT boundNamesSet, N
 			return symbolreference(i); /* root */
 		} else {
 			// can be error.
-			NodeT v = annotate(nil, close(Squote, Quoter, call(dynEnv, call(Squote, root)))); /* TODO this quote is hardcoded and probably shouldn't be (not that bad, though). */
+			NodeT v = annotate(nil, closeOver(Squote, Quoter, call(dynEnv, call(Squote, root)))); /* TODO this quote is hardcoded and probably shouldn't be (not that bad, though). */
 			return eval(v); // make very VERY sure that that is not annotated again.
 		}
 	} // else other stuff.

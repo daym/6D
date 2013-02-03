@@ -61,12 +61,12 @@ void initArithmetic(void) {
 	INIT_BINARY_FN(shr)
 }
 NODET withArithmetic(NODET body) {
-	return close(Splus, add, 
-	       close(Sdash, subtract,
-	       close(Sstar, multiply,
-	       close(Sslash, divide,
-	       close(Sshl, shl,
-	       close(Sshr, shr,
+	return closeOver(Splus, add, 
+	       closeOver(Sdash, subtract,
+	       closeOver(Sstar, multiply,
+	       closeOver(Sslash, divide,
+	       closeOver(Sshl, shl,
+	       closeOver(Sshr, shr,
 	       body))))));
 }
 END_NAMESPACE_6D(Arithmetic)

@@ -123,7 +123,7 @@ NodeT pair(NodeT a, NodeT b) G_5D_PURE;
 NodeT getPairFst(NodeT p) G_5D_PURE;
 NodeT getPairSnd(NodeT p) G_5D_PURE;
 
-static inline NodeT close(NodeT /* symbol */ parameter, NodeT argument, NodeT body) {
+static inline NodeT closeOver(NodeT /* symbol */ parameter, NodeT argument, NodeT body) {
 	return call(fn(parameter, body), argument);
 }
 int getSymbolreferenceIndex(NodeT n) G_5D_PURE;
