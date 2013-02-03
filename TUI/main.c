@@ -18,9 +18,26 @@ void printPrompt(void) {
 	fprintf(stderr, "eval $ ");
 	fflush(stderr);
 }
+static NodeT input;
+static NodeT getBoundNames(void) {
+	return cons(symbolFromStr("abba"), cons(symbolFromStr("beta"), nil));
+}
 static char* command_generator(const char* text, int state) {
+	static NodeT boundNames;
+	static int len;
 	if(state == 0) { /* restart global */
-		return strdup("A");
+		boundNames = getBoundNames();
+		len = strlen(text);
+		//return strdup("A");
+	}
+	if(!boundNames)
+		return NULL;
+	while(consP(boundNames)) {
+		NodeT key = getConsHead(boundNames);
+		const char* ktext = getSymbol1Name(key);
+		boundNames = getConsTail(boundNames);
+		if(ktext && strncmp(ktext, text, len) == 0)
+			return strdup(ktext);
 	}
 	/* TODO search wrapper envs (exports), then parsed text as far as possible */
 	return(NULL);
@@ -42,6 +59,7 @@ int main() {
 	NodeT builtins = initBuiltins();
 	rl_readline_name = "6D";
 	rl_attempted_completion_function = complete;
+	rl_bind_key('\t',rl_complete);
 	//Values::NodeT annotate(Values::NodeT environment, Values::NodeT node);
 	//Values::NodeT eval(Values::NodeT node);
 	//Values::NodeT execute(Values::NodeT term);
@@ -52,13 +70,13 @@ int main() {
 			continue;
 		add_history(s);
 		FILE* f = fmemopen((char*) s, strlen(s), "r");
-		prog = L_parse1(f, "<stdin>");
+		input = L_parse1(f, "<stdin>");
 		fclose(f);
-		prog = closeOver(symbolFromStr("Builtins"), builtins, withArithmetic(L_withDefaultEnv(prog)));
+		input = closeOver(symbolFromStr("Builtins"), builtins, withArithmetic(L_withDefaultEnv(input)));
 		//print(stderr, prog);
 		//fprintf(stderr, "\n");
 		//fflush(stderr);
-		prog = annotate(defaultDynEnv, prog);
+		prog = annotate(defaultDynEnv, input);
 		prog = eval(prog);
 		print(stdout, prog);
 		printf("\n");
