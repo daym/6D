@@ -138,8 +138,8 @@ NodeT integerAdd(NodeT aP, NodeT bP) {
 	// here, either both tails are nil or both tails are not nil.
 	NativeUInt value2 = avalue + bvalue;
 	if(UNLIKELY_6D(!atail && 
-		(((value2&HIGHBIT) && !(avalue&HIGHBIT) && !(bvalue&HIGHBIT)) || 
-		((!(value2&HIGHBIT) && (avalue&HIGHBIT) && (bvalue&HIGHBIT)))))) { /* flipped sign accidentally */
+	   (((value2&HIGHBIT) && !(avalue&HIGHBIT) && !(bvalue&HIGHBIT)) || 
+	   ((!(value2&HIGHBIT) && (avalue&HIGHBIT) && (bvalue&HIGHBIT)))))) { /* flipped sign accidentally */
 		assert(value2 >= avalue); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
 		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
 		return integerpart(value2, newMS);
