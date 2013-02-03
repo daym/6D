@@ -213,7 +213,7 @@ int getSymbolreferenceIndex(NodeT n) {
 		return (-1);
 }
 bool FFIFnWithCallbackP(NodeT n, FFIFnCallbackT callback) { /* used "internally" only */
-	const struct Box* box = (const struct Box*) getCXXInstance(n);
+	const struct CFFIFn* box = (const struct CFFIFn*) getCXXInstance(n);
 	return box->nativePointer == callback;
 }
 static int fGeneration = 0;
