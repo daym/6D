@@ -5,7 +5,9 @@
 BEGIN_NAMESPACE_6D(Strings)
 NodeT concat(NodeT a, NodeT b);
 NodeT listFromStr(NodeT str);
+NodeT strFromList(NodeT l);
 void initStrings(void);
 DECLARE_BINARY_FN(Bconcat)
+DECLARE_FFI_FN(BstrFromList)
 END_NAMESPACE_6D(Strings)
 #endif /* ndef __STRINGS_STRINGS_H */
