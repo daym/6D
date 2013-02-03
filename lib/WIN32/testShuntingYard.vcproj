@@ -173,75 +173,75 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\Numbers\BigUnsigned.cc"
+				RelativePath="..\Numbers\BigUnsigned.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Combinators\Combinators.cc"
+				RelativePath="..\Combinators\Combinators.c"
 				>
 			</File>
 			<File
-				RelativePath="..\strict\SpecialForms\Constanter.cc"
+				RelativePath="..\strict\SpecialForms\Constanter.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Evaluators\Evaluators.cc"
+				RelativePath="..\Evaluators\Evaluators.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Values\Hashtable.cc"
+				RelativePath="..\Values\Hashtable.c"
 				>
 			</File>
 			<File
-				RelativePath="..\strict\SpecialForms\Identer.cc"
+				RelativePath="..\strict\SpecialForms\Identer.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Numbers\Integer.cc"
+				RelativePath="..\Numbers\Integer.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Values\Keyword.cc"
+				RelativePath="..\Values\Keyword.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Parsers\Lang5D.cc"
+				RelativePath="..\Parsers\Lang5D.c"
 				>
 			</File>
 			<File
-				RelativePath="..\strict\Logic\Logic.cc"
+				RelativePath="..\strict\Logic\Logic.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Formatters\Math.cc"
+				RelativePath="..\Formatters\Math.c"
 				>
 			</File>
 			<File
-				RelativePath="..\strict\SpecialForms\Quoter.cc"
+				RelativePath="..\strict\SpecialForms\Quoter.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Numbers\Ratio.cc"
+				RelativePath="..\Numbers\Ratio.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Numbers\Real.cc"
+				RelativePath="..\Numbers\Real.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Scanners\Scanner.cc"
+				RelativePath="..\Scanners\Scanner.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Formatters\SExpression.cc"
+				RelativePath="..\Formatters\SExpression.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Parsers\ShuntingYardParser.cc"
+				RelativePath="..\Parsers\ShuntingYardParser.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Values\Symbol.cc"
+				RelativePath="..\Values\Symbol.c"
 				>
 			</File>
 			<File
@@ -249,15 +249,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Formatters\TExpression.cc"
+				RelativePath="..\Formatters\TExpression.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Values\Values.cc"
+				RelativePath="..\Values\Values.c"
 				>
 			</File>
 			<File
-				RelativePath="..\Values\wstrings.cc"
+				RelativePath="..\Values\wstrings.c"
 				>
 			</File>
 		</Filter>
