@@ -16,11 +16,12 @@ struct Node GC_BASECLASS {
 enum {
 	TAG_Nil = 0,
 	TAG_Symbolreference = 1 /* very VERY often used */,
-	TAG_Int = 2,
-	TAG_CFFIFn = 3/* quite important */,
-	TAG_Float = 4,
-	TAG_Integer = 5,
+	TAG_CFFIFn = 2/* quite important */,
+	/* numbers are in promotion order */
+	TAG_Int = 3,
+	TAG_Integer = 4,
 	TAG_Ratio = 6,
+	TAG_Float = 5,
 	TAG_Cons = 7,
 	TAG_Call = 8,
 	TAG_Fn = 9,
