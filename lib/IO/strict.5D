@@ -1,0 +1,21 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in
+let ioValue := \m m in 
+let ioWorld := \m 42 in 
+let (;) := \m \ber ber m in 
+let liftIO! := v in 
+let return! := liftIO! in 
+let defer! := \finalizer \body 
+	rem "Following tradition, this ignores the result of the finalizer."$
+	body ;\a
+	finalizer ;\_
+	a
+in 
+let use! := \opener \closer \body 
+	opener ;\f
+	defer! (closer f) (body f)
+in 
+let with! := \obj \body
+	use! obj.open! obj.close! body
+in 
+(#exports[ioValue ioWorld liftIO! return! (;) defer! use! with!])
