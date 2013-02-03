@@ -117,10 +117,8 @@ $(PACKAGE)-$(VERSION)/Combinators/Combinators \
 $(PACKAGE)-$(VERSION)/Evaluators/Evaluators.cc \
 $(PACKAGE)-$(VERSION)/Evaluators/Evaluators \
 $(PACKAGE)-$(VERSION)/Makefile \
-$(PACKAGE)-$(VERSION)/Numbers/BigUnsigned \
 $(PACKAGE)-$(VERSION)/Numbers/Integer2.cc \
 $(PACKAGE)-$(VERSION)/Numbers/Real.cc \
-$(PACKAGE)-$(VERSION)/Numbers/BigUnsigned.cc \
 $(PACKAGE)-$(VERSION)/Numbers/Small \
 $(PACKAGE)-$(VERSION)/Numbers/Integer2 \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio \
@@ -198,7 +196,6 @@ STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/Specia
 EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o FFIs/Converters.o
 NUMBERS = Numbers/Integer2.o \
 Numbers/Real.o \
-Numbers/BigUnsigned.o \
 Numbers/Ratio.o
 OBJECTS = Formatters/Math.o \
 Formatters/SExpression.o \
@@ -257,7 +254,6 @@ Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators 
 Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
 Numbers/Integer2.o: Numbers/Integer2.cc Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
 Numbers/Real.o: Numbers/Real.cc Numbers/Real Numbers/Small Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
-Numbers/BigUnsigned.o: Numbers/BigUnsigned.cc Numbers/BigUnsigned Numbers/Small
 Numbers/Ratio.o: Numbers/Ratio.cc Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
 strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.cc strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations
 strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.cc strict/SpecialForms/Constanter strict/SpecialForms/SpecialForms include/6D/Operations
