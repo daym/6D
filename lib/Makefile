@@ -236,7 +236,7 @@ Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS) $(SILLY_G
 Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 Formatters/Math.o: Formatters/Math.c Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
-Formatters/TExpression.o: Formatters/TExpression.c Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms
+Formatters/TExpression.o: Formatters/TExpression.c Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms include/6D/Operations lazy/SpecialForms/SpecialForms
 Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc
 Scanners/Scanner.o: Scanners/Scanner.c Scanners/Scanner  include/6D/Values include/6D/FFIs
 Values/Values.o: Values/Values.c Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
@@ -248,18 +248,18 @@ Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.c Parsers/Lang5D Format
 Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.c Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins
 Tests/03_Numbers/main.o: Tests/03_Numbers/main.c Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
 Values/wstrings.o: Values/wstrings.c include/6D/wstrings Allocators/Allocators include/6D/Allocators
-Evaluators/Evaluators.o: Evaluators/Evaluators.c strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
+Evaluators/Evaluators.o: Evaluators/Evaluators.c strict/SpecialForms/SpecialForms include/6D/Operations  lazy/SpecialForms/SpecialForms Values/Values
 Numbers/Integer2.o: Numbers/Integer2.c Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
 Numbers/Real.o: Numbers/Real.c Numbers/Real Numbers/Small Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
 Numbers/Ratio.o: Numbers/Ratio.c Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
-strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.c strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations
+strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.c strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations  include/6D/Operations
 strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.c strict/SpecialForms/Constanter strict/SpecialForms/SpecialForms include/6D/Operations
 lazy/Logic/Logic.o: lazy/Logic/Logic.c lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs
-strict/Logic/Logic.o: strict/Logic/Logic.c strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
+strict/Logic/Logic.o: strict/Logic/Logic.c strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms include/6D/Operations  Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.c Combinators/Combinators include/6D/Operations include/6D/Evaluators
 Modulesystem/Memoizer.o: Modulesystem/Memoizer.c Modulesystem/Memoizer Values/Values Values/Hashtable include/6D/Evaluators include/6D/Values include/6D/FFIs
 Modulesystem/Exports.o: Modulesystem/Exports.c include/6D/Operations include/6D/FFIs include/6D/Values include/6D/Modulesystem
-Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins Modulesystem/Memoizer include/6D/Modulesystem
+Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/SpecialForms include/6D/Operations  lazy/SpecialForms/SpecialForms include/6D/Builtins Modulesystem/Memoizer include/6D/Modulesystem
 FFIs/Converters.o: FFIs/Converters.c FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
 Values/Hashtable.o: Values/Hashtable.c Values/Hashtable Values/Values include/6D/Values include/6D/Allocators
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator

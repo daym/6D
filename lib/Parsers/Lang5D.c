@@ -376,6 +376,7 @@ void initLang5D(void) {
 		Shashf = symbolFromStr("#f");
 		assert(operatorP(symbolFromStr("+")));
 		assert(operatorP(symbolFromStr("(")));
+		INIT_FFI_FN(DynEnv);
 		defaultDynEnv = DynEnv;
 	}
 }
