@@ -255,8 +255,8 @@ static NodeT mgetConsTail(NodeT c) {
 	return a1;
 }
 static NodeT mquote(NodeT a) {
-	return quote(a);
-	// NOT return call(Squote, a);
+	//return quote(a);
+	return call(Squote, a);
 }
 static NodeT error(const char* expectedPart, const char* gotPart) {
 	return merror(expectedPart, gotPart);
@@ -783,7 +783,13 @@ static NodeT replaceIN(NodeT equation, NodeT body) {
 		if(macroStandinP(equation) && macroStandinOperator(equation) == Simport && (fr = macroStandinOperand(equation)) && (c2 = getCallCallable(fr))) {
 			//consP(tl) && (tl2 = getConsTail(tl)) && consP(tl2)) {
 			NodeT source = getCallArgument(fr);
-			return replaceIMPORT(body, source, getCallArgument(c2));
+			NodeT symlist = getCallArgument(c2);
+			if(symlist) {
+				/* for strict eval without caching, we could reuse one of the syms in symlist in order to stand for source. */
+				return replaceIMPORT(body, source, symlist);
+			} else { /* nothing to import: don't do anything. */
+				return body;
+			}
 		} else
 			return error("<equation>", "<junk>");
 	}
@@ -796,7 +802,7 @@ static NodeT replaceIN(NodeT equation, NodeT body) {
 static NodeT moperation(NodeT operator_, NodeT a, NodeT b) {
 	return //operator_ == Sbackslash ? fn(macroStandinOperand(a),b) :  /* CRASH HERE */
 	       operator_ == Sin ? replaceIN(a ,b) :
-	       operator_ == Sdot ? call(a, quote(b)) : 
+	       operator_ == Sdot ? call(a, mquote(b)) : 
 	       operation(operator_, a, b);
 }
 /** returns: growth of the values stack */
@@ -885,9 +891,9 @@ NodeT L_parse1(FILE* f, const char* name) {
 	return result;
 }
 static NodeT L_withDefaultEnv(NodeT body) {
-        return //close(Squote, SpecialForms::Quoter, 
+        return close(Squote, /*SpecialForms::*/Quoter, 
 	       close(Shashexports, /*Combinators*/Identity, 
-	       body);
+	       body));
 }
 
 //DEFINE_STRICT_MONADIC_FN(parse1, L_parse1((FILE*) pointerFromNode(argument), NULL)) /* FIXME more args */

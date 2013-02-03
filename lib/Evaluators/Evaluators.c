@@ -92,9 +92,8 @@ static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, NodeT boundNamesSet, N
 			//std::distance(boundNames.begin(), std::find(boundNames.begin(), boundNames.end(), symbolNode));
 			return symbolreference(i); /* root */
 		} else {
-			//return eval(call(dynEnv, quote(root)));
 			// can be error.
-			NodeT v = annotate(nil, call(dynEnv, quote(root)));
+			NodeT v = annotate(nil, call(dynEnv, quote2(root))); /* TODO this quote is hardcoded and probably shouldn't be (not that bad, though). */
 			return eval(v); // make very VERY sure that that is not annotated again.
 		}
 	} // else other stuff.

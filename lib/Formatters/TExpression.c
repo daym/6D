@@ -15,6 +15,45 @@ static NodeT getSymbolByIndex(int index, NodeT names) {
 	else
 		return getSymbolByIndex(index - 1, getConsTail(names));
 }
+static void printStr(FILE* destination, const char* s, size_t size) {
+	fputc('"', destination);
+	size_t sz;
+	for(sz = size; sz > 0; --sz, ++s) {
+		char c = *s;
+		if(c < 32) {
+			switch(c) {
+			case '\n':
+				fprintf(destination, "\\n");
+				break;
+			case '\r':
+				fprintf(destination, "\\r");
+				break;
+			case '\b':
+				fprintf(destination, "\\b");
+				break;
+			case '\t':
+				fprintf(destination, "\\t");
+				break;
+			case '\f':
+				fprintf(destination, "\\f");
+				break;
+			case '\a':
+				fprintf(destination, "\\a");
+				break;
+			case '\v':
+				fprintf(destination, "\\v");
+				break;
+			default:
+				fprintf(destination, "\\x%02X", c);
+			}
+		} else if(c == '\\' || c == '"' /*|| c == '\''*/) {
+			fputc('\\', destination);
+			fputc(c, destination);
+		} else
+			fputc(c, destination);
+	}
+	fputc('"', destination);
+}
 /* TODO:
 	- track the bindings of variables and backsubstitute values if possible (WTF).
 	- synthetisize let forms (always or just if the entire thing is smaller than some minimum size?)
@@ -86,6 +125,12 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 		print(destination, call2(symbolFromStr("/"), getRatioA(node), getRatioB(node)));
 	} else if(SPECIAL_FORM_EQUAL_P(node, Quoter)) {
 		fprintf(destination, "'");
+	} else if(strP(node)) {
+		const struct Str* str = (const struct Str*) getCXXInstance(node);
+		char* p;
+		if(!stringFromNode(str, &p))
+			abort();
+		printStr(destination, p, getStrSize(str));
 	} else {
 		str(node, destination);
 	}
