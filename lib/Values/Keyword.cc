@@ -30,12 +30,12 @@ NodeT keywordFromStr(const char* name) {
 	
 }
 void Keyword::str(FILE* destination) const {
-	fputs(this->text.c_str(), destination);
+	fputs(this->text, destination);
 }
 const char* getKeyword1Name(NodeT node) {
 	if(keywordP(node)) {
 		const Keyword* s = (const Keyword*) getCXXInstance(node);
-		return s->text.c_str();
+		return s->text;
 	} else
 		return NULL;
 }

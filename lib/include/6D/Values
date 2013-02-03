@@ -38,8 +38,8 @@ NodeT symbolFromStr(const char* name) G_5D_PURE;
 /* given two nodes, constructs a "Cons" with a head and tail and return it */
 NodeT cons(NodeT head, NodeT tail) G_5D_PURE;
 
-/* given a std::string, somehow puts it into something resembling a NodeT */
-NodeT strCXX(const std::string& value) G_5D_PURE;
+/* given a string, somehow puts it into something resembling a NodeT */
+NodeT strC(const char* value) G_5D_PURE;
 
 /* given a Str, returns its size */
 size_t getStrSize(NodeT n) G_5D_PURE;

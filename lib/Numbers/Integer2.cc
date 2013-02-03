@@ -64,7 +64,7 @@ NodeT integerAddU(NodeT aP, NativeUInt amount) {
 		tail = a->tail;
 		assert(tail);
 	} else
-		return evalError(strCXX("<integer>"), strCXX("<junk>"), aP);
+		return evalError(strC("<integer>"), strC("<junk>"), aP);
 	NativeUInt value2 = value + amount;
 	if(UNLIKELY_6D(!tail && (value2&HIGHBIT) && !(value&HIGHBIT)/* precond && !(amount&HIGHBIT)*/)) { /* flipped sign accidentally (middle) */
 		/* this can only happen with the MSB of the entire number.  */
@@ -88,7 +88,7 @@ NodeT integerAddN(NodeT aP, NativeUInt amount) {
 		tail = a->tail;
 		assert(tail);
 	} else 
-		return evalError(strCXX("<integer>"), strCXX("<junk>"), aP);
+		return evalError(strC("<integer>"), strC("<junk>"), aP);
 	NativeUInt value2 = value + amount;
 	if(UNLIKELY_6D(!tail && !(value2&HIGHBIT) && (value&HIGHBIT) /*&& precond amount&HIGHBIT */)) { /* flipped sign accidentally */
 		/* this can only happen with the MSB of the entire number */
@@ -113,7 +113,7 @@ NodeT integerAdd(NodeT aP, NodeT bP) {
 		atail = a->tail;
 		assert(atail);
 	} else
-		return evalError(strCXX("<integer>"), strCXX("<junk>"), aP);
+		return evalError(strC("<integer>"), strC("<junk>"), aP);
 	if(intP(bP)) {
 		const Int* b = (const Int*) getCXXInstance(bP);
 		bvalue = b->value;
@@ -124,7 +124,7 @@ NodeT integerAdd(NodeT aP, NodeT bP) {
 		btail = b->tail;
 		assert(btail);
 	} else
-		return evalError(strCXX("<integer>"), strCXX("<junk>"), bP);
+		return evalError(strC("<integer>"), strC("<junk>"), bP);
 	if(atail && !btail)
 		btail = &zerozerozerozero;
 	if(btail && !atail)
@@ -158,7 +158,7 @@ NodeT integerMul(NodeT aP, NodeT bP) {
 		btail = b->tail;
 		assert(btail);
 	} else
-		return evalError(strCXX("<integer>"), strCXX("<junk>"), bP);
+		return evalError(strC("<integer>"), strC("<junk>"), bP);
 	for(NativeUInt mask = HIGHBIT; mask; mask >>= 1) {
 		result = integerShl(result, 1);
 		if(bvalue&mask)
@@ -189,7 +189,7 @@ bool integerEqualsP(NodeT aP, NodeT bP) {
 		atail = a->tail;
 		assert(atail);
 	} else
-		return evalError(strCXX("<integer>"), strCXX("<junk>"), aP);
+		return evalError(strC("<integer>"), strC("<junk>"), aP);
 	if(intP(bP)) {
 		const Int* b = (const Int*) getCXXInstance(bP);
 		bvalue = b->value;
@@ -200,7 +200,7 @@ bool integerEqualsP(NodeT aP, NodeT bP) {
 		btail = b->tail;
 		assert(btail);
 	} else
-		return evalError(strCXX("<integer>"), strCXX("<junk>"), bP);
+		return evalError(strC("<integer>"), strC("<junk>"), bP);
 	if(atail && !btail)
 		return false;
 	if(btail && !atail)

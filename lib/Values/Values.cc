@@ -127,7 +127,13 @@ struct Str : Box {
 	}
 	virtual void str(FILE* destination) const;
 };
+#if 0
 NodeT strCXX(const std::string& value) {
+	/* TODO not necessarily new. Pool strings? (see Symbols for where it's already done) */
+	return new Str(value);
+}
+#endif
+NodeT strC(const char* value) {
 	/* TODO not necessarily new. Pool strings? (see Symbols for where it's already done) */
 	return new Str(value);
 }

@@ -57,7 +57,7 @@ int getFreeVariables(Hashtable& freeNames, NodeT root) {
 	return freeNamesCount;
 }
 static inline NodeT error(const char* expectedText, const char* gotText, NodeT context) {
-	return evalError(strCXX(expectedText), strCXX(gotText), context);
+	return evalError(strC(expectedText), strC(gotText), context);
 }
 static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, Hashtable& boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.
@@ -173,7 +173,7 @@ NodeT eval(NodeT node) {
 	try {
 		return(eval1(node));
 	} catch(std::exception& exception) {
-		return(error("<valid-expr>", exception.what(), node));
+		return(error("<valid-expr>", GCx_strdup(exception.what()), node));
 	}
 }
 

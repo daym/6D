@@ -86,7 +86,7 @@ public:
 	static NODET Shasht;
 	static NODET Shashf;
 	NODET readToken(FILE* f, int& linenumber) const;
-	NODET error(std::string expectedPart, std::string gotPart) const;
+	NODET error(const char* expectedPart, const char* gotPart) const;
 	NODET error(NODET expectedPart, NODET gotPart) const;
 	bool errorP(NODET n) const { return Values::errorP(n); }
 	bool openingParenP(NODET node) const;

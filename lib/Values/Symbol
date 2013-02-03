@@ -8,7 +8,7 @@ BEGIN_NAMESPACE_6D(Values)
 
 struct Symbol : Node {
 private:
-	std::string text;
+	const char* text;
 	friend const char* getSymbol1Name(NodeT node);
 public:
 	Symbol(const char* text) {

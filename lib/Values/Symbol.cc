@@ -31,12 +31,12 @@ NodeT symbolFromStr(const char* name) {
 const char* getSymbol1Name(NodeT node) {
 	if(symbolP(node)) {
 		const Symbol* s = (const Symbol*) getCXXInstance(node);
-		return s->text.c_str();
+		return s->text;
 	} else
 		return NULL;
 }
 void Symbol::str(FILE* destination) const {
-	fputs(this->text.c_str(), destination);
+	fputs(this->text, destination);
 }
 
 END_NAMESPACE_6D(Values)

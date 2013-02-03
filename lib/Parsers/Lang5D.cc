@@ -67,10 +67,10 @@ NodeT Lang5D::Sdot;
 NodeT Lang5D::Shasht;
 NodeT Lang5D::Shashf;
 //NodeT Lang5D::Sdot;
-static inline NodeT merror(const std::string& expectedPart, const std::string& gotPart) {
-	return parseError(strCXX(expectedPart), strCXX(gotPart));
+static inline NodeT merror(const char* expectedPart, const char* gotPart) {
+	return parseError(strC(expectedPart), strC(gotPart));
 }
-static inline std::string nvl(const char* a, const char* b) {
+static inline const char* nvl(const char* a, const char* b) {
 	return a ? a : b;
 }
 static inline NodeT getDynEnvEntry(NodeT sym) {
@@ -277,7 +277,7 @@ Lang5D::Lang5D(void) {
 		defaultDynEnv = DynEnv;
 	}
 }
-NodeT Lang5D::error(std::string expectedPart, std::string gotPart) const {
+NodeT Lang5D::error(const char* expectedPart, const char* gotPart) const {
 	return merror(expectedPart, gotPart);
 }
 #define NO_OPERATOR (-2)
@@ -660,7 +660,7 @@ NodeT Lang5D::readString(FILE* file, int& linenumber, int c) const {
 		} else {
 			char const* nn = getSymbol1Name(n);
 			assert(nn);
-			return strCXX(nn); // TODO maybe we should special-case those just as we did numbers (instead of creating the strings here)?
+			return strC(nn); // TODO maybe we should special-case those just as we did numbers (instead of creating the strings here)?
 		}
 	} else
 		return error("<string>", "<junk>");
@@ -693,7 +693,7 @@ NodeT Lang5D::readToken(FILE* file, int& linenumber) const {
 	else {
 		char buf[2] = {0,0};
 		buf[0] = c;
-		return error("<token>", std::string(buf));
+		return error("<token>", GCx_strdup(buf));
 	}
 }
 NodeT Lang5D::reflectHashExports(NodeT entries) const {

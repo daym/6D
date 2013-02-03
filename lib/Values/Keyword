@@ -7,7 +7,7 @@
 BEGIN_NAMESPACE_6D(Values)
 struct Keyword : Node {
 private:
-	std::string text;
+	const char* text;
 	friend const char* getKeyword1Name(NodeT node);
 public:
 	Keyword(const char* name) {

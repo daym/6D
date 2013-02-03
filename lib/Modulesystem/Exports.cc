@@ -36,7 +36,7 @@ static NodeT exportsFVA(const char* fmt, char* names, va_list ap) {
 			names[strlen(names) - 1] = '!';
 		if(snprintf(buf, 2048, fmt, names) == -1)
 			abort();
-		name = symbolFromStr(buf); // makeStr(buf);
+		name = symbolFromStr(GCx_strdup(buf)); // makeStr(buf);
 		names = x;
 		NodeT fn = (NodeT) va_arg(ap, void*);
 		return(cons(entry(name, fn), exportsFVA(fmt, names, ap)));
