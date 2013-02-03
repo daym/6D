@@ -5,6 +5,7 @@
 #include "Numbers/Integer2"
 /* assumes two's complement */
 /* assumes the value is always stored in the shortest possible form */
+/* a number is a list of the form [Integer Integer Integer Int] whereas the last Int is the most significant part. The last Int also includes a (two's complement) "sign" bit. */
 BEGIN_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(FFIs)
 /* cons-like list of NativeUInt, least significant first. */
