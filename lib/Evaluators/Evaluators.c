@@ -133,7 +133,7 @@ static NodeT shift(NodeT argument, int index, NodeT term) {
 static int recursionLevel = 0;
 static inline NodeT remember(NodeT app, NodeT result) {
 	setCallResult(app, result);
-	return(app);
+	return(result);
 }
 NodeT eval1(NodeT term) {
 	//Formatters::TExpression::print(stderr, term);

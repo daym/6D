@@ -33,7 +33,7 @@
 }
 #define REGISTER_STR(name, body) /* FIXME */
 #define REGISTER_BUILTIN(name, aCount, reservedCount, sym)
-#define FFI_FN_EQUAL_P(node, name) (boxP(node) && FFIFnWithCallbackP((node), name##_exec))
+#define FFI_FN_EQUAL_P(node, name) (FFIFnP(node) && FFIFnWithCallbackP((node), name##_exec))
 #define SPECIAL_FORM_EQUAL_P(node, name) FFI_FN_EQUAL_P(node, name)
 #define DEFINE_STRICT_MONADIC_FN(name, body) \
 	DEFINE_STRICT_FN(name, body)
