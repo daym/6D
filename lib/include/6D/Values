@@ -104,6 +104,9 @@ bool consP(NodeT) G_5D_PURE;
 bool nilP(NodeT) G_5D_PURE;
 bool boxP(NodeT) G_5D_PURE;
 bool strP(NodeT) G_5D_PURE; /* not necessarily disjunct from int */
+bool intP(NodeT) G_5D_PURE;
+bool integerP(NodeT) G_5D_PURE;
+bool floatP(NodeT) G_5D_PURE;
 void* getBoxValue(NodeT node) G_5D_PURE;
 char* getStrValue(NodeT node) G_5D_PURE;
 NodeT operation(NodeT callable, NodeT argument1, NodeT argument2) G_5D_PURE;
@@ -142,6 +145,10 @@ NodeT getRatioB(NodeT n) G_5D_PURE;
 NodeT parseError(NodeT aExpectedInput, NodeT aGotInput) G_5D_PURE;
 NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) G_5D_PURE;
 bool errorP(NodeT n) G_5D_PURE;
+NodeT getErrorKind(NodeT node) G_5D_PURE;
+NodeT getErrorExpectedInput(NodeT node) G_5D_PURE;
+NodeT getErrorGotInput(NodeT node) G_5D_PURE;
+NodeT getErrorContext(NodeT node) G_5D_PURE;
 
 void initIntegers(void);
 void initFloats(void);

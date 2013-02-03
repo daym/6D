@@ -2,11 +2,13 @@
 #include "Values/Values"
 #include "Formatters/TExpression"
 #include "SpecialForms/SpecialForms"
+#include "6D/FFIs"
 BEGIN_NAMESPACE_6D(Formatters)
 BEGIN_NAMESPACE_6D(TExpression)
 USE_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(SpecialForms)
+USE_NAMESPACE_6D(FFIs)
 static NodeT getSymbolByIndex(int index, NodeT names) {
 	if(names == nil)
 		return nil;
@@ -53,6 +55,24 @@ static void printStr(FILE* destination, const char* s, size_t size) {
 			fputc(c, destination);
 	}
 	fputc('"', destination);
+}
+void printInt(FILE* destination, NativeInt value) {
+	fprintf(destination, "%ld", value); /* FIXME make sure to use the correct one */
+}
+void printInteger(FILE* destination, NodeT v) {
+	abort(); /* FIXME */
+}
+void printFloat(FILE* destination, NativeFloat value) {
+	fprintf(destination, "%llf", value); /* FIXME make sure to use the correct one */
+}
+void print0(FILE* destination, NodeT names, NodeT node);
+void printError(FILE* destination, NodeT names, NodeT v) {
+	NodeT error = symbolFromStr("error");
+	NodeT kind = getErrorKind(v);
+	NodeT expectedInput = getErrorExpectedInput(v);
+	NodeT gotInput = getErrorGotInput(v);
+	NodeT context = getErrorContext(v);
+	print0(destination, names, cons(error, cons(kind, cons(expectedInput, cons(gotInput, cons(context, nil))))));
 }
 /* TODO:
 	- track the bindings of variables and backsubstitute values if possible (WTF).
@@ -125,12 +145,26 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 		print(destination, call2(symbolFromStr("/"), getRatioA(node), getRatioB(node)));
 	} else if(SPECIAL_FORM_EQUAL_P(node, Quoter)) {
 		fprintf(destination, "'");
+	} else if(intP(node)) {
+		NativeInt value;
+		if(!toNativeInt(node, &value))
+			abort();
+		printInt(destination, value);
+	} else if(floatP(node)) {
+		NativeFloat value;
+		if(!toNativeFloat(node, &value))
+			abort();
+		printFloat(destination, value);
+	} else if(integerP(node)) {
+		printInteger(destination, node);
 	} else if(strP(node)) {
 		const struct Str* str = (const struct Str*) getCXXInstance(node);
 		char* p;
 		if(!stringFromNode(str, &p))
 			abort();
 		printStr(destination, p, getStrSize(str));
+	} else if(errorP(node)) {
+		printError(destination, names, node);
 	} else {
 		str(node, destination);
 	}

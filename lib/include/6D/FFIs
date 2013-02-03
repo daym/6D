@@ -64,5 +64,8 @@ static inline bool nodeFromNode(NODET root, NODET* result) {
 	return true;
 }
 
+bool toNativeFloat(NODET node, NATIVEFLOAT* result) G_5D_PURE;
+bool toNativeInt(NODET node, NATIVEINT* result) G_5D_PURE;
+
 END_NAMESPACE_6D(FFIs)
 #endif

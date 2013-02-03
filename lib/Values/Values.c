@@ -76,6 +76,7 @@ NodeT call(NodeT callable, NodeT argument) {
 	result = NEW(Call);
 	result->callable = callable;
 	result->argument = argument;
+	result->resultGeneration = -1;
 	return result;
 }
 

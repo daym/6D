@@ -7,6 +7,6 @@ do
 	echo "= $s"
 	er="${s%.5D}.expectedResult"
 	gr="${s%.5D}.gotResult" 
-	./testEvaluator "${s}" >"${gr}" || (echo "failed: $s">&2 ; false)
+	./testNumbers "${s}" >"${gr}" || (echo "failed: $s">&2 ; false)
 	diff -ur "${gr}" "${er}"
 done

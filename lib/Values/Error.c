@@ -20,5 +20,21 @@ NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) {
 	result->context = aContext;
 	return result;
 }
+NodeT getErrorKind(NodeT node) {
+	const struct Error* error = (const struct Error*) getCXXInstance(node);
+	return error->kind;
+}
+NodeT getErrorExpectedInput(NodeT node) {
+	const struct Error* error = (const struct Error*) getCXXInstance(node);
+	return error->expectedInput;
+}
+NodeT getErrorGotInput(NodeT node) {
+	const struct Error* error = (const struct Error*) getCXXInstance(node);
+	return error->gotInput;
+}
+NodeT getErrorContext(NodeT node) {
+	const struct Error* error = (const struct Error*) getCXXInstance(node);
+	return error->context;
+}
 
 END_NAMESPACE_6D(Values)
