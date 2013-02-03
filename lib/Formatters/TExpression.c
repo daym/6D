@@ -144,7 +144,7 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 	else if(ratioP(node)) {
 		print(destination, call2(symbolFromStr("/"), getRatioA(node), getRatioB(node)));
 	} else if(SPECIAL_FORM_EQUAL_P(node, Quoter)) {
-		fprintf(destination, "'");
+		fprintf(destination, "Q");
 	} else if(intP(node)) {
 		NativeInt value;
 		if(!toNativeInt(node, &value))

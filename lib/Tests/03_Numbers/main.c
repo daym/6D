@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 	initAllocators();
 	initIntegers();
 	initEvaluator();
-	initLang5D();
+	NodeT defaultDynEnv = initLang5D();
 	NodeT prog = argc > 1 ? L_parse1(fopen(argv[1], "r"), argv[1]) : L_parse1(stdin, "<stdin>");
 	// TODO Memoize
 	prog = close(symbolFromStr("Builtins"), initBuiltins(), prog);

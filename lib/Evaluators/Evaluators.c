@@ -21,10 +21,15 @@ USE_NAMESPACE_6D(Combinators)
 USE_NAMESPACE_6D(Logic)
 USE_NAMESPACE_6D(SpecialForms)
 
+static NodeT Squote;
 void initEvaluator(void) {
+	Squote = symbolFromStr("'");
 	initCombinators();
 	initLogic();
 	initSpecialForms();
+}
+static bool quoteP(NodeT n) {
+	return n == Squote;
 }
 /* also could just use a list instead of the hashtable. Would be slower. */
 static void getFreeVariablesImpl(NodeT boundNames, int boundNamesCount/*includes shadowed*/, NodeT freeNames, int* freeNamesCount/*includes name unknown*/, NodeT root) {
@@ -85,7 +90,7 @@ static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, NodeT boundNamesSet, N
 			return(annotateImpl(boundNames, boundNamesSet, reduce1(operand)));
 		}*/
 		NodeT newOperatorNode = annotateImpl(dynEnv, boundNames, boundNamesSet, operator_);
-		NodeT newOperandNode = quoteP(newOperatorNode) ? operand : annotateImpl(dynEnv, boundNames, boundNamesSet, operand);
+		NodeT newOperandNode = quoteP(/*ugh*/operator_) ? operand : annotateImpl(dynEnv, boundNames, boundNamesSet, operand);
 		return REUSE_6D((operator_ == newOperatorNode && operand == newOperandNode) ? root : )errorP(newOperatorNode) ? newOperatorNode : errorP(newOperandNode) ? newOperandNode : call(newOperatorNode, newOperandNode);
 	} else if(symbolP(root)) {
 		int i = indexOfSymbol(root, 0, boundNames);
@@ -94,7 +99,7 @@ static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, NodeT boundNamesSet, N
 			return symbolreference(i); /* root */
 		} else {
 			// can be error.
-			NodeT v = annotate(nil, call(dynEnv, quote2(root))); /* TODO this quote is hardcoded and probably shouldn't be (not that bad, though). */
+			NodeT v = annotate(nil, close(Squote, Quoter, call(dynEnv, call(Squote, root)))); /* TODO this quote is hardcoded and probably shouldn't be (not that bad, though). */
 			return eval(v); // make very VERY sure that that is not annotated again.
 		}
 	} // else other stuff.

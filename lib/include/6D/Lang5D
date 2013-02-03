@@ -5,5 +5,6 @@
 BEGIN_NAMESPACE_6D(Parsers)
 NodeT initLang5D(void);    
 NodeT L_parse1(FILE* f, const char* name);
+NodeT L_withDefaultEnv(NodeT body);
 END_NAMESPACE_6D(Parsers)
 #endif /* ndef __6D_LANG5D_H */

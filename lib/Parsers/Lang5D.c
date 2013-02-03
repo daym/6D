@@ -892,8 +892,8 @@ NodeT L_parse1(FILE* f, const char* name) {
 		fprintf(stderr, "Info: the following occured near line %d\n", Scanner_getLinenumber(scanner));
 	return result;
 }
-static NodeT L_withDefaultEnv(NodeT body) {
-        return close(Squote, /*SpecialForms::*/Quoter, 
+NodeT L_withDefaultEnv(NodeT body) {
+	return close(Squote, /*SpecialForms::*/Quoter, 
 	       close(Shashexports, /*Combinators*/Identity, 
 	       body));
 }
