@@ -237,9 +237,25 @@ bool toNativeInt(NodeT aP, NativeInt& result) {
 	} else
 		return false;
 }
-bool toNearestNativeInt(Values::NodeT node, FFIs::NativeInt& result) {
-	/* FIXME */
-	return toNativeInt(node, result);
+bool toNearestNativeInt(NodeT node, NativeInt& result) {
+	if(intP(node))
+		return toNativeInt(node, result);
+	while(integerP(node)) {
+		const Integer* a = (const Integer*) getCXXInstance(node);
+		node = a->tail;
+	}
+	if(intP(node)) {
+		const Int* a = (const Int*) getCXXInstance(node);
+		NativeUInt result = 1U << HIGHBIT;
+		if(a->value&HIGHBIT) { /* negative */
+			return (NativeInt) result;
+		} else {
+			--result;
+			return (NativeInt) result;
+		}
+		return true;
+	}
+	return false;
 }
 NodeT internNative(NativeInt value) {
 	return intA((FFIs::NativeUInt) value);
