@@ -166,7 +166,7 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 	} else if(errorP(node)) {
 		printError(destination, names, node);
 	} else {
-		str(node, destination);
+		fprintf(destination, "???"); /* FIXME str(node, destination); */
 	}
 }
 void print(FILE* destination, NodeT node) {
