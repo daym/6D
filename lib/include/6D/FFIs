@@ -4,35 +4,13 @@
 
 BEGIN_NAMESPACE_6D(FFIs)
 /* conversions */
-static inline NODET internNative(NODET value) {
+static inline NODET internNativeNode(NODET value) {
 	return value;
 }
-NODET internNative(bool value) G_5D_PURE;
+NODET internNativeBool(bool value) G_5D_PURE;
 
-#ifdef __SIZEOF_LONG__
-#if __SIZEOF_LONG_LONG__ != __SIZEOF_LONG__
-#define INTERN_NATIVE_NEED_LONG_LONG
-NODET internNative(long long value);
-NODET internNativeU(unsigned long long value);
-typedef long int NativeInt; /* register type */
-#else
-typedef long long int NativeInt; /* register type */
-#endif
-#else
-#define INTERN_NATIVE_NEED_LONG_LONG
-typedef int NativeInt; /* register type */
-NODET internNative(long long value);
-NODET internNativeU(unsigned long long value);
-#endif
-#ifdef __SIZEOF_LONG__
-#if __SIZEOF_LONG_LONG__ != __SIZEOF_LONG__
-typedef unsigned long int NativeUInt; /* register type */
-#else
-typedef unsigned long long int NativeUInt; /* register type */
-#endif
-#else
-typedef unsigned int NativeUInt; /* register type */
-#endif
+NODET internNativeLL(long long value);
+NODET internNativeULL(unsigned long long value);
 
 #if defined(__VFP_FP__) || defined(__ARM_EABI__)
 /* ARM doesn't have extended-precision floating point */
@@ -46,33 +24,44 @@ typedef long double NativeFloat;
 typedef unsigned int uint32_t; /* why me... */
 #endif
 
-NODET internNative(NativeInt value);
-NODET internNativeU(NativeUInt value);
-NODET internNative(NativeFloat value);
+#if __SIZEOF_LONG_LONG__ != __SIZEOF_LONG__
+typedef unsigned long long int NativeUInt; /* register type */
+typedef long long int NativeInt; /* register type */
+#else
+typedef unsigned long int NativeUInt; /* register type */
+typedef long int NativeInt; /* register type */
+#endif
 
-int intFromNode(NODET root);
+NODET internNativeInt(NativeInt value);
+/*NODET internNativeU(NativeUInt value);*/
+NODET internNativeFloat(NativeFloat value);
+
+bool intFromNode(NODET root, int* result);
 int nearestIntFromNode(NODET root);
-long longFromNode(NODET root);
-long long longLongFromNode(NODET root);
-short shortFromNode(NODET root);
-void* pointerFromNode(NODET root);
-bool booleanFromNode(NODET root); /* evaluates! */
-char* stringFromNode(NODET root);
-char* stringOrNilFromNode(NODET root);
-size_t stringSizeFromNode(NODET root);
-float floatFromNode(NODET root);
-long double longDoubleFromNode(NODET root);
-double doubleFromNode(NODET root);
-long long sizedIntFromNode(int bitCount, NODET root);
+bool longFromNode(NODET root, long* result);
+bool longLongFromNode(NODET root, long long* result);
+bool shortFromNode(NODET root, short* result);
+bool pointerFromNode(NODET root, void** result);
+bool booleanFromNode(NODET root, bool* result); /* evaluates! */
+bool stringFromNode(NODET root, char** result);
+bool stringOrNilFromNode(NODET root, char** resullt);
+bool stringSizeFromNode(NODET root, size_t* result);
+bool floatFromNode(NODET root, float* result);
+bool longDoubleFromNode(NODET root, long double* result);
+bool doubleFromNode(NODET root, double* result);
+bool sizedIntFromNode(int bitCount, NODET root, long long* result);
 /* this will eventually be used to force the entire lazy cons (one level) to be evaluated. Use with care (infinite lists aren't gonna like that). */
-static inline NODET consFromNode(NODET root) {
-	return(root);
+static inline bool consFromNode(NODET root, NODET* result) {
+	*result = root;
+	return true;
 }
-static inline NODET pairFromNode(NODET root) {
-	return(root);
+static inline bool pairFromNode(NODET root, NODET* result) {
+	*result = root;
+	return true;
 }
-static inline NODET nodeFromNode(NODET root) {
-	return root;
+static inline bool nodeFromNode(NODET root, NODET* result) {
+	*result = root;
+	return true;
 }
 
 END_NAMESPACE_6D(FFIs)

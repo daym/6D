@@ -3,19 +3,12 @@
 #include "6D/Values"
 #include "Values/Values"
 BEGIN_NAMESPACE_6D(Values)
-	struct Error : public Node {
-	};
-	struct ParseError : public Error {
-		NodeT expectedInput;
-		NodeT gotInput;
-		ParseError(NodeT aExpectedInput, NodeT aGotInput) : expectedInput(aExpectedInput), gotInput(aGotInput) {}
-	};
-	struct EvalError : public Error {
+	BEGIN_STRUCT_6D(Error)
+		NodeT kind;
 		NodeT expectedInput;
 		NodeT gotInput;
 		NodeT context;
-		EvalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) : expectedInput(aExpectedInput), gotInput(aGotInput), context(aContext) {}
-	};
+	END_STRUCT_6D(Error)
 	NodeT parseError(NodeT aExpectedInput, NodeT aGotInput) G_5D_PURE;
 	bool errorP(NodeT n) G_5D_PURE;
 	NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) G_5D_PURE;

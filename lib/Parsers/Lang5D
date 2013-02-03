@@ -1,8 +1,6 @@
 #ifndef __LANG5_D_H
 #define __LANG5_D_H
 #include <stdio.h>
-#include <string>
-#include <vector>
 #include "Values/Values"
 #include "Scanners/Scanner"
 #include "Allocators/Allocators"
@@ -10,106 +8,8 @@
 #include "6D/Operations"
 BEGIN_NAMESPACE_6D(Parsers)
 
-class Lang5D {
-private:
-	NODET reflectHashExports(NODET entries) const;
-protected:
-	NODET collect(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const;
-	NODET collect1(FILE* file, int& linenumber, bool (*continueP)(int input)) const;
-	NODET collectC(FILE* file, int& linenumber, int prefix, bool (*continueP)(int input)) const;
-	NODET collect1C(FILE* file, int& linenumber, bool (*continueP)(int input)) const;
-	NODET collectNumeric2(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const;
-	int collectNumeric3(FILE* file, int& linenumber, int base, bool (*continueP)(int input)) const;
-	NODET collectUnicodeID(FILE* file, int& linenumber, int prefix, const std::string& prev) const;
-	NODET readDigits(FILE* file, int& linenumber, int c) const;
-	NODET readOperator(FILE* file, int& linenumber, int c) const;
-	NODET readUnicodeOperator3(FILE* file, int& linenumber, int c) const;
-	NODET readSpecialCoding(FILE* file, int& linenumber, int c) const;
-	NODET readString(FILE* file, int& linenumber, int c) const;
-	NODET readKeyword(FILE* file, int& linenumber, int c) const;
-	NODET mcall(NODET a, NODET b) const;
-	NODET moperation(NODET operator_, NODET a, NODET b) const;
-	NODET replaceIN(NODET equation, NODET body) const;
-	NODET readHashExports(FILE* file, int& linenumber, int c) const;
-	NODET parseValue(Scanners::Scanner<Lang5D>& scanner) const;
-	NODET parseListLiteral(NODET endToken, Scanners::Scanner<Lang5D>& tokenizer) const;
-	NODET replaceIMPORT(NODET body, NODET source, NODET symlist) const;
-	NODET mcons(NODET hd, NODET tl) const;
-	NODET mpair(NODET hd, NODET tl) const;
-	NODET mgetConsHead(NODET c) const;
-	NODET mgetConsTail(NODET c) const;
-	NODET mquote(NODET a) const;
-	bool mnilP(NODET a) const;
-	NODET blowHashExportsUp(NODET tl, NODET entries) const;
-public:
-	Lang5D(void);
-	static NODET SLF;
-	static NODET Sindent;
-	static NODET Sdedent;
-	static NODET SopeningParen;
-	static NODET Sapply;
-	static NODET Sdash;
-	static NODET Szero;
-	static NODET Sunderscore;
-	static NODET Scircumflex;
-	static NODET Sstarstar;
-	static NODET Scross;
-	static NODET Scolon;
-	static NODET Squote;
-	static NODET Scomma;
-	static NODET Sdollar;
-	static NODET Selif;
-	static NODET Selse;
-	static NODET Ssemicolon;
-	static NODET Sbackslash;
-	static NODET Slet;
-	static NODET Sletexclam;
-	static NODET Simport;
-	static NODET Sleftparen;
-	static NODET Sleftcurly;
-	static NODET Sleftbracket;
-	static NODET Srightparen;
-	static NODET Srightcurly;
-	static NODET Srightbracket;
-	static NODET Sequal;
-	static NODET Scolonequal;
-	static NODET Sin;
-	static NODET Sfrom;
-	static NODET SEOF;
-	static NODET Serror;
-	static NODET Shashexports;
-	static NODET Sif;
-	static NODET defaultDynEnv;
-	static NODET Sexports;
-	static NODET Snil;
-	static NODET Sdot;
-	static NODET Shasht;
-	static NODET Shashf;
-	NODET readToken(FILE* f, int& linenumber) const;
-	NODET error(const char* expectedPart, const char* gotPart) const;
-	NODET error(NODET expectedPart, NODET gotPart) const;
-	bool errorP(NODET n) const { return Values::errorP(n); }
-	bool openingParenP(NODET node) const;
-	bool operatorP(NODET node) const;
-	int operatorArgcount(NODET node) const;
-	//bool operatorPrefixNeutralP(NODET node) const;
-	NODET operatorPrefixNeutral(NODET node) const;
-	bool macroStarterP(NODET node) const;
-	void startMacro(NODET node, std::vector<NODET ALLOCATOR_VECTOR>& /*ref*/values) const;
-	bool closingParenP(NODET node) const;
-	NODET openingParenOf(NODET node) const;
-	bool operatorLE(NODET a, NODET b) const;
-	NODET readShebang(FILE* file, int& linenumber, int c) const;
-	NODET astFromRpn(const std::vector<NODET ALLOCATOR_VECTOR>& list) const;
-	int callRpnOperator(NODET operator_, std::vector<NODET ALLOCATOR_VECTOR>& /*ref*/values) const;
-	NODET parse(Scanners::Scanner<Lang5D>& scanner) const;
-	NODET parse0(Scanners::Scanner<Lang5D>& scanner, NODET endToken) const;
-	NODET parse1(FILE* f, const char* name) const;
-	NODET startMacro(NODET node, Scanners::Scanner<Lang5D>& tokenizer) const;
-	NODET macroStandin(NODET operator_, NODET operand) const;
-	NODET withDefaultEnv(NODET node) const;
-};
-DECLARE_FFI_FN(Lang5DWrapper)
-
+void initLang5D(void);
+NodeT L_parse1(FILE* f, const char* name);
+extern NodeT defaultDynEnv;
 END_NAMESPACE_6D(Parsers)
 #endif /* ndef __LANG5_D_H */

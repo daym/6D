@@ -4,7 +4,7 @@
 
 BEGIN_NAMESPACE_6D(Evaluators)
 void initEvaluator(void);
-NODET annotate(Values::NodeT environment, Values::NodeT node);
+NODET annotate(NODET environment, NODET node);
 NODET eval(NODET node);
 NODET execute(NODET term);
 void increaseGeneration(void);

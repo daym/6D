@@ -8,49 +8,43 @@ USE_NAMESPACE_6D(Allocators)
 /* it doesn't matter to me what exactly Node is, I'm just using struct here so it shuts up */
 
 struct Node GC_BASECLASS {
-	virtual ~Node(void);
-	virtual void str(FILE* destination) const;
+	int tag;
 };
 #define OVERRIDE_STR_6D virtual void str(FILE* destination) const;
 
 /* semi-private */
 enum {
-	TAG_SYMBOLREFERENCE /* very VERY often used */,
-	TAG_INT,
-	TAG_FFI_FN /* quite important */,
-	TAG_FLOAT,
-	TAG_INTEGER,
-	TAG_RATIO,
-	TAG_CONS,
-	TAG_CALL,
-	TAG_FN,
-	TAG_BOX,
-	TAG_STR,
+	TAG_Nil,
+	TAG_Symbolreference /* very VERY often used */,
+	TAG_Int,
+	TAG_CFFIFn /* quite important */,
+	TAG_Float,
+	TAG_Integer,
+	TAG_Ratio,
+	TAG_Cons,
+	TAG_Call,
+	TAG_Fn,
+	TAG_Box,
+	TAG_Str,
 	/* convenience */
-	TAG_KEYWORD,
-	TAG_SYMBOL,
-	TAG_ERROR,
-	TAG_OPAQUE,
+	TAG_Keyword,
+	TAG_Symbol,
+	TAG_Error,
+	TAG_Opaque,
+	TAG_Hashtable,
 };
+static inline struct Node* Node_initTag(struct Node* node, int tag) {
+	node->tag = tag;
+	return node;
+}
 int tagOfNode(NodeT node);
 
-struct Call : Node {
+BEGIN_STRUCT_6D(Call)
 	NodeT callable;
 	NodeT argument;
 	NodeT result;
 	int resultGeneration;
-	Call(NodeT aCallable, NodeT aArgument) :
-		callable(aCallable),
-		argument(aArgument)
-	{
-		this->callable = callable;
-		this->argument = argument;
-		this->result = NULL;
-		this->resultGeneration = -1;
-	}
-	virtual ~Call() {
-	}
-};
+END_STRUCT_6D(Call)
 static inline int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundNames) {
 	if(boundNames == nil)
 		return(-1);

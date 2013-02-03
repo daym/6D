@@ -1,29 +1,16 @@
 #ifndef __VALUES_SYMBOL_H
 #define __VALUES_SYMBOL_H
-#include <string>
 #include "6D/Values"
 #include "Values/Values"
 
 BEGIN_NAMESPACE_6D(Values)
 
-struct Symbol : Node {
-private:
+BEGIN_STRUCT_6D(Symbol)
 	const char* text;
-	friend const char* getSymbol1Name(NodeT node);
-public:
-	Symbol(const char* text) {
-		this->text = text;
-	}
-	virtual void str(FILE* destination) const;
-};
-
-struct Symbolreference : Node { /* for (substitution) speed reasons, a Symbolreference is NOT a Symbol */
-	const int index;
-	Symbolreference(int aIndex) :
-		index(aIndex)
-	{
-	}
-};
-
+END_STRUCT_6D(Symbol)
+BEGIN_STRUCT_6D(Symbolreference)
+	int index;
+END_STRUCT_6D(Symbolreference)
+const char* getSymbol1Name(NodeT node);
 END_NAMESPACE_6D(Values)
 #endif /* ndef __VALUES_SYMBOL_H */

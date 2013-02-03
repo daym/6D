@@ -1,21 +1,32 @@
 #ifndef __6D_VALUES_H
 #define __6D_VALUES_H
-#include <string>
 #include <stdio.h>
 #include <stdlib.h>
-#include <map>
 #ifdef __cplusplus
+#define NODET Values::NodeT
 #define BEGIN_NAMESPACE_6D(name) namespace name {
 #define END_NAMESPACE_6D(name) }
 #define USE_NAMESPACE_6D(name) using namespace name;
 #define BEGIN_STRUCT_6D(name) struct name : Values::Node {
 #define END_STRUCT_6D(name) };
+#define NATIVEUINT FFIs::NativeUInt
+#define NATIVEFLOAT FFIs::NativeFloat
+#define NATIVEINT FFIs::NativeInt
 #else
+#define NODET NodeT
+#define MNODET NodeT
+//struct Node*
+#define NATIVEUINT NativeUInt
+#define NATIVEFLOAT NativeFloat
+#define NATIVEINT NativeInt
+typedef int bool;
+#define true 1
+#define false 0
 #define BEGIN_NAMESPACE_6D(name) 
 #define END_NAMESPACE_6D(name) 
-#define USE_NAMESPACE_6D
+#define USE_NAMESPACE_6D(name)
 #define BEGIN_STRUCT_6D(name) struct name { \
-	Node super;
+	struct Node super;
 #define END_STRUCT_6D(name) };
 #endif
 #ifdef __GNUC__
@@ -31,7 +42,6 @@ BEGIN_NAMESPACE_6D(Values)
 
 /* this is used as the "result" of the parser (one of it is the result) */
 typedef const struct Node* NodeT;
-#define NODET Values::NodeT
 /* given a string, returns a node that can be quickly checked for identicalness */
 NodeT symbolFromStr(const char* name) G_5D_PURE;
 

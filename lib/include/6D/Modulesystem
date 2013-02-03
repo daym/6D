@@ -6,9 +6,9 @@ BEGIN_NAMESPACE_6D(Modulesystem)
 
 NODET exportsQ(const char* names, ...);
 NODET exportsFQ(const char* fmt, const char* names, ...);
-#define exports(...) Modulesystem::exportsQ(""#__VA_ARGS__, __VA_ARGS__)
-#define exportsf(fmt, ...) Modulesystem::exportsFQ(fmt, ""#__VA_ARGS__, __VA_ARGS__)
+#define exports(...) exportsQ(""#__VA_ARGS__, __VA_ARGS__)
+#define exportsf(fmt, ...) exportsFQ(fmt, ""#__VA_ARGS__, __VA_ARGS__)
 DECLARE_FFI_FN(Dispatch)
-#define DEFINE_MODULE(modname, exp) NODET modname = CLOSED_FFI_FN_NO_GC(Modulesystem::Dispatch, (exp));
+#define DEFINE_MODULE(modname, exp) NODET modname = CLOSED_FFI_FN_NO_GC(Dispatch, (exp));
 END_NAMESPACE_6D(Modulesystem)
 #endif /* ndef __6D_MODULESYSTEM_H */

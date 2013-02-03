@@ -3,8 +3,8 @@
 
 #define DECLARE_SMALL_VALUE(P, T) \
 /* use internNative to create. */ \
-struct P : Values::Node { \
+BEGIN_STRUCT_6D(P) \
 	T value; \
-};
+END_STRUCT_6D(P)
 
 #endif /* ndef __NUMBERS_SMALL_H */

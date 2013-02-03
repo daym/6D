@@ -1,6 +1,5 @@
 #ifndef __NUMBERS_REAL_H
 #define __NUMBERS_REAL_H
-#include <sstream>
 #include "Numbers/Small"
 #include "Values/Values"
 #include "6D/Values"
@@ -9,22 +8,18 @@
 
 BEGIN_NAMESPACE_6D(Values)
 
-DECLARE_SMALL_VALUE(Float, FFIs::NativeFloat)   
+DECLARE_SMALL_VALUE(Float, NATIVEFLOAT)
 DECLARE_FFI_FN(FloatP)
 
-NODET operator+(const Float& a, const Float& b) G_5D_PURE;
-NODET operator-(const Float& a, const Float& b) G_5D_PURE;
-NODET operator*(const Float& a, const Float& b) G_5D_PURE;
-NODET operator/(const Float& a, const Float& b) G_5D_PURE;
-NODET operator<=(const Float& a, const Float& b) G_5D_PURE;
-
-NODET nan(void) G_5D_PURE;
-NODET infinity(void) G_5D_PURE;
+NODET nanA(void) G_5D_PURE;
+NODET infinityA(void) G_5D_PURE;
 bool floatP(NODET node) G_5D_PURE;
+double nanxx(void);
+double infxx(void);
 
 END_NAMESPACE_6D(Values)
 BEGIN_NAMESPACE_6D(FFIs)
-bool toNativeFloat(NODET node, FFIs::NativeFloat& result) G_5D_PURE;
+bool toNativeFloat(NODET node, NATIVEFLOAT* result) G_5D_PURE;
 END_NAMESPACE_6D(FFIs)
 
 #endif /* ndef __NUMBERS_REAL_H */

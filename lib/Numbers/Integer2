@@ -6,23 +6,27 @@
 #include "Numbers/Small"
 BEGIN_NAMESPACE_6D(Values)
 BEGIN_STRUCT_6D(Integer)
-	NodeT tail; /* Integer or Int */
-	FFIs::NativeUInt value;
+	NODET tail; /* Integer or Int */
+	NATIVEUINT value;
 END_STRUCT_6D(Integer)
-DECLARE_SMALL_VALUE(Int, FFIs::NativeUInt)
+DECLARE_SMALL_VALUE(Int, NATIVEUINT)
 void initIntegers(void);
-bool intP(NodeT node);
-bool integerP(NodeT node);
-NodeT integerAdd(NodeT aP, NodeT bP);
-NodeT integerMul(NodeT aP, NodeT bP);
-bool integerEqualsP(NodeT aP, NodeT bP);
-bool integerEqualsIntP(NodeT aP, FFIs::NativeUInt value);
-NodeT integerAddU(NodeT aP, FFIs::NativeUInt amount);
-NodeT integerShl(NodeT aP, unsigned amount);
-NodeT integerShr(NodeT aP, unsigned amount);
+bool intP(NODET node);
+bool integerP(NODET node);
+NODET integerAdd(NODET aP, NODET bP);
+NODET integerMul(NODET aP, NODET bP);
+bool integerEqualsP(NODET aP, NODET bP);
+bool integerEqualsIntP(NODET aP, NATIVEINT value);
+NODET integerAddU(NODET aP, NATIVEUINT amount);
+NODET integerShl(NODET aP, unsigned amount);
+NODET integerShr(NODET aP, unsigned amount);
 END_NAMESPACE_6D(Values)
 BEGIN_NAMESPACE_6D(FFIs)
-bool toNativeInt(NODET aP, NativeInt& result);
-bool toNearestNativeInt(NODET node, NativeInt& result);
+bool toNativeInt(NODET aP, NativeInt* result);
+bool toNearestNativeInt(NODET node, NativeInt* result);
+NODET internNativeInt(NativeInt value);
+NODET internNativeUInt(NativeUInt value);
+NativeInt integerCompareU(NODET aP, NativeInt b);
+NativeInt integerCompare(NODET aP, NODET b);
 END_NAMESPACE_6D(FFIs)
 #endif /* ndef __NUMBERS_INTEGER2_H */

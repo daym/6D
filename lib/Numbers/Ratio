@@ -8,7 +8,7 @@ BEGIN_NAMESPACE_6D(Values)
 		NODET a; /* numerator */
 		NODET b; /* denominator */
 	END_STRUCT_6D(Ratio)
-	Ratio* ratio(NODET aa, NODET bb);
+	NODET ratio(NODET aa, NODET bb);
 	bool ratioP(NODET n);
 	NODET getRatioA(NODET n) G_5D_PURE;
 	NODET getRatioB(NODET n) G_5D_PURE;

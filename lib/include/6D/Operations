@@ -2,10 +2,11 @@
 #define __6D_OPERATIONS_H
 #include <stdlib.h>
 #include "6D/Values"
-#define DECLARE_ENV_SPECIAL_FORM(name) NODET name##_exec(Values::NodeT uargument, Values::NodeT env);
+#define DECLARE_ENV_SPECIAL_FORM(name) NODET name##_exec(NODET uargument, NODET env);
 #define DECLARE_FFI_FN(name) extern NODET name; NODET name##_exec(NODET uargument, NODET env);
 #define DECLARE_SPECIAL_FORM(name) DECLARE_FFI_FN(name) DECLARE_ENV_SPECIAL_FORM(name)
-#define DEFINE_FFI_FN(name) NODET name = FFIFnNoGC(name##_exec, nil, ""#name);
+#define DEFINE_FFI_FN(name) NODET name = nil;
+#define INIT_FFI_FN(name) name = FFIFnNoGC(name##_exec, nil, ""#name);
 #define CLOSED_FFI_FN(name, argument) FFIFn(name##_exec, argument, ""#name)
 #define CLOSED_FFI_FN_NO_GC(name, argument) FFIFnNoGC(name##_exec, argument, ""#name)
 #ifdef STRICT_EVAL
@@ -18,7 +19,7 @@
 	NODET name##_exec(NODET uargument, NODET env) { \
 		USE_NAMESPACE_6D(Values) \
 		NODET argument = PREPARE(uargument); \
-		return internNative(body); \
+		return body; \
 	} \
 	DEFINE_FFI_FN(name)
 #define DEFINE_SPECIAL_FORM(name, body) \

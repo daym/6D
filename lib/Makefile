@@ -8,7 +8,7 @@ DISTFILES = \
 $(PACKAGE)-$(VERSION)/Tests/03_Numbers/02.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/03_Numbers/02.5D \
 $(PACKAGE)-$(VERSION)/Tests/03_Numbers/03.5D \
-$(PACKAGE)-$(VERSION)/Tests/03_Numbers/main.cc \
+$(PACKAGE)-$(VERSION)/Tests/03_Numbers/main.c \
 $(PACKAGE)-$(VERSION)/Tests/03_Numbers/01.5D \
 $(PACKAGE)-$(VERSION)/Tests/03_Numbers/03.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/03_Numbers/01.expectedResult \
@@ -51,7 +51,7 @@ $(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/22.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/d.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/14.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/18.expectedResult \
-$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/main.cc \
+$(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/main.c \
 $(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/12.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/18.5D \
 $(PACKAGE)-$(VERSION)/Tests/01_ShuntingYard/03.expectedResult \
@@ -95,7 +95,7 @@ $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/03.5D \
 $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/04.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/05.5D \
 $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/09.5D \
-$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/main.cc \
+$(PACKAGE)-$(VERSION)/Tests/02_Evaluator/main.c \
 $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/01.5D \
 $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/03.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/01.expectedResult \
@@ -110,45 +110,45 @@ $(PACKAGE)-$(VERSION)/include/6D/wstrings \
 $(PACKAGE)-$(VERSION)/include/6D/Values \
 $(PACKAGE)-$(VERSION)/include/6D/Builtins \
 $(PACKAGE)-$(VERSION)/include/6D/Modulesystem \
-$(PACKAGE)-$(VERSION)/Allocators/Allocators.cc \
+$(PACKAGE)-$(VERSION)/Allocators/Allocators.c \
 $(PACKAGE)-$(VERSION)/Allocators/Allocators \
-$(PACKAGE)-$(VERSION)/Combinators/Combinators.cc \
+$(PACKAGE)-$(VERSION)/Combinators/Combinators.c \
 $(PACKAGE)-$(VERSION)/Combinators/Combinators \
-$(PACKAGE)-$(VERSION)/Evaluators/Evaluators.cc \
+$(PACKAGE)-$(VERSION)/Evaluators/Evaluators.c \
 $(PACKAGE)-$(VERSION)/Evaluators/Evaluators \
 $(PACKAGE)-$(VERSION)/Makefile \
-$(PACKAGE)-$(VERSION)/Numbers/Integer2.cc \
-$(PACKAGE)-$(VERSION)/Numbers/Real.cc \
+$(PACKAGE)-$(VERSION)/Numbers/Integer2.c \
+$(PACKAGE)-$(VERSION)/Numbers/Real.c \
 $(PACKAGE)-$(VERSION)/Numbers/Small \
 $(PACKAGE)-$(VERSION)/Numbers/Integer2 \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio \
-$(PACKAGE)-$(VERSION)/Numbers/Ratio.cc \
+$(PACKAGE)-$(VERSION)/Numbers/Ratio.c \
 $(PACKAGE)-$(VERSION)/Numbers/Real \
-$(PACKAGE)-$(VERSION)/Formatters/Math.cc \
+$(PACKAGE)-$(VERSION)/Formatters/Math.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math \
-$(PACKAGE)-$(VERSION)/Formatters/SExpression.cc \
 $(PACKAGE)-$(VERSION)/Formatters/TExpression \
-$(PACKAGE)-$(VERSION)/Formatters/SExpression \
-$(PACKAGE)-$(VERSION)/Formatters/TExpression.cc \
+$(PACKAGE)-$(VERSION)/Formatters/TExpression.c \
 $(PACKAGE)-$(VERSION)/Formatters/GenericFormatter.inc \
-$(PACKAGE)-$(VERSION)/Parsers/Lang5D.cc \
+$(PACKAGE)-$(VERSION)/Parsers/Lang5D.c \
 $(PACKAGE)-$(VERSION)/Parsers/ShuntingYardParser \
-$(PACKAGE)-$(VERSION)/Parsers/LangForth.cc \
+$(PACKAGE)-$(VERSION)/Parsers/LangForth.c \
 $(PACKAGE)-$(VERSION)/Scanners/Scanner \
 $(PACKAGE)-$(VERSION)/Parsers/Lang5D \
 $(PACKAGE)-$(VERSION)/Parsers/LangForth \
-$(PACKAGE)-$(VERSION)/Scanners/Scanner.cc \
-$(PACKAGE)-$(VERSION)/Parsers/ShuntingYardParser.cc \
-$(PACKAGE)-$(VERSION)/Values/Values.cc \
-$(PACKAGE)-$(VERSION)/Values/wstrings.cc \
+$(PACKAGE)-$(VERSION)/Scanners/Scanner.inc \
+$(PACKAGE)-$(VERSION)/Scanners/Scanner.c \
+$(PACKAGE)-$(VERSION)/Parsers/ShuntingYardParser.inc \
+$(PACKAGE)-$(VERSION)/Values/Values.c \
+$(PACKAGE)-$(VERSION)/Values/wstrings.c \
 $(PACKAGE)-$(VERSION)/Values/Symbol \
 $(PACKAGE)-$(VERSION)/Values/Keyword \
-$(PACKAGE)-$(VERSION)/Values/Hashtable.cc \
-$(PACKAGE)-$(VERSION)/Values/Keyword.cc \
+$(PACKAGE)-$(VERSION)/Values/Hashtable.c \
+$(PACKAGE)-$(VERSION)/Values/Hashtable.inc \
+$(PACKAGE)-$(VERSION)/Values/Keyword.c \
 $(PACKAGE)-$(VERSION)/Values/Hashtable \
-$(PACKAGE)-$(VERSION)/Values/Symbol.cc \
+$(PACKAGE)-$(VERSION)/Values/Symbol.c \
 $(PACKAGE)-$(VERSION)/Values/Values \
-$(PACKAGE)-$(VERSION)/WIN32/wstrings.cc \
+$(PACKAGE)-$(VERSION)/WIN32/wstrings.c \
 $(PACKAGE)-$(VERSION)/WIN32/testShuntingYard.cpp \
 $(PACKAGE)-$(VERSION)/WIN32/targetver.h \
 $(PACKAGE)-$(VERSION)/WIN32/stdafx.h \
@@ -158,35 +158,35 @@ $(PACKAGE)-$(VERSION)/WIN32/stdafx.cpp \
 $(PACKAGE)-$(VERSION)/WIN32/testShuntingYard.vcproj \
 $(PACKAGE)-$(VERSION)/lazy/SpecialForms/SpecialForms \
 $(PACKAGE)-$(VERSION)/lazy/Logic/Logic \
-$(PACKAGE)-$(VERSION)/lazy/Logic/Logic.cc \
+$(PACKAGE)-$(VERSION)/lazy/Logic/Logic.c \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/SpecialForms \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Quoter \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Constanter \
-$(PACKAGE)-$(VERSION)/strict/SpecialForms/Constanter.cc \
-$(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer.cc \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Constanter.c \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer.c \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer \
-$(PACKAGE)-$(VERSION)/strict/SpecialForms/Quoter.cc \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Quoter.c \
 $(PACKAGE)-$(VERSION)/strict/Logic/Logic \
-$(PACKAGE)-$(VERSION)/strict/Logic/Logic.cc \
+$(PACKAGE)-$(VERSION)/strict/Logic/Logic.c \
 $(PACKAGE)-$(VERSION)/design/symbols.py \
 $(PACKAGE)-$(VERSION)/design/scanner.py \
 $(PACKAGE)-$(VERSION)/design/shuntingyard.py.simple \
 $(PACKAGE)-$(VERSION)/design/shuntingyard.py \
 $(PACKAGE)-$(VERSION)/design/generate \
-$(PACKAGE)-$(VERSION)/Builtins/Builtins.cc \
+$(PACKAGE)-$(VERSION)/Builtins/Builtins.c \
 $(PACKAGE)-$(VERSION)/Builtins/Builtins \
-$(PACKAGE)-$(VERSION)/Modulesystem/Memoizer.cc \
+$(PACKAGE)-$(VERSION)/Modulesystem/Memoizer.c \
 $(PACKAGE)-$(VERSION)/Modulesystem/Memoizer \
 $(PACKAGE)-$(VERSION)/Modulesystem/Modulesystem \
-$(PACKAGE)-$(VERSION)/Modulesystem/Exports.cc \
+$(PACKAGE)-$(VERSION)/Modulesystem/Exports.c \
 $(PACKAGE)-$(VERSION)/Allocators/SillyGC \
-$(PACKAGE)-$(VERSION)/Allocators/SillyGC.cc \
-$(PACKAGE)-$(VERSION)/FFIs/Converters.cc
+$(PACKAGE)-$(VERSION)/Allocators/SillyGC.c \
+$(PACKAGE)-$(VERSION)/FFIs/Converters.c
 
 BUILTINS_LIB = lib6dbuiltins.so.1
-CXXFLAGS += $(shell pkg-config --cflags glib-2.0 gthread-2.0)
-LDFLAGS += $(shell pkg-config --libs glib-2.0 gthread-2.0)
-CXXFLAGS += -Wall -fPIC -O0 -g3 -Wall -Istrict -I. -Iinclude -fno-strict-overflow -Wno-deprecated $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include -DSTRICT_EVAL
+CFLAGS += $(shell pkg-config --cflags glib-2.0 gthread-2.0)
+LDFLAGS += $(shell pkg-config --libs glib-2.0 gthread-2.0) -lm
+CFLAGS += -Wall -fPIC -O0 -g3 -Wall -Istrict -I. -Iinclude -fno-strict-overflow -Wno-deprecated $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include -DSTRICT_EVAL
 ifdef LIBGC_LD_WRAP_CFLAGS
 LDFLAGS += -lgc
 endif
@@ -198,11 +198,9 @@ NUMBERS = Numbers/Integer2.o \
 Numbers/Real.o \
 Numbers/Ratio.o
 OBJECTS = Formatters/Math.o \
-Formatters/SExpression.o \
 Formatters/TExpression.o \
 Parsers/Lang5D.o \
 Scanners/Scanner.o \
-Parsers/ShuntingYardParser.o \
 Values/Values.o \
 Values/Keyword.o \
 Values/Symbol.o \
@@ -222,49 +220,47 @@ LIB = lib6dbuiltins.so.1
 STATIC_LIB = lib6dbuiltins1.a  
 
 .SUFFIXES:            # Delete the default suffixes
-%.o: %.cc
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
+%.o: %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 all: $(LIB) $(STATIC_LIB) 
 #Tests/01_ShuntingYard/testShuntingYard
 $(LIB): $(OBJECTS)
-	$(CXX) -shared -o $(LIB) $(OBJECTS) $(LDFLAGS)
+	$(CC) -shared -o $(LIB) $(OBJECTS) $(LDFLAGS)
 $(STATIC_LIB): $(OBJECTS)
 	$(AR) rcs $(STATIC_LIB) $(OBJECTS)
 Tests/01_ShuntingYard/testShuntingYard: Tests/01_ShuntingYard/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS)
 Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS)
 Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
-	$(CXX) -o $@ $^ $(LDFLAGS)
-Formatters/Math.o: Formatters/Math.cc Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
-Formatters/SExpression.o: Formatters/SExpression.cc Formatters/SExpression Values/Values include/6D/Values 
-Formatters/TExpression.o: Formatters/TExpression.cc Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms
-Parsers/Lang5D.o: Parsers/Lang5D.cc Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations
-Scanners/Scanner.o: Scanners/Scanner.cc Scanners/Scanner 
-Parsers/ShuntingYardParser.o: Parsers/ShuntingYardParser.cc Parsers/ShuntingYardParser 
-Values/Values.o: Values/Values.cc Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
-Values/Keyword.o: Values/Keyword.cc Values/Keyword Values/Hashtable
-Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
-Values/Error.o: Values/Error.cc Values/Error Values/Values include/6D/Values
-Allocators/Allocators.o: Allocators/Allocators.cc Allocators/Allocators include/6D/Allocators
-Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Values include/6D/Allocators
-Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins
-Tests/03_Numbers/main.o: Tests/03_Numbers/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
-Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
-Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
-Numbers/Integer2.o: Numbers/Integer2.cc Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
-Numbers/Real.o: Numbers/Real.cc Numbers/Real Numbers/Small Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
-Numbers/Ratio.o: Numbers/Ratio.cc Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
-strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.cc strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations
-strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.cc strict/SpecialForms/Constanter strict/SpecialForms/SpecialForms include/6D/Operations
-lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs
-strict/Logic/Logic.o: strict/Logic/Logic.cc strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
-Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators include/6D/Operations include/6D/Evaluators
-Modulesystem/Memoizer.o: Modulesystem/Memoizer.cc Modulesystem/Memoizer Values/Values Values/Hashtable include/6D/Evaluators include/6D/Values include/6D/FFIs
-Modulesystem/Exports.o: Modulesystem/Exports.cc include/6D/Operations include/6D/FFIs include/6D/Values include/6D/Modulesystem
-Builtins/Builtins.o: Builtins/Builtins.cc Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins Modulesystem/Memoizer include/6D/Modulesystem
-FFIs/Converters.o: FFIs/Converters.cc FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
-Values/Hashtable.o: Values/Hashtable.cc Values/Hashtable Values/Values
+	$(CC) -o $@ $^ $(LDFLAGS)
+Formatters/Math.o: Formatters/Math.c Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
+Formatters/TExpression.o: Formatters/TExpression.c Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms
+Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc
+Scanners/Scanner.o: Scanners/Scanner.c Scanners/Scanner  include/6D/Values include/6D/FFIs
+Values/Values.o: Values/Values.c Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
+Values/Keyword.o: Values/Keyword.c Values/Keyword Values/Hashtable include/6D/Allocators include/6D/Values
+Values/Symbol.o: Values/Symbol.c Values/Symbol Values/Hashtable include/6D/Allocators include/6D/Values
+Values/Error.o: Values/Error.c Values/Error Values/Values include/6D/Values
+Allocators/Allocators.o: Allocators/Allocators.c Allocators/Allocators include/6D/Allocators
+Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.c Parsers/Lang5D Formatters/TExpression include/6D/Values include/6D/Allocators
+Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.c Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins
+Tests/03_Numbers/main.o: Tests/03_Numbers/main.c Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
+Values/wstrings.o: Values/wstrings.c include/6D/wstrings Allocators/Allocators include/6D/Allocators
+Evaluators/Evaluators.o: Evaluators/Evaluators.c strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
+Numbers/Integer2.o: Numbers/Integer2.c Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
+Numbers/Real.o: Numbers/Real.c Numbers/Real Numbers/Small Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
+Numbers/Ratio.o: Numbers/Ratio.c Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
+strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.c strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations
+strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.c strict/SpecialForms/Constanter strict/SpecialForms/SpecialForms include/6D/Operations
+lazy/Logic/Logic.o: lazy/Logic/Logic.c lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs
+strict/Logic/Logic.o: strict/Logic/Logic.c strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms Combinators/Combinators
+Combinators/Combinators.o: Combinators/Combinators.c Combinators/Combinators include/6D/Operations include/6D/Evaluators
+Modulesystem/Memoizer.o: Modulesystem/Memoizer.c Modulesystem/Memoizer Values/Values Values/Hashtable include/6D/Evaluators include/6D/Values include/6D/FFIs
+Modulesystem/Exports.o: Modulesystem/Exports.c include/6D/Operations include/6D/FFIs include/6D/Values include/6D/Modulesystem
+Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins Modulesystem/Memoizer include/6D/Modulesystem
+FFIs/Converters.o: FFIs/Converters.c FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
+Values/Hashtable.o: Values/Hashtable.c Values/Hashtable Values/Values include/6D/Values include/6D/Allocators
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
 	Tests/03_Numbers/run
