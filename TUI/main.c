@@ -5,6 +5,7 @@
 #include "6D/Operations"
 #include "6D/Lang5D"
 #include "6D/Arithmetic"
+#include "6D/Builtins"
 USE_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(Evaluators)
 USE_NAMESPACE_6D(Numbers)
@@ -29,6 +30,8 @@ int main() {
 	//Values::NodeT execute(Values::NodeT term);
 	while((printPrompt(), s = fgets(buffer, 2048, stdin))) { /* TODO handle longer lines */
 		NodeT prog;
+		if(!s[0] || (s[0] == '\n' && !s[1]))
+			continue;
 		FILE* f = fmemopen((char*) s, strlen(s), "r");
 		prog = L_parse1(f, "<stdin>");
 		fclose(f);
