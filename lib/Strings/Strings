@@ -1,0 +1,11 @@
+#ifndef __STRINGS_STRINGS_H
+#define __STRINGS_STRINGS_H
+#include "6D/Values"
+#include "6D/Operations"
+BEGIN_NAMESPACE_6D(Strings)
+NodeT concat(NodeT a, NodeT b);
+NodeT listFromStr(NodeT str);
+void initStrings(void);
+DECLARE_BINARY_FN(Bconcat)
+END_NAMESPACE_6D(Strings)
+#endif /* ndef __STRINGS_STRINGS_H */

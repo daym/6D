@@ -127,6 +127,8 @@ $(PACKAGE)-$(VERSION)/Numbers/Ratio \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio.c \
 $(PACKAGE)-$(VERSION)/Numbers/Real \
 $(PACKAGE)-$(VERSION)/Numbers/Arithmetic.c \
+$(PACKAGE)-$(VERSION)/Strings/Strings \
+$(PACKAGE)-$(VERSION)/Strings/Strings.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math \
 $(PACKAGE)-$(VERSION)/Formatters/TExpression \
@@ -202,6 +204,7 @@ NUMBERS = Numbers/Integer2.o \
 Numbers/Real.o \
 Numbers/Ratio.o \
 Numbers/Arithmetic.o
+STRINGS = Strings/Strings.o
 OBJECTS = Formatters/Math.o \
 Formatters/TExpression.o \
 Parsers/Lang5D.o \
@@ -216,6 +219,7 @@ Values/Hashtable.o \
 $(STRICT_OBJECTS) \
 $(EVAL_OBJECTS) \
 $(NUMBERS) \
+$(STRINGS) \
 Modulesystem/Exports.o \
 Modulesystem/Memoizer.o \
 Builtins/Builtins.o
@@ -263,9 +267,10 @@ strict/Logic/Logic.o: strict/Logic/Logic.c strict/Logic/Logic include/6D/Values 
 Combinators/Combinators.o: Combinators/Combinators.c Combinators/Combinators include/6D/Operations include/6D/Evaluators
 Modulesystem/Memoizer.o: Modulesystem/Memoizer.c Modulesystem/Memoizer Values/Values Values/Hashtable include/6D/Evaluators include/6D/Values include/6D/FFIs
 Modulesystem/Exports.o: Modulesystem/Exports.c include/6D/Operations include/6D/FFIs include/6D/Values include/6D/Modulesystem
-Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/SpecialForms include/6D/Operations  lazy/SpecialForms/SpecialForms include/6D/Builtins Modulesystem/Memoizer include/6D/Modulesystem
+Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/SpecialForms include/6D/Operations  lazy/SpecialForms/SpecialForms include/6D/Builtins Modulesystem/Memoizer include/6D/Modulesystem Strings/Strings
 FFIs/Converters.o: FFIs/Converters.c FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
 Values/Hashtable.o: Values/Hashtable.c Values/Hashtable Values/Values include/6D/Values include/6D/Allocators
+Strings/Strings.o: Strings/Strings.c Strings/Strings include/6D/Values include/6D/Allocators Numbers/Integer2
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
 	Tests/03_Numbers/run

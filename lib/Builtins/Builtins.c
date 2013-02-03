@@ -6,10 +6,12 @@
 #include "Modulesystem/Memoizer"
 #include "6D/Modulesystem"
 #include "Numbers/Integer2"
+#include "Strings/Strings"
 BEGIN_NAMESPACE_6D(Builtins)
 USE_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(FFIs)
 USE_NAMESPACE_6D(SpecialForms)
+USE_NAMESPACE_6D(Strings)
 static NodeT SConstanter;
 static NodeT Srem;
 static NodeT Shashexports;
@@ -43,6 +45,7 @@ static NodeT SstrP;
 static NodeT SintP;
 static NodeT SintegerP;
 static NodeT SfloatP;
+static NodeT Splusplus;
 //static NodeT SboxValue;
 //static NodeT SstrValue;
 /* operation */
@@ -175,12 +178,14 @@ static NodeT builtin(NodeT node) {
 	       (node == SerrorExpectedInput) ? BerrorExpectedInput : 
 	       (node == SerrorGotInput) ? BerrorGotInput : 
 	       (node == SerrorContext) ? BerrorContext : 
+	       (node == Splusplus) ? Bconcat : 
 	       nil; /* FIXME error */
 }
 // TODO Modulesystem::memoize
 //DEFINE_STRICT_FN(Builtins, dispatch(Modulesystem::exportsQ("Constanter rem memoize", SpecialForms::Constanter, SpecialForms::Identer, Modulesystem::Memoizer)))
 DEFINE_STRICT_FN(Builtins, builtin(argument))
 NodeT initBuiltins(void) {
+	initStrings();
 	SConstanter = symbolFromStr("Constanter");
 	Srem = symbolFromStr("rem");
 	Shashexports = symbolFromStr("#exports");
@@ -230,6 +235,7 @@ NodeT initBuiltins(void) {
 	SerrorExpectedInput = symbolFromStr("errorExpectedInput");
 	SerrorGotInput = symbolFromStr("errorGotInput");
 	SerrorContext = symbolFromStr("errorContext");
+	Splusplus = symbolFromStr("++");
 	INIT_BINARY_FN(BsymbolsEqP)
 	INIT_BINARY_FN(BsymbolsLEP)
 	INIT_FFI_FN(BsymbolFromStr)
@@ -272,6 +278,7 @@ NodeT initBuiltins(void) {
 	INIT_FFI_FN(BerrorGotInput)
 	INIT_FFI_FN(BerrorContext)
 	INIT_FFI_FN(Builtins)
+	INIT_BINARY_FN(Bconcat)
 	/* FIXME exports */
 	return Builtins;
 }

@@ -43,4 +43,7 @@
 #define INIT_BINARY_FN(name) \
 	INIT_FFI_FN(name) \
 	INIT_FFI_FN(name##2)
+#define DECLARE_BINARY_FN(name) \
+	DECLARE_FFI_FN(name) \
+	DECLARE_FFI_FN(name##2)
 #endif /* __6D_OPERATIONS_H */
