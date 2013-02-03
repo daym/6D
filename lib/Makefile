@@ -110,6 +110,8 @@ $(PACKAGE)-$(VERSION)/include/6D/wstrings \
 $(PACKAGE)-$(VERSION)/include/6D/Values \
 $(PACKAGE)-$(VERSION)/include/6D/Builtins \
 $(PACKAGE)-$(VERSION)/include/6D/Modulesystem \
+$(PACKAGE)-$(VERSION)/include/6D/Arithmetic \
+$(PACKAGE)-$(VERSION)/include/6D/Lang5D \
 $(PACKAGE)-$(VERSION)/Allocators/Allocators.c \
 $(PACKAGE)-$(VERSION)/Allocators/Allocators \
 $(PACKAGE)-$(VERSION)/Combinators/Combinators.c \
@@ -124,6 +126,7 @@ $(PACKAGE)-$(VERSION)/Numbers/Integer2 \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio.c \
 $(PACKAGE)-$(VERSION)/Numbers/Real \
+$(PACKAGE)-$(VERSION)/Numbers/Arithmetic.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math \
 $(PACKAGE)-$(VERSION)/Formatters/TExpression \
@@ -197,7 +200,8 @@ STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/Specia
 EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o FFIs/Converters.o
 NUMBERS = Numbers/Integer2.o \
 Numbers/Real.o \
-Numbers/Ratio.o
+Numbers/Ratio.o \
+Numbers/Arithmetic.o
 OBJECTS = Formatters/Math.o \
 Formatters/TExpression.o \
 Parsers/Lang5D.o \

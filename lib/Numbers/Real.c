@@ -87,5 +87,4 @@ NodeT nanA(void) {
 NodeT infinityA(void) {
 	return(&infinityFloat);
 }
-
 END_NAMESPACE_6D(Values)

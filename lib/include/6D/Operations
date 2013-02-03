@@ -37,4 +37,10 @@
 #define SPECIAL_FORM_EQUAL_P(node, name) FFI_FN_EQUAL_P(node, name)
 #define DEFINE_STRICT_MONADIC_FN(name, body) \
 	DEFINE_STRICT_FN(name, body)
+#define DEFINE_STRICT_BINARY_FN(name, body) \
+	DEFINE_STRICT_FN(name##2, body) \
+	DEFINE_STRICT_FN(name, CLOSED_FFI_FN(name##2, argument))
+#define INIT_BINARY_FN(name) \
+	INIT_FFI_FN(name) \
+	INIT_FFI_FN(name##2)
 #endif /* __6D_OPERATIONS_H */
