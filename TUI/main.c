@@ -14,19 +14,30 @@ USE_NAMESPACE_6D(Allocators)
 USE_NAMESPACE_6D(Parsers)
 USE_NAMESPACE_6D(Formatters::TExpression)
 USE_NAMESPACE_6D(Arithmetic)
+USE_NAMESPACE_6D(Strings)
 void printPrompt(void) {
 	fprintf(stderr, "eval $ ");
 	fflush(stderr);
 }
+static NodeT builtins;
 static NodeT input;
-static NodeT getBoundNames(void) {
-	return cons(symbolFromStr("abba"), cons(symbolFromStr("beta"), nil));
+static NodeT Sexports;
+static NodeT reflect(NodeT accessor, NodeT newTail) {
+	if(!accessor)
+		return newTail;
+	NodeT exports = eval(annotate(nil, call(accessor, Sexports)));
+	return concat(exports, newTail);
+}
+static NodeT getBoundNames(const char* text, int point) {
+	// TODO check where exactly you are.
+	//return cons(symbolFromStr("abba"), cons(symbolFromStr("beta"), nil));
+	return reflect(builtins, nil);
 }
 static char* command_generator(const char* text, int state) {
 	static NodeT boundNames;
 	static int len;
 	if(state == 0) { /* restart global */
-		boundNames = getBoundNames();
+		boundNames = getBoundNames(text, rl_point);
 		len = strlen(text);
 		//return strdup("A");
 	}
@@ -56,7 +67,8 @@ int main() {
 	initArithmetic();
 	NodeT defaultDynEnv = initLang5D();
 	initEvaluator();
-	NodeT builtins = initBuiltins();
+	builtins = initBuiltins();
+	Sexports = symbolFromStr("exports");
 	rl_readline_name = "6D";
 	rl_attempted_completion_function = complete;
 	rl_bind_key('\t',rl_complete);
