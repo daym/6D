@@ -66,6 +66,7 @@ static NodeT SerrorKind;
 static NodeT SerrorExpectedInput;
 static NodeT SerrorGotInput;
 static NodeT SerrorContext;
+static NodeT SstrFromList;
 static bool symbolsEqP(NodeT a, NodeT b) {
 	return a == b;
 }
@@ -179,6 +180,7 @@ static NodeT builtin(NodeT node) {
 	       (node == SerrorGotInput) ? BerrorGotInput : 
 	       (node == SerrorContext) ? BerrorContext : 
 	       (node == Splusplus) ? Bconcat : 
+	       (node == SstrFromList) ? BstrFromList : 
 	       nil; /* FIXME error */
 }
 // TODO Modulesystem::memoize
@@ -198,7 +200,7 @@ NodeT initBuiltins(void) {
 	Skeyword1Name = symbolFromStr("keyword1Name");
 	SnilP = symbolFromStr("nil?");
 	Snil = symbolFromStr("nil");
-	Scolon = symbolFromStr("colon");
+	Scolon = symbolFromStr(":");
 	SstrSize = symbolFromStr("strSize");
 	Sfn = symbolFromStr("fn");
 	Scall = symbolFromStr("call");
@@ -236,6 +238,7 @@ NodeT initBuiltins(void) {
 	SerrorGotInput = symbolFromStr("errorGotInput");
 	SerrorContext = symbolFromStr("errorContext");
 	Splusplus = symbolFromStr("++");
+	SstrFromList = symbolFromStr("strFromList");
 	INIT_BINARY_FN(BsymbolsEqP)
 	INIT_BINARY_FN(BsymbolsLEP)
 	INIT_FFI_FN(BsymbolFromStr)
@@ -278,7 +281,6 @@ NodeT initBuiltins(void) {
 	INIT_FFI_FN(BerrorGotInput)
 	INIT_FFI_FN(BerrorContext)
 	INIT_FFI_FN(Builtins)
-	INIT_BINARY_FN(Bconcat)
 	/* FIXME exports */
 	return Builtins;
 }

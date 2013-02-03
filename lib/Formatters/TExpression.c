@@ -134,7 +134,7 @@ void print0(FILE* destination, NodeT names, NodeT node) {
 				fprintf(destination, ",");
 				print0(destination, names, tail);
 			}
-		} else {
+		} else if(!nilP(tail)) {
 			fprintf(destination, " ");
 			print0(destination, names, getConsTail(node));
 		}
