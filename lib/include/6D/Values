@@ -133,5 +133,6 @@ NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) G_5D_PURE
 bool errorP(NodeT n) G_5D_PURE;
 
 void initIntegers(void);
+void initFloats(void);
 END_NAMESPACE_6D(Values)
 #endif /* ndef __6D_VALUES_H */

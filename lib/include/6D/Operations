@@ -26,10 +26,11 @@
 		return body; \
 	} \
 	DEFINE_FFI_FN(name)
-#define REGISTER_STR(name, body) void name::str(FILE* destination) const { \
+#define REGISTER_STRxx(name, body) void name::str(FILE* destination) const { \
 	const name* node = this; \
 	body \
 }
+#define REGISTER_STR(name, body) /* FIXME */
 #define REGISTER_BUILTIN(name, aCount, reservedCount, sym)
 #define FFI_FN_EQUAL_P(node, name) (Values::boxP(node) && Values::FFIFnWithCallbackP((node), name##_exec))
 #define SPECIAL_FORM_EQUAL_P(node, name) FFI_FN_EQUAL_P(node, name)

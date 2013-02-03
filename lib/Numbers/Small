@@ -5,9 +5,6 @@
 /* use internNative to create. */ \
 struct P : Values::Node { \
 	T value; \
-	P(T aValue) : value(aValue) { \
-	} \
-	OVERRIDE_STR_6D \
 };
 
 #endif /* ndef __NUMBERS_SMALL_H */

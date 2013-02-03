@@ -3,6 +3,7 @@
 #include "Values/Values"
 #include "6D/FFIs"
 #include "Numbers/Integer2"
+#include "Numbers/Small"
 /* assumes two's complement */
 /* assumes the value is always stored in the shortest possible form */
 /* a number is a list of the form [Integer Integer Integer Int] whereas the last Int is the most significant part. The last Int also includes a (two's complement) "sign" bit. */
@@ -15,9 +16,7 @@ BEGIN_STRUCT_6D(Integer)
 	NodeT tail; /* Integer or Int */
 	NativeUInt value;
 END_STRUCT_6D(Integer)
-BEGIN_STRUCT_6D(Int)
-	NativeUInt value;
-END_STRUCT_6D(Int)
+DECLARE_SMALL_VALUE(Int, NativeUInt)
 bool intP(NodeT node) {
 	return tagOfNode(node) == TAG_INT;
 }
@@ -58,7 +57,7 @@ NodeT integerpart(NativeUInt value, NodeT tail) {
 NodeT integerAddU(NodeT aP, NativeUInt amount) {
 	NativeUInt value;
 	NodeT tail;
-	if(amount == 0)
+	if(amount == 0U)
 		return aP;
 	if(intP(aP)) {
 		const Int* a = (const Int*) getCXXInstance(aP);

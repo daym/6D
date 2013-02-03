@@ -7,8 +7,10 @@
 
 BEGIN_NAMESPACE_6D(FFIs)
 USE_NAMESPACE_6D(Values)
-Values::NodeT internNative(NativeFloat value) {
-	return(new Values::Float(value));
+NodeT internNative(NativeFloat value) {
+	Float* result = new Float;
+	result->value = value;
+	return result;
 }
 bool toNativeFloat(NodeT node, NativeFloat& result) {
 	result = 0.0;
@@ -70,12 +72,9 @@ NodeT operator<=(const Float& a, const Float& b) {
 
 REGISTER_BUILTIN(FloatP, 1, 0, symbolFromStr("float?"))
 
+static Float nanFloat;
+static Float infinityFloat;
 
-#ifdef __GNUC__
-#define LLVM_INF           __builtin_inff()
-static Float nanFloat(__builtin_nanf(""));
-static Float infinityFloat(__builtin_inff());
-#else
 #ifdef _MSC_VER
 static inline double nanxx(void) {
 	uint32_t nan[2]={0xffffffff, 0x7fffffff};
@@ -87,14 +86,18 @@ static inline double infxx(void) {
 	double g = *( double* )inf;
 	return g;
 }
-static Float nanFloat(nanxx());
-static Float infinityFloat(infxx());
 #else
-static Float nanFloat(0.0/0.0);
-static Float infinityFloat(1.0/0.0);
+static inline double nanxx(void) {
+	return __builtin_nanf(""); /* 0.0/0.0 */
+}
+static inline double infxx(void) {
+	return __builtin_inff(); /* 1.0/0.0 */
+}
 #endif
-#endif
-
+void initFloats(void) {
+	nanFloat.value = nanxx();
+	infinityFloat.value = infxx();
+}
 NodeT nan(void) {
 	return(&nanFloat);
 }
