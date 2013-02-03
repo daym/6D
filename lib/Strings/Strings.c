@@ -49,7 +49,10 @@ NodeT concat(NodeT a, NodeT b) {
 		a = listFromStr(a);
 	if(strP(b))
 		b = listFromStr(b);
-	return concatLists(b, a);
+	if(nilP(b))
+		return a;
+	else
+		return concatLists(b, a);
 }
 DEFINE_STRICT_BINARY_FN(Bconcat, concat(env, argument))
 DEFINE_STRICT_FN(BstrFromList, strFromList(argument))
