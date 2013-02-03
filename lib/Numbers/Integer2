@@ -11,6 +11,8 @@ NodeT integerMul(NodeT aP, NodeT bP);
 bool integerEqualsP(NodeT aP, NodeT bP);
 bool integerEqualsIntP(NodeT aP, FFIs::NativeUInt value);
 NodeT integerAddU(NodeT aP, FFIs::NativeUInt amount);
+NodeT integerShl(NodeT aP, unsigned amount);
+NodeT integerShr(NodeT aP, unsigned amount);
 END_NAMESPACE_6D(Values)
 BEGIN_NAMESPACE_6D(FFIs)
 bool toNativeInt(Values::NodeT aP, NativeInt& result);

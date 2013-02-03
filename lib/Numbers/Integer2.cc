@@ -6,6 +6,7 @@
 /* assumes two's complement */
 /* assumes the value is always stored in the shortest possible form */
 /* a number is a list of the form [Integer Integer Integer Int] whereas the last Int is the most significant part. The last Int also includes a (two's complement) "sign" bit. */
+/* disadvantage: you don't know whether a number is smaller than 0 or bigger than 0 without traversing the entire number */
 BEGIN_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(FFIs)
 /* cons-like list of NativeUInt, least significant first. */
@@ -43,13 +44,11 @@ static inline NodeT intA(NativeUInt value) {
 	return makeInt(value);
 }
 NodeT integerpart(NativeUInt value, NodeT tail) {
-	if(tail) {
-		Integer* result = new Integer;
-		result->tail = tail;
-		result->value = value;
-		return result;
-	} else 
-		return intA(value);
+	Integer* result = new Integer;
+	assert(tail);
+	result->tail = tail;
+	result->value = value;
+	return result;
 }
 /* FIXME determine size */
 #define HIGHBIT 63
@@ -76,10 +75,10 @@ NodeT integerAddU(NodeT aP, NativeUInt amount) {
 	if(UNLIKELY_6D(!tail && (value2&HIGHBIT) && !(value&HIGHBIT)/* precond && !(amount&HIGHBIT)*/)) { /* flipped sign accidentally (middle) */
 		/* this can only happen with the MSB of the entire number.  */
 		assert(value2 >= value); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
-		NodeT newMS = integerpart(SIGNEXTENSION(value), nil); /* sign extend */
+		NodeT newMS = intA(SIGNEXTENSION(value)); /* sign extend */
 		return integerpart(value2, newMS);
 	}
-	return integerpart(value2, (value2 < value) ? integerAddU(tail, 1) : tail);
+	return tail ? integerpart(value2, (value2 < value) ? integerAddU(tail, 1) : tail) : intA(value2);
 }
 /* only suitable for adding "negative" amounts */
 NodeT integerAddN(NodeT aP, NativeUInt amount) {
@@ -94,16 +93,16 @@ NodeT integerAddN(NodeT aP, NativeUInt amount) {
 		value = a->value;
 		tail = a->tail;
 		assert(tail);
-	} else
+	} else 
 		return evalError(strCXX("<integer>"), strCXX("<junk>"), aP);
 	NativeUInt value2 = value + amount;
 	if(UNLIKELY_6D(!tail && !(value2&HIGHBIT) && (value&HIGHBIT) /*&& precond amount&HIGHBIT */)) { /* flipped sign accidentally */
 		/* this can only happen with the MSB of the entire number */
 		assert(value2 >= value); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
-		NodeT newMS = integerpart(SIGNEXTENSION(value), nil); /* sign extend */
+		NodeT newMS = intA(SIGNEXTENSION(value)); /* sign extend */
 		return integerpart(value2, newMS);
 	}
-	return integerpart(value2, integerAddN(integerAddU(tail, (value2 < value) ? 1 : 0), SIGNEXTENSION(value)));
+	return tail ? integerpart(value2, integerAddN(integerAddU(tail, (value2 < value) ? 1 : 0), SIGNEXTENSION(value))) : intA(value2);
 }
 NodeT integerAdd(NodeT aP, NodeT bP) {
 	NativeUInt avalue;
@@ -142,10 +141,10 @@ NodeT integerAdd(NodeT aP, NodeT bP) {
 		(((value2&HIGHBIT) && !(avalue&HIGHBIT) && !(bvalue&HIGHBIT)) || 
 		((!(value2&HIGHBIT) && (avalue&HIGHBIT) && (bvalue&HIGHBIT)))))) { /* flipped sign accidentally */
 		assert(value2 >= avalue); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
-		NodeT newMS = integerpart(SIGNEXTENSION(avalue), nil); /* sign extend */
+		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
 		return integerpart(value2, newMS);
 	}
-	return integerpart(value2, integerAddU(integerAdd(atail, btail), (value2 < avalue) ? 1 : 0));
+	return atail ? integerpart(value2, integerAddU(integerAdd(atail, btail), (value2 < avalue) ? 1 : 0)) : intA(value2);
 }
 NodeT integerSucc(NodeT aP) {
 	return integerAddU(aP, 1);
@@ -153,8 +152,33 @@ NodeT integerSucc(NodeT aP) {
 NodeT integerMul(NodeT aP, NodeT bP) {
 	/* TODO prefer the shorter one */
 	NodeT result = intA(0);
-	/* FIXME */
-	return(result);
+	NativeUInt bvalue;
+	NodeT btail;
+	if(intP(bP)) {
+		const Int* b = (const Int*) getCXXInstance(bP);
+		bvalue = b->value;
+		btail = nil;
+	} else if(integerP(bP)) {
+		const Integer* b = (const Integer*) getCXXInstance(bP);
+		bvalue = b->value;
+		btail = b->tail;
+		assert(btail);
+	} else
+		return evalError(strCXX("<integer>"), strCXX("<junk>"), bP);
+	for(NativeUInt mask = HIGHBIT; mask; mask >>= 1) {
+		result = integerShl(result, 1);
+		if(bvalue&mask)
+			result = integerAdd(result, aP);
+	}
+	return integerAdd(result, integerShl(integerMul(aP, btail), HIGHBIT + 1));
+}
+NodeT integerShl(NodeT aP, unsigned amount) {
+	abort();
+	return aP;
+}
+NodeT integerShr(NodeT aP, unsigned amount) {
+	abort();
+	return aP;
 }
 bool integerEqualsP(NodeT aP, NodeT bP) {
 	NativeUInt avalue;
