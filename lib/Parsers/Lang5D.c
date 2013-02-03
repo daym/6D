@@ -430,6 +430,7 @@ static bool macroStandinP(NodeT c) {
 }
 static NodeT parse0(struct Scanner* scanner, NodeT endToken);
 static NodeT parseValue(struct Scanner* scanner) {
+	/* TODO quoted values */
 	NodeT token = Scanner_getToken(scanner);
 	if(token == Sleftparen) {
 		return parse0(scanner, Srightparen);

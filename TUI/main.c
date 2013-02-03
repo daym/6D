@@ -18,6 +18,19 @@ void printPrompt(void) {
 	fprintf(stderr, "eval $ ");
 	fflush(stderr);
 }
+static char* command_generator(const char* text, int state) {
+	if(state == 0) { /* restart global */
+		return strdup("A");
+	}
+	/* TODO search wrapper envs (exports), then parsed text as far as possible */
+	return(NULL);
+}
+static char** complete(const char* text, int start, int end) {
+	char** matches = NULL;
+	//if(start == 0) // or after a brace.
+		matches = completion_matches(text, command_generator);
+	return(matches);
+}
 int main() {
 	const char* s;
 	//char buffer[2049];
@@ -27,6 +40,8 @@ int main() {
 	NodeT defaultDynEnv = initLang5D();
 	initEvaluator();
 	NodeT builtins = initBuiltins();
+	rl_readline_name = "6D";
+	rl_attempted_completion_function = complete;
 	//Values::NodeT annotate(Values::NodeT environment, Values::NodeT node);
 	//Values::NodeT eval(Values::NodeT node);
 	//Values::NodeT execute(Values::NodeT term);
