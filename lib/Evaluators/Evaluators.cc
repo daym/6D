@@ -59,7 +59,7 @@ int getFreeVariables(Hashtable& freeNames, NodeT root) {
 static inline NodeT error(const char* expectedText, const char* gotText, NodeT context) {
 	return evalError(strCXX(expectedText), strCXX(gotText), context);
 }
-static NodeT annotateImpl(Values::NodeT dynEnv, Values::NodeT boundNames, Hashtable& boundNamesSet, NodeT root) {
+static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, Hashtable& boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.
 	NodeT result;
 	if(fnP(root)) {
@@ -169,7 +169,7 @@ NodeT eval1(NodeT term) {
 }
 
 /* public interface */
-Values::NodeT eval(Values::NodeT node) {
+NodeT eval(NodeT node) {
 	try {
 		return(eval1(node));
 	} catch(std::exception& exception) {
@@ -179,8 +179,8 @@ Values::NodeT eval(Values::NodeT node) {
 
 /* only here for speed. Think of it as FFI. */
 #define WORLD nil
-Values::NodeT execute(NodeT term) {
-	Values::NodeT r = eval(call(term, WORLD));
+NodeT execute(NodeT term) {
+	NodeT r = eval(call(term, WORLD));
 	// TODO error check
 	return(getConsHead(r));
 }

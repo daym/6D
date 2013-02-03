@@ -3,7 +3,7 @@
 BEGIN_NAMESPACE_6D(Formatters)
 BEGIN_NAMESPACE_6D(SExpression)
 USE_NAMESPACE_6D(Values)
-void print(FILE* destination, Values::NodeT node) {
+void print(FILE* destination, NodeT node) {
 	if(symbolP(node)) {
 		fprintf(destination, "%s", getSymbol1Name(node));
 	} else if(keywordP(node)) {

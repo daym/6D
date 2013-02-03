@@ -17,16 +17,16 @@ private:
 	T& env;
 	int executionResultCount;
 	int argcount;
-	Values::NodeT prevInput;
-	bool unaryP(Values::NodeT input) {
+	NODET prevInput;
+	bool unaryP(NODET input) {
 		int argcount = env.operatorArgcount(input);
 		if (argcount > 1) {
-			Values::NodeT neutral = env.operatorPrefixNeutral(input);
+			NODET neutral = env.operatorPrefixNeutral(input);
 			return !env.errorP(neutral);
 		} else
 			return (argcount == 1 || argcount == -1);
 	}
-	Values::NodeT applyAndPush(int argcount, bool bUnary, Values::NodeT input) {
+	NODET applyAndPush(int argcount, bool bUnary, NODET input) {
 		/* Note: there is no case for binary suffix operators abused as unary operator. */
 		bool bClosingParen = env.closingParenP(input);
 		NodeT pendingOperator;
@@ -57,7 +57,7 @@ private:
 		}
 		return input;
 	}
-	inline void pushOperand(Values::NodeT input) {
+	inline void pushOperand(NODET input) {
 		result.push_back(input); 
 		++executionResultCount;
 	}
@@ -67,9 +67,9 @@ public:
 		env(aEnv)
 	{
 	}
-	std::vector<NodeT ALLOCATOR_VECTOR> parse(Values::NodeT endToken) {
+	std::vector<NodeT ALLOCATOR_VECTOR> parse(NODET endToken) {
 		//"\n\tThis works like the following:\n\t\t#operators is a stack of operators. It is always kept in order of ascending precedence. \n\t\t(non-operator) values are just emitted.\n\t\tAn opening parenthesis would just be put on the operator stack (without popping anything off), EVEN THOUGH it is recorded with the lowest precedence ever.\n\t\tAn operator is handled like this: if we try to push a new operator with lower precedence on top, it will keep popping (and emitting) existing operators off the operator stack until the invariant is satisfied. Then the operator is pushed on the operator stack.\n\t\tA closing parenthesis is an " operator     " which is not being put on the operator stack (it would do nothing anyway), otherwise handled like any other operator.\n\t";
-		Values::NodeT input;
+		NODET input;
 		prevInput = env.SopeningParen; // intern("(");
 		NodeT SEOF = env.SEOF;
 		// TODO maybe don't auto-apply on any kind of closing paren.
@@ -108,7 +108,7 @@ public:
 				if (env.operatorP(prevInput) && (!env.closingParenP(prevInput) || unaryP(input)) && !env.closingParenP(input)) { /* either prefix operator or binary operator that has been abused as an unary operator (f.e. -3). Parens are not unary. */
 					bUnary = true;
 					if (argcount > 1) { /* binary operator has been abused as an unary operator */
-						Values::NodeT neutral = env.operatorPrefixNeutral(input);
+						NODET neutral = env.operatorPrefixNeutral(input);
 						pushOperand(/* yield */ neutral);
 						if (env.errorP(neutral)) { /* binary operator is not allowed to be abused as an unary operator */
 							return result;
@@ -140,7 +140,7 @@ public:
 	}
 };
 template<typename S, typename T>
-static inline std::vector<NodeT ALLOCATOR_VECTOR> parse(S& tokenizer, T& env, Values::NodeT endToken) {
+static inline std::vector<NodeT ALLOCATOR_VECTOR> parse(S& tokenizer, T& env, NODET endToken) {
 	return Parser<S,T>(tokenizer, env).parse(endToken);
 }
 END_NAMESPACE_6D(Scanners)

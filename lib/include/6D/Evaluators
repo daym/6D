@@ -4,9 +4,9 @@
 
 BEGIN_NAMESPACE_6D(Evaluators)
 void initEvaluator(void);
-Values::NodeT annotate(Values::NodeT environment, Values::NodeT node);
-Values::NodeT eval(Values::NodeT node);
-Values::NodeT execute(Values::NodeT term);
+NODET annotate(Values::NodeT environment, Values::NodeT node);
+NODET eval(NODET node);
+NODET execute(NODET term);
 void increaseGeneration(void);
 END_NAMESPACE_6D(Evaluators)
 

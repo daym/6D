@@ -14,7 +14,7 @@ BEGIN_NAMESPACE_6D(Scanners)
 template<typename T>
 struct Scanner GC_BASECLASS {
 private: /* ugh */
-	Values::NodeT value;
+	NODET value;
 	FILE* file;
 	std::string name;
 	int linenumber;
@@ -22,7 +22,7 @@ private: /* ugh */
 	T env;
 	std::stack<int> indents;
 	int indent; /* of current line */
-	Values::NodeT SEOF;
+	NODET SEOF;
 	bool bEOF;
 protected:
 	/** \return whether we already injected a token or not. */
@@ -92,8 +92,8 @@ public:
 	}
 	void pop(void) {
 	}
-	Values::NodeT consume(void) {
-		Values::NodeT previousValue = this->value;
+	NODET consume(void) {
+		NODET previousValue = this->value;
 		if(!this->skipWhitespace()) {
 			if(bEOF) { /* TODO unlikely */
 				if(this->indents.size() > 1) {
@@ -109,13 +109,13 @@ public:
 		}
 		return previousValue;
 	}
-	/*Values::NodeT consume1(Values::NodeT expectedToken) {
+	/*NODET consume1(NODET expectedToken) {
 		if(this->value != expectedToken)
 			return env.error(getSymbol1Name(expectedToken), getSymbol1Name(this->value));
 		else
 			return consume(expectedToken);
 	}*/
-	Values::NodeT getToken(void) const {
+	NODET getToken(void) const {
 		return this->value;
 	}
 	int getLinenumber(void) const {

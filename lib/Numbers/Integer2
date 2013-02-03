@@ -2,7 +2,14 @@
 #define __NUMBERS_INTEGER2_H
 #include "6D/FFIs"
 #include "6D/Values"
+#include "Values/Values"
+#include "Numbers/Small"
 BEGIN_NAMESPACE_6D(Values)
+BEGIN_STRUCT_6D(Integer)
+	NodeT tail; /* Integer or Int */
+	FFIs::NativeUInt value;
+END_STRUCT_6D(Integer)
+DECLARE_SMALL_VALUE(Int, FFIs::NativeUInt)
 void initIntegers(void);
 bool intP(NodeT node);
 bool integerP(NodeT node);
@@ -15,6 +22,7 @@ NodeT integerShl(NodeT aP, unsigned amount);
 NodeT integerShr(NodeT aP, unsigned amount);
 END_NAMESPACE_6D(Values)
 BEGIN_NAMESPACE_6D(FFIs)
-bool toNativeInt(Values::NodeT aP, NativeInt& result);
+bool toNativeInt(NODET aP, NativeInt& result);
+bool toNearestNativeInt(NODET node, NativeInt& result);
 END_NAMESPACE_6D(FFIs)
 #endif /* ndef __NUMBERS_INTEGER2_H */

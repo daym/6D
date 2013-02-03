@@ -1,7 +1,8 @@
 #include <limits>
+#include <stdexcept>
 #include "6D/Values"
 #include "6D/FFIs"
-#include "Numbers/Integer"
+#include "Numbers/Integer2"
 #include "Numbers/Real"
 #include "Numbers/Ratio"
 #include "Logic/Logic"

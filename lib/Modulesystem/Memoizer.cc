@@ -22,7 +22,7 @@ static NodeT memoized(NodeT env, NodeT key) {
 DEFINE_STRICT_FN(Memoizer2, memoized(env, argument))
 
 /* memoizer: given a function, results in a memoizer for that function. */
-Values::NodeT memoizer(Values::NodeT fn) {
+NodeT memoizer(NodeT fn) {
 	if(!dummy)
 		dummy = new Node;
 	return CLOSED_FFI_FN(Memoizer2, pair(new Hashtable, fn));

@@ -2,6 +2,7 @@
 #include "Formatters/Math"
 BEGIN_NAMESPACE_6D(Formatters)
 BEGIN_NAMESPACE_6D(Math)
+USE_NAMESPACE_6D(Values)
 #include "Formatters/GenericFormatter.inc"
 
 END_NAMESPACE_6D(Math)

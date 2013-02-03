@@ -4,11 +4,11 @@
 #include "6D/Operations"
 
 BEGIN_NAMESPACE_6D(Logic)
-extern Values::NodeT trueN;
-extern Values::NodeT falseN;
-extern Values::NodeT Disjunction;
-extern Values::NodeT Conjunction;
-extern Values::NodeT Negation;
+extern NODET trueN;
+extern NODET falseN;
+extern NODET Disjunction;
+extern NODET Conjunction;
+extern NODET Negation;
 void initLogic(void);
 END_NAMESPACE_6D(Logic)
 #endif /* ndef __6D_LAZY_LOGIC_H */

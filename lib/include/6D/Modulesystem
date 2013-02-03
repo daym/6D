@@ -4,11 +4,11 @@
 #include "6D/Operations"
 BEGIN_NAMESPACE_6D(Modulesystem)
 
-Values::NodeT exportsQ(const char* names, ...);
-Values::NodeT exportsFQ(const char* fmt, const char* names, ...);
+NODET exportsQ(const char* names, ...);
+NODET exportsFQ(const char* fmt, const char* names, ...);
 #define exports(...) Modulesystem::exportsQ(""#__VA_ARGS__, __VA_ARGS__)
 #define exportsf(fmt, ...) Modulesystem::exportsFQ(fmt, ""#__VA_ARGS__, __VA_ARGS__)
 DECLARE_FFI_FN(Dispatch)
-#define DEFINE_MODULE(modname, exp) Values::NodeT modname = CLOSED_FFI_FN_NO_GC(Modulesystem::Dispatch, (exp));
+#define DEFINE_MODULE(modname, exp) NODET modname = CLOSED_FFI_FN_NO_GC(Modulesystem::Dispatch, (exp));
 END_NAMESPACE_6D(Modulesystem)
 #endif /* ndef __6D_MODULESYSTEM_H */

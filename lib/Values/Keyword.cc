@@ -19,7 +19,7 @@ struct eqstr2 {
 		return strcmp(s1, s2) == 0;
 	}
 };
-typedef RawHashtable<const char*, Values::NodeT, hashstr2, eqstr2> Hashtable2;
+typedef RawHashtable<const char*, NodeT, hashstr2, eqstr2> Hashtable2;
 static Hashtable2 keywords;
 NodeT keywordFromStr(const char* name) {
 	Hashtable2::const_iterator iter = keywords.find(name);

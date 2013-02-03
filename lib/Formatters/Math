@@ -4,7 +4,7 @@
 #include "Values/Values"
 BEGIN_NAMESPACE_6D(Formatters)
 BEGIN_NAMESPACE_6D(Math)
-void print(FILE* destination, Values::NodeT node);
+void print(FILE* destination, NODET node);
 END_NAMESPACE_6D(Math)
 END_NAMESPACE_6D(Formatters)
 #endif /* ndef __FORMATTERS_MATH_H */

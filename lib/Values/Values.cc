@@ -5,7 +5,7 @@
 #include "Values/Keyword"
 #include "Allocators/Allocators"
 #include "Formatters/TExpression"
-#include "Numbers/Integer"
+#include "Numbers/Integer2"
 #include "Numbers/Real"
 #include "Numbers/Ratio"
 BEGIN_NAMESPACE_6D(Values)
@@ -231,7 +231,7 @@ int tagOfNode(NodeT node) {
 	       TAG_OPAQUE;
 }
 static NodeT symbolreferences[200];
-Values::NodeT symbolreference(int index) {
+NodeT symbolreference(int index) {
 	if(index >= 0 && index < 200) {
 		if(!symbolreferences[index])
 			symbolreferences[index] = new (NoGC) Symbolreference(index); /* Note: could also just stack-allocate them */
@@ -243,7 +243,7 @@ bool symbolreferenceP(NodeT n) {
 	return tagOfNode(n) == TAG_SYMBOLREFERENCE;
 }
 /* returns the jump index of n if it is a Symbolreference, otherwise (-1) */
-int getSymbolreferenceIndex(Values::NodeT n) {
+int getSymbolreferenceIndex(NodeT n) {
 	if(symbolreferenceP(n)) {
 		const Symbolreference* sr = (const Symbolreference*) getCXXInstance(n);
 		return sr->index;

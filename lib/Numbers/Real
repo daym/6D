@@ -12,19 +12,19 @@ BEGIN_NAMESPACE_6D(Values)
 DECLARE_SMALL_VALUE(Float, FFIs::NativeFloat)   
 DECLARE_FFI_FN(FloatP)
 
-Values::NodeT operator+(const Float& a, const Float& b) G_5D_PURE;
-Values::NodeT operator-(const Float& a, const Float& b) G_5D_PURE;
-Values::NodeT operator*(const Float& a, const Float& b) G_5D_PURE;
-Values::NodeT operator/(const Float& a, const Float& b) G_5D_PURE;
-Values::NodeT operator<=(const Float& a, const Float& b) G_5D_PURE;
+NODET operator+(const Float& a, const Float& b) G_5D_PURE;
+NODET operator-(const Float& a, const Float& b) G_5D_PURE;
+NODET operator*(const Float& a, const Float& b) G_5D_PURE;
+NODET operator/(const Float& a, const Float& b) G_5D_PURE;
+NODET operator<=(const Float& a, const Float& b) G_5D_PURE;
 
-Values::NodeT nan(void) G_5D_PURE;
-Values::NodeT infinity(void) G_5D_PURE;
-bool floatP(Values::NodeT node) G_5D_PURE;
+NODET nan(void) G_5D_PURE;
+NODET infinity(void) G_5D_PURE;
+bool floatP(NODET node) G_5D_PURE;
 
 END_NAMESPACE_6D(Values)
 BEGIN_NAMESPACE_6D(FFIs)
-bool toNativeFloat(Values::NodeT node, FFIs::NativeFloat& result) G_5D_PURE;
+bool toNativeFloat(NODET node, FFIs::NativeFloat& result) G_5D_PURE;
 END_NAMESPACE_6D(FFIs)
 
 #endif /* ndef __NUMBERS_REAL_H */

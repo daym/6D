@@ -4,6 +4,6 @@
 #include "6D/Operations"
 BEGIN_NAMESPACE_6D(Builtins)
 DECLARE_FFI_FN(Builtins)
-Values::NodeT initBuiltins(void);
+NODET initBuiltins(void);
 END_NAMESPACE_6D(Builtins)
 #endif /* ndef __6D_BUILTINS_H */

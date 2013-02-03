@@ -4,9 +4,9 @@
 #include "6D/Values"
 
 BEGIN_NAMESPACE_6D(Combinators)
-extern Values::NodeT Identity;
-extern Values::NodeT Konstant;
-static inline Values::NodeT constanter(Values::NodeT argument) {
+extern NODET Identity;
+extern NODET Konstant;
+static inline NODET constanter(NODET argument) {
 	return call(Konstant, argument);
 }
 void initCombinators(void);

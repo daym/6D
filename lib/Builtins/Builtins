@@ -2,6 +2,6 @@
 #define __6D_BUILTINS_BUILTINS_H
 #include "6D/Values"
 BEGIN_NAMESPACE_6D(Builtins)
-Values::NodeT initBuiltins(void);
+NODET initBuiltins(void);
 END_NAMESPACE_6D(Builtins)
 #endif /* ndef __6D_BUILTINS_BUILTINS_H */

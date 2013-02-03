@@ -118,11 +118,11 @@ $(PACKAGE)-$(VERSION)/Evaluators/Evaluators.cc \
 $(PACKAGE)-$(VERSION)/Evaluators/Evaluators \
 $(PACKAGE)-$(VERSION)/Makefile \
 $(PACKAGE)-$(VERSION)/Numbers/BigUnsigned \
-$(PACKAGE)-$(VERSION)/Numbers/Integer.cc \
+$(PACKAGE)-$(VERSION)/Numbers/Integer2.cc \
 $(PACKAGE)-$(VERSION)/Numbers/Real.cc \
 $(PACKAGE)-$(VERSION)/Numbers/BigUnsigned.cc \
 $(PACKAGE)-$(VERSION)/Numbers/Small \
-$(PACKAGE)-$(VERSION)/Numbers/Integer \
+$(PACKAGE)-$(VERSION)/Numbers/Integer2 \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio.cc \
 $(PACKAGE)-$(VERSION)/Numbers/Real \
@@ -242,10 +242,10 @@ Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJE
 Formatters/Math.o: Formatters/Math.cc Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
 Formatters/SExpression.o: Formatters/SExpression.cc Formatters/SExpression Values/Values include/6D/Values 
 Formatters/TExpression.o: Formatters/TExpression.cc Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms
-Parsers/Lang5D.o: Parsers/Lang5D.cc Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer include/6D/Operations
+Parsers/Lang5D.o: Parsers/Lang5D.cc Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations
 Scanners/Scanner.o: Scanners/Scanner.cc Scanners/Scanner 
 Parsers/ShuntingYardParser.o: Parsers/ShuntingYardParser.cc Parsers/ShuntingYardParser 
-Values/Values.o: Values/Values.cc Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer Numbers/Real Numbers/Ratio
+Values/Values.o: Values/Values.cc Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
 Values/Keyword.o: Values/Keyword.cc Values/Keyword Values/Hashtable
 Values/Symbol.o: Values/Symbol.cc Values/Symbol Values/Hashtable
 Values/Error.o: Values/Error.cc Values/Error Values/Values include/6D/Values
@@ -255,11 +255,10 @@ Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Parsers/Lang5D Formatters/
 Tests/03_Numbers/main.o: Tests/03_Numbers/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
-#Numbers/Integer.o: Numbers/Integer.cc Numbers/Integer Numbers/Small include/6D/FFIs include/6D/Values Values/Values
 Numbers/Integer2.o: Numbers/Integer2.cc Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
-Numbers/Real.o: Numbers/Real.cc Numbers/Real Numbers/Small Numbers/Integer include/6D/FFIs include/6D/Values Values/Values
+Numbers/Real.o: Numbers/Real.cc Numbers/Real Numbers/Small Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
 Numbers/BigUnsigned.o: Numbers/BigUnsigned.cc Numbers/BigUnsigned Numbers/Small
-Numbers/Ratio.o: Numbers/Ratio.cc Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer include/6D/FFIs include/6D/Values Values/Values
+Numbers/Ratio.o: Numbers/Ratio.cc Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
 strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.cc strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations
 strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.cc strict/SpecialForms/Constanter strict/SpecialForms/SpecialForms include/6D/Operations
 lazy/Logic/Logic.o: lazy/Logic/Logic.cc lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs
@@ -268,7 +267,7 @@ Combinators/Combinators.o: Combinators/Combinators.cc Combinators/Combinators in
 Modulesystem/Memoizer.o: Modulesystem/Memoizer.cc Modulesystem/Memoizer Values/Values Values/Hashtable include/6D/Evaluators include/6D/Values include/6D/FFIs
 Modulesystem/Exports.o: Modulesystem/Exports.cc include/6D/Operations include/6D/FFIs include/6D/Values include/6D/Modulesystem
 Builtins/Builtins.o: Builtins/Builtins.cc Builtins/Builtins strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms include/6D/Builtins Modulesystem/Memoizer include/6D/Modulesystem
-FFIs/Converters.o: FFIs/Converters.cc FFIs/Converters Numbers/Integer Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
+FFIs/Converters.o: FFIs/Converters.cc FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
 Values/Hashtable.o: Values/Hashtable.cc Values/Hashtable Values/Values
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run

@@ -729,36 +729,36 @@ NodeT Lang5D::replaceIMPORT(NodeT body, NodeT source, NodeT symlist) const {
 	if(symlist) {
 		NodeT hd = mgetConsHead(symlist);
 		NodeT accessor = call(source, mquote(hd)); /* better? */
-		return Values::close(hd, accessor, replaceIMPORT(body, source, mgetConsTail(symlist)));
+		return close(hd, accessor, replaceIMPORT(body, source, mgetConsTail(symlist)));
 	} else
 		return body;
 }
-Values::NodeT Lang5D::mcons(Values::NodeT hd, Values::NodeT tl) const {
+NodeT Lang5D::mcons(NodeT hd, NodeT tl) const {
 	// TODO prevent variable capture of the (:)
 	return call2(Scolon, hd, tl);
 }
-Values::NodeT Lang5D::mpair(Values::NodeT hd, Values::NodeT tl) const {
+NodeT Lang5D::mpair(NodeT hd, NodeT tl) const {
 	// TODO prevent variable capture of the (:)
 	return call2(Scomma, hd, tl);
 }
-bool Lang5D::mnilP(Values::NodeT c) const {
+bool Lang5D::mnilP(NodeT c) const {
 	return nilP(c) || c == Snil;
 }
-Values::NodeT Lang5D::mgetConsHead(Values::NodeT c) const {
+NodeT Lang5D::mgetConsHead(NodeT c) const {
 	NodeT c2 = getCallCallable(c);
 	assert(c2);
 	assert(getCallCallable(c2) == Scolon);
 	NodeT a0 = getCallArgument(c2);
 	return a0;
 }
-Values::NodeT Lang5D::mgetConsTail(Values::NodeT c) const {
+NodeT Lang5D::mgetConsTail(NodeT c) const {
 	NodeT c2 = getCallCallable(c);
 	assert(c2);
 	assert(getCallCallable(c2) == Scolon);
 	NodeT a1 = getCallArgument(c);
 	return a1;
 }
-Values::NodeT Lang5D::mquote(Values::NodeT a) const {
+NodeT Lang5D::mquote(NodeT a) const {
 	return quote(a);
 	// NOT return call(Squote, a);
 }
@@ -894,7 +894,7 @@ DEFINE_STRICT_FN(withDefaultEnv, lang5D.withDefaultEnv(argument))
 DEFINE_MODULE(Lang5D, exports(parse1, withDefaultEnv))
 /* FFI:
 Lang5DWrapper non-monadic
-        Values::NodeT parse1(FILE* f, const char* name) const; monadic
+        NodeT parse1(FILE* f, const char* name) const; monadic
 	withDefaultEnv non-monadic
 */
 

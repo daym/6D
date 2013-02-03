@@ -53,8 +53,8 @@ void* ealloc(size_t size, void* source);
 void efree(void* beginning);
 
 #ifdef GC_THREADS
-#define ALLOCATOR_STACK , std::deque<NodeT, gc_allocator<Values::NodeT> > 
-#define ALLOCATOR_VECTOR , gc_allocator<Values::NodeT>
+#define ALLOCATOR_STACK , std::deque<NodeT, gc_allocator<NODET> > 
+#define ALLOCATOR_VECTOR , gc_allocator<NODET>
 #define ALLOCATOR_VECTOR2(t) , gc_allocator<t>
 #define GC_BASECLASS : public gc
 #else

@@ -1,9 +1,9 @@
 #include "6D/Values"
 #include "SpecialForms/Constanter"
 BEGIN_NAMESPACE_6D(SpecialForms)
-
+USE_NAMESPACE_6D(Values)
 DEFINE_SPECIAL_FORM(Constanter2, env)
-Values::NodeT constanter2(Values::NodeT argument) {
+NodeT constanter2(NodeT argument) {
 	return CLOSED_FFI_FN(Constanter2, argument); // call(CLOSED_FFI_FN(), argument);
 }
 /* mostly for debugging */

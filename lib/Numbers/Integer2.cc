@@ -12,11 +12,6 @@ BEGIN_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(FFIs)
 /* cons-like list of NativeUInt, least significant first. */
 /* TODO reuse common tails. */
-BEGIN_STRUCT_6D(Integer)
-	NodeT tail; /* Integer or Int */
-	NativeUInt value;
-END_STRUCT_6D(Integer)
-DECLARE_SMALL_VALUE(Int, NativeUInt)
 bool intP(NodeT node) {
 	return tagOfNode(node) == TAG_INT;
 }

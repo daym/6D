@@ -4,6 +4,6 @@
 #include "6D/Operations"
 /* like Constanter, just prefers the other argument */
 BEGIN_NAMESPACE_6D(SpecialForms)
-Values::NodeT identer2(Values::NodeT argument);
+NODET identer2(NODET argument);
 END_NAMESPACE_6D(SpecialForms)
 #endif /* ndef __6D_SPECIAL_FORMS_IDENTER_H */

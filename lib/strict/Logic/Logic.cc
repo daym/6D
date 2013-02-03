@@ -37,7 +37,7 @@ USE_NAMESPACE_6D(Logic)
 NodeT internNative(bool value) {
 	return value ? t : f;
 }
-bool booleanFromNode(Values::NodeT n) {
+bool booleanFromNode(NodeT n) {
 	return(n != f);
 }
 END_NAMESPACE_6D(FFIs)

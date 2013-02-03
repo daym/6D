@@ -5,12 +5,12 @@
 BEGIN_NAMESPACE_6D(Combinators)
 USE_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(Evaluators)
-Values::NodeT Identity;
-Values::NodeT Konstant;
+NodeT Identity;
+NodeT Konstant;
 /* TODO Substitution */
 void initCombinators(void) {
-	Values::NodeT a = symbolFromStr("a");
-	Values::NodeT b = symbolFromStr("b");
+	NodeT a = symbolFromStr("a");
+	NodeT b = symbolFromStr("b");
 	Identity = annotate(nil, fn(a, a));
 	Konstant = annotate(nil, fn(a, fn(b, a)));
 }

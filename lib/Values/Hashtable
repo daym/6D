@@ -238,7 +238,7 @@ public:
 		//  TODO shrink
 	}
 };
-typedef RawHashtable<Values::NodeT, Values::NodeT, hashstr, eqstr> Hashtable;
+typedef RawHashtable<NODET, NODET, hashstr, eqstr> Hashtable;
 
 #ifdef CX11xx
 class Hashtable : public RawHashtable, public Values::Node {

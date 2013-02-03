@@ -20,11 +20,11 @@ static inline NodeT ensureRatio(NodeT node) {
 		throw std::invalid_argument("argument is not a Ratio");
 	return(node);
 }
-Values::NodeT getRatioA(Values::NodeT n) {
+NodeT getRatioA(NodeT n) {
 	const Ratio* r = (const Ratio*) getCXXInstance(n);
 	return r->a;
 }
-Values::NodeT getRatioB(Values::NodeT n) {
+NodeT getRatioB(NodeT n) {
 	const Ratio* r = (const Ratio*) getCXXInstance(n);
 	return r->b;
 }

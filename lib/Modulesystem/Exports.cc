@@ -67,7 +67,7 @@ NodeT exportsFQ(const char* fmt, const char* names, ...) {
 	result = cons(pair(Sexports, cons(Sexports, reflector(result))), result); // exports are automatcially added by Modulesystem dispatcher
 	return(result);
 }
-Values::NodeT dispatch42(Values::NodeT key, Values::NodeT list) {
+NodeT dispatch42(NodeT key, NodeT list) {
 	if(nilP(list)) {
 		/* TODO error */
 		return nil;
@@ -81,7 +81,7 @@ Values::NodeT dispatch42(Values::NodeT key, Values::NodeT list) {
 	}
 }
 /* TODO memoize! */
-Values::NodeT dispatch1(Values::NodeT key, Values::NodeT list) {
+NodeT dispatch1(NodeT key, NodeT list) {
 	return dispatch42(key, list);
 }
 DEFINE_STRICT_FN(Dispatch, dispatch1(argument, env))

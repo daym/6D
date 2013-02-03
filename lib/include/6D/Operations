@@ -2,12 +2,12 @@
 #define __6D_OPERATIONS_H
 #include <stdlib.h>
 #include "6D/Values"
-#define DECLARE_ENV_SPECIAL_FORM(name) Values::NodeT name##_exec(Values::NodeT uargument, Values::NodeT env);
-#define DECLARE_FFI_FN(name) extern Values::NodeT name; Values::NodeT name##_exec(Values::NodeT uargument, Values::NodeT env);
+#define DECLARE_ENV_SPECIAL_FORM(name) NODET name##_exec(Values::NodeT uargument, Values::NodeT env);
+#define DECLARE_FFI_FN(name) extern NODET name; NODET name##_exec(NODET uargument, NODET env);
 #define DECLARE_SPECIAL_FORM(name) DECLARE_FFI_FN(name) DECLARE_ENV_SPECIAL_FORM(name)
-#define DEFINE_FFI_FN(name) Values::NodeT name = Values::FFIFnNoGC(name##_exec, nil, ""#name);
-#define CLOSED_FFI_FN(name, argument) Values::FFIFn(name##_exec, argument, ""#name)
-#define CLOSED_FFI_FN_NO_GC(name, argument) Values::FFIFnNoGC(name##_exec, argument, ""#name)
+#define DEFINE_FFI_FN(name) NODET name = FFIFnNoGC(name##_exec, nil, ""#name);
+#define CLOSED_FFI_FN(name, argument) FFIFn(name##_exec, argument, ""#name)
+#define CLOSED_FFI_FN_NO_GC(name, argument) FFIFnNoGC(name##_exec, argument, ""#name)
 #ifdef STRICT_EVAL
 /* if the evaluator is already strict then we don't need to evaluate it ourselves again. */
 #define PREPARE(argument) argument
@@ -15,14 +15,14 @@
 #define PREPARE(argument) Evaluators::eval(nil, argument)
 #endif
 #define DEFINE_STRICT_FN(name, body) \
-	Values::NodeT name##_exec(Values::NodeT uargument, Values::NodeT env) { \
+	NODET name##_exec(NODET uargument, NODET env) { \
 		USE_NAMESPACE_6D(Values) \
-		Values::NodeT argument = PREPARE(uargument); \
+		NODET argument = PREPARE(uargument); \
 		return internNative(body); \
 	} \
 	DEFINE_FFI_FN(name)
 #define DEFINE_SPECIAL_FORM(name, body) \
-	Values::NodeT name##_exec(Values::NodeT argument, Values::NodeT env) { \
+	NODET name##_exec(NODET argument, NODET env) { \
 		return body; \
 	} \
 	DEFINE_FFI_FN(name)
@@ -32,7 +32,7 @@
 }
 #define REGISTER_STR(name, body) /* FIXME */
 #define REGISTER_BUILTIN(name, aCount, reservedCount, sym)
-#define FFI_FN_EQUAL_P(node, name) (Values::boxP(node) && Values::FFIFnWithCallbackP((node), name##_exec))
+#define FFI_FN_EQUAL_P(node, name) (boxP(node) && FFIFnWithCallbackP((node), name##_exec))
 #define SPECIAL_FORM_EQUAL_P(node, name) FFI_FN_EQUAL_P(node, name)
 #define DEFINE_STRICT_MONADIC_FN(name, body) \
 	DEFINE_STRICT_FN(name, body)

@@ -2,7 +2,7 @@
 #include <limits>
 #include "Numbers/Real"
 #include "6D/FFIs"
-#include "Numbers/Integer"
+#include "Numbers/Integer2"
 #include "Values/Values"
 
 BEGIN_NAMESPACE_6D(FFIs)
@@ -34,7 +34,7 @@ END_NAMESPACE_6D(FFIs)
 BEGIN_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(FFIs)
 USE_NAMESPACE_6D(Values)
-bool floatP(Values::NodeT node) {
+bool floatP(NodeT node) {
 	return tagOfNode(node) == TAG_FLOAT;
 }
 REGISTER_STR(Float, {

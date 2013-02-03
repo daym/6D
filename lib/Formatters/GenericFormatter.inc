@@ -1,4 +1,4 @@
-void print(FILE* destination, Values::NodeT node) {
+void print(FILE* destination, NodeT node) {
 	if(symbolP(node)) {
 		fprintf(destination, "%s", getSymbol1Name(node));
 	} else if(keywordP(node)) {
@@ -19,7 +19,7 @@ void print(FILE* destination, Values::NodeT node) {
 		fprintf(destination, "(");
 		print(destination, getConsHead(node));
 		fprintf(destination, " ");
-		Values::NodeT tail = getConsTail(node);
+		NodeT tail = getConsTail(node);
 		if(consP(tail)) {
 			print(destination, getConsHead(tail));
 			fprintf(destination, " ");
@@ -28,6 +28,6 @@ void print(FILE* destination, Values::NodeT node) {
 			print(destination, getConsTail(node));
 		fprintf(destination, ")");
 	} else {
-		Values::str(node, destination);
+		str(node, destination);
 	}
 }

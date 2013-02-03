@@ -4,16 +4,16 @@
 
 BEGIN_NAMESPACE_6D(FFIs)
 /* conversions */
-static inline Values::NodeT internNative(Values::NodeT value) {
+static inline NODET internNative(NODET value) {
 	return value;
 }
-Values::NodeT internNative(bool value) G_5D_PURE;
+NODET internNative(bool value) G_5D_PURE;
 
 #ifdef __SIZEOF_LONG__
 #if __SIZEOF_LONG_LONG__ != __SIZEOF_LONG__
 #define INTERN_NATIVE_NEED_LONG_LONG
-Values::NodeT internNative(long long value);
-Values::NodeT internNativeU(unsigned long long value);
+NODET internNative(long long value);
+NODET internNativeU(unsigned long long value);
 typedef long int NativeInt; /* register type */
 #else
 typedef long long int NativeInt; /* register type */
@@ -21,8 +21,8 @@ typedef long long int NativeInt; /* register type */
 #else
 #define INTERN_NATIVE_NEED_LONG_LONG
 typedef int NativeInt; /* register type */
-Values::NodeT internNative(long long value);
-Values::NodeT internNativeU(unsigned long long value);
+NODET internNative(long long value);
+NODET internNativeU(unsigned long long value);
 #endif
 #ifdef __SIZEOF_LONG__
 #if __SIZEOF_LONG_LONG__ != __SIZEOF_LONG__
@@ -46,32 +46,32 @@ typedef long double NativeFloat;
 typedef unsigned int uint32_t; /* why me... */
 #endif
 
-Values::NodeT internNative(NativeInt value);
-Values::NodeT internNativeU(NativeUInt value);
-Values::NodeT internNative(NativeFloat value);
+NODET internNative(NativeInt value);
+NODET internNativeU(NativeUInt value);
+NODET internNative(NativeFloat value);
 
-int intFromNode(Values::NodeT root);
-int nearestIntFromNode(Values::NodeT root);
-long longFromNode(Values::NodeT root);
-long long longLongFromNode(Values::NodeT root);
-short shortFromNode(Values::NodeT root);
-void* pointerFromNode(const Values::NodeT root);
-bool booleanFromNode(Values::NodeT root); /* evaluates! */
-char* stringFromNode(Values::NodeT root);
-char* stringOrNilFromNode(Values::NodeT root);
-size_t stringSizeFromNode(Values::NodeT root);
-float floatFromNode(Values::NodeT root);
-long double longDoubleFromNode(Values::NodeT root);
-double doubleFromNode(Values::NodeT root);
-long long sizedIntFromNode(int bitCount, Values::NodeT root);
+int intFromNode(NODET root);
+int nearestIntFromNode(NODET root);
+long longFromNode(NODET root);
+long long longLongFromNode(NODET root);
+short shortFromNode(NODET root);
+void* pointerFromNode(NODET root);
+bool booleanFromNode(NODET root); /* evaluates! */
+char* stringFromNode(NODET root);
+char* stringOrNilFromNode(NODET root);
+size_t stringSizeFromNode(NODET root);
+float floatFromNode(NODET root);
+long double longDoubleFromNode(NODET root);
+double doubleFromNode(NODET root);
+long long sizedIntFromNode(int bitCount, NODET root);
 /* this will eventually be used to force the entire lazy cons (one level) to be evaluated. Use with care (infinite lists aren't gonna like that). */
-static inline Values::NodeT consFromNode(Values::NodeT root) {
+static inline NODET consFromNode(NODET root) {
 	return(root);
 }
-static inline Values::NodeT pairFromNode(Values::NodeT root) {
+static inline NODET pairFromNode(NODET root) {
 	return(root);
 }
-static inline Values::NodeT nodeFromNode(Values::NodeT root) {
+static inline NODET nodeFromNode(NODET root) {
 	return root;
 }
 

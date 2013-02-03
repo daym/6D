@@ -4,7 +4,7 @@
 #include "6D/Values"
 BEGIN_NAMESPACE_6D(Modulesystem)
 /* TODO more than 1 argument */
-Values::NodeT memoizer(Values::NodeT fn); /* for builtins */
+NODET memoizer(NODET fn); /* for builtins */
 DECLARE_FFI_FN(Memoizer)
 END_NAMESPACE_6D(Modulesystem)
 #endif /* ndef __6D_MODULE_SYSTEM_MEMOIZER_H */
