@@ -1,0 +1,9 @@
+#ifndef __6D_LANG5D_H
+#define __6D_LANG5D_H
+#include <stdio.h>
+#include "6D/Operations"
+BEGIN_NAMESPACE_6D(Parsers)
+NodeT initLang5D(void);    
+NodeT L_parse1(FILE* f, const char* name);
+END_NAMESPACE_6D(Parsers)
+#endif /* ndef __6D_LANG5D_H */

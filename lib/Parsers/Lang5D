@@ -8,8 +8,7 @@
 #include "6D/Operations"
 BEGIN_NAMESPACE_6D(Parsers)
 
-void initLang5D(void);
+NodeT initLang5D(void);
 NodeT L_parse1(FILE* f, const char* name);
-extern NodeT defaultDynEnv;
 END_NAMESPACE_6D(Parsers)
 #endif /* ndef __LANG5_D_H */

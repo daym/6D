@@ -59,7 +59,7 @@ NodeT Sin;
 NodeT Sfrom;
 NodeT Shashexports;
 NodeT Sif;
-NodeT defaultDynEnv;
+//NodeT defaultDynEnv;
 NodeT Sexports;
 NodeT Snil;
 NodeT Scolonequal;
@@ -331,7 +331,7 @@ static int level(NodeT n) {
 static bool operatorP(NodeT node) {
 	return level(node) != NO_OPERATOR;
 }
-void initLang5D(void) {
+NodeT initLang5D(void) {
 	if(Srightbracket == NULL) {
 		SLF = symbolFromStr("<LF>");
 		Sindent = symbolFromStr("<indent>");
@@ -377,8 +377,9 @@ void initLang5D(void) {
 		assert(operatorP(symbolFromStr("+")));
 		assert(operatorP(symbolFromStr("(")));
 		INIT_FFI_FN(DynEnv);
-		defaultDynEnv = DynEnv;
+		/*defaultDynEnv = DynEnv;*/
 	}
+	return DynEnv;
 }
 static bool macroStarterP(NodeT node) {
 	return /*(node == Slet) || (node == Simport) ||*/ (node == Sbackslash) || (node == Sleftbracket) || (node == Sleftcurly);
