@@ -7,9 +7,10 @@ static NodeT Splus;
 static NodeT Sdash;
 static NodeT Sstar;
 static NodeT Sslash;
+/* TODO promotion */
 static NodeT addA(NodeT a, NodeT b) {
 	printf("ADDING\n");
-	return a;
+	return integerAdd(a, b);
 }
 DEFINE_STRICT_BINARY_FN(add, addA(env, argument))
 static NodeT subtractA(NodeT a, NodeT b) {
