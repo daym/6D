@@ -196,7 +196,7 @@ LDFLAGS += -lpthread $(LIBGC_LD_WRAP_LDFLAGS)
 STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/SpecialForms/Constanter.o strict/SpecialForms/Identer.o
 
 EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o FFIs/Converters.o
-NUMBERS = Numbers/Integer.o \
+NUMBERS = Numbers/Integer2.o \
 Numbers/Real.o \
 Numbers/BigUnsigned.o \
 Numbers/Ratio.o
@@ -255,7 +255,8 @@ Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.cc Parsers/Lang5D Formatters/
 Tests/03_Numbers/main.o: Tests/03_Numbers/main.cc Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
 Values/wstrings.o: Values/wstrings.cc include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.cc strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms Values/Values
-Numbers/Integer.o: Numbers/Integer.cc Numbers/Integer Numbers/Small include/6D/FFIs include/6D/Values Values/Values
+#Numbers/Integer.o: Numbers/Integer.cc Numbers/Integer Numbers/Small include/6D/FFIs include/6D/Values Values/Values
+Numbers/Integer2.o: Numbers/Integer2.cc Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
 Numbers/Real.o: Numbers/Real.cc Numbers/Real Numbers/Small Numbers/Integer include/6D/FFIs include/6D/Values Values/Values
 Numbers/BigUnsigned.o: Numbers/BigUnsigned.cc Numbers/BigUnsigned Numbers/Small
 Numbers/Ratio.o: Numbers/Ratio.cc Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer include/6D/FFIs include/6D/Values Values/Values

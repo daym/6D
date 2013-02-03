@@ -12,7 +12,7 @@
 #include "SpecialForms/SpecialForms"
 #include "Modulesystem/Modulesystem"
 #include "Combinators/Combinators"
-#include "Numbers/Integer"
+#include "Numbers/Integer2"
 #include "6D/FFIs"
 #include "6D/Modulesystem"
 #undef GETC
@@ -24,7 +24,6 @@ USE_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(FFIs)
 USE_NAMESPACE_6D(Allocators)
 USE_NAMESPACE_6D(SpecialForms)
-USE_NAMESPACE_6D(Numbers)
 NodeT Lang5D::SLF;
 NodeT Lang5D::Sindent;
 NodeT Lang5D::Sdedent;
@@ -88,14 +87,15 @@ static inline NodeT getDynEnvEntry(NodeT sym) {
 				if(errno == 0)
 					return internNative(value);
 				else {
-					Integer result;
+					NodeT base = internNative((FFIs::NativeInt) 10);
+					NodeT result = internNative((FFIs::NativeInt) 0);
 					for(;isdigit(*name);++name) {
 						char c = *name;
 						int off = c - '0';
-						result *= 10;
-						result += off;
+						result = integerMul(result, base);
+						result = integerAddU(result, off);
 					}
-					return new Integer(result);
+					return result;
 				}
 			}
 		}
@@ -820,7 +820,7 @@ int Lang5D::callRpnOperator(NodeT operator_, std::vector<NodeT ALLOCATOR_VECTOR>
 	}
 	assert(argcount == 2);
 	if(values.size() < 2) {
-		fprintf(stderr, "NOT ENOUGH\n");
+		fprintf(stderr, "NOT ENOUGH for (%s)\n", getSymbol1Name(operator_));
 		values.push_back(error("<2-arguments>", "<too-little>"));
 		return 0;
 	} else {

@@ -1,0 +1,18 @@
+#ifndef __NUMBERS_INTEGER2_H
+#define __NUMBERS_INTEGER2_H
+#include "6D/FFIs"
+#include "6D/Values"
+BEGIN_NAMESPACE_6D(Values)
+void initIntegers(void);
+bool intP(NodeT node);
+bool integerP(NodeT node);
+NodeT integerAdd(NodeT aP, NodeT bP);
+NodeT integerMul(NodeT aP, NodeT bP);
+bool integerEqualsP(NodeT aP, NodeT bP);
+bool integerEqualsIntP(NodeT aP, FFIs::NativeUInt value);
+NodeT integerAddU(NodeT aP, FFIs::NativeUInt amount);
+END_NAMESPACE_6D(Values)
+BEGIN_NAMESPACE_6D(FFIs)
+bool toNativeInt(Values::NodeT aP, NativeInt& result);
+END_NAMESPACE_6D(FFIs)
+#endif /* ndef __NUMBERS_INTEGER2_H */
