@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <editline/readline.h>
 #include "6D/Allocators"
 #include "6D/Values"
 #include "6D/Evaluators"
@@ -19,7 +20,8 @@ void printPrompt(void) {
 }
 int main() {
 	const char* s;
-	char buffer[2049];
+	//char buffer[2049];
+	rl_initialize();
 	initAllocators();
 	initArithmetic();
 	NodeT defaultDynEnv = initLang5D();
@@ -28,10 +30,12 @@ int main() {
 	//Values::NodeT annotate(Values::NodeT environment, Values::NodeT node);
 	//Values::NodeT eval(Values::NodeT node);
 	//Values::NodeT execute(Values::NodeT term);
-	while((printPrompt(), s = fgets(buffer, 2048, stdin))) { /* TODO handle longer lines */
+	while(s = readline("eval $ ")) {
+		//(printPrompt(), s = fgets(buffer, 2048, stdin))) { /* TODO handle longer lines */
 		NodeT prog;
 		if(!s[0] || (s[0] == '\n' && !s[1]))
 			continue;
+		add_history(s);
 		FILE* f = fmemopen((char*) s, strlen(s), "r");
 		prog = L_parse1(f, "<stdin>");
 		fclose(f);
