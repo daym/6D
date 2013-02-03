@@ -157,6 +157,7 @@ $(PACKAGE)-$(VERSION)/WIN32/testShuntingYard.sln \
 $(PACKAGE)-$(VERSION)/WIN32/stdafx.cpp \
 $(PACKAGE)-$(VERSION)/WIN32/testShuntingYard.vcproj \
 $(PACKAGE)-$(VERSION)/lazy/SpecialForms/SpecialForms \
+$(PACKAGE)-$(VERSION)/lazy/SpecialForms/SpecialForms.c \
 $(PACKAGE)-$(VERSION)/lazy/Logic/Logic \
 $(PACKAGE)-$(VERSION)/lazy/Logic/Logic.c \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/SpecialForms \
@@ -191,7 +192,7 @@ ifdef LIBGC_LD_WRAP_CFLAGS
 LDFLAGS += -lgc
 endif
 LDFLAGS += -lpthread $(LIBGC_LD_WRAP_LDFLAGS)
-STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/SpecialForms/Constanter.o strict/SpecialForms/Identer.o
+STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/SpecialForms/Constanter.o strict/SpecialForms/Identer.o strict/SpecialForms/SpecialForms.o
 
 EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o FFIs/Converters.o
 NUMBERS = Numbers/Integer2.o \

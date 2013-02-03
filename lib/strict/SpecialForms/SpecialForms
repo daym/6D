@@ -15,5 +15,6 @@ static inline bool fnWantsItsArgumentReducedP(NODET fn) {
 	return !fnSpecialFormP(fn);
 }
 
+void initSpecialForms(void);
 END_NAMESPACE_6D(SpecialForms)
 #endif /* #ifndef __6D_SPECIAL_FORMS_H */

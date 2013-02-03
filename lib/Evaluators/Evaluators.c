@@ -24,6 +24,7 @@ USE_NAMESPACE_6D(SpecialForms)
 void initEvaluator(void) {
 	initCombinators();
 	initLogic();
+	initSpecialForms();
 }
 /* also could just use a list instead of the hashtable. Would be slower. */
 static void getFreeVariablesImpl(NodeT boundNames, int boundNamesCount/*includes shadowed*/, NodeT freeNames, int* freeNamesCount/*includes name unknown*/, NodeT root) {
