@@ -73,33 +73,56 @@ static inline NodeT merror(const char* expectedPart, const char* gotPart) {
 static inline const char* nvl(const char* a, const char* b) {
 	return a ? a : b;
 }
+static int digitInBase(int base, int c) {
+	int result = (c >= '0' && c <= '9') ? 10 + (c - '0') :
+	             (c >= 'a' && c <= 'z') ? 10 + (c - 'a') : 
+	             (c >= 'A' && c <= 'Z') ? 10 + (c - 'A') : 
+	             (-1);
+	if(result >= base)
+		result = -1;
+	return result;
+}
+static inline NodeT getNumber(int baseI, const char* name) {
+	errno = 0;
+	if(strchr(name, '.')) { /* TODO other bases for float */
+		NativeFloat value = strtod(name, NULL);
+		if(errno == 0)
+			return internNativeInt(value);
+	} else {
+		NativeInt value = strtol(name, NULL, baseI);
+		if(errno == 0)
+			return internNativeInt(value);
+		else {
+			int off;
+			NodeT base = internNativeInt((NativeInt) baseI);
+			NodeT result = internNativeInt((NativeInt) 0);
+			for(;(off = digitInBase(baseI, *name)) != -1;++name) {
+				result = integerMul(result, base);
+				result = integerAddU(result, off);
+			}
+			return result;
+		}
+	}
+	return nil;
+}
 static inline NodeT getDynEnvEntry(NodeT sym) {
 	const char* name = getSymbol1Name(sym);
+	NodeT result = nil;
 	if(name) {
 		if(isdigit(name[0])) { /* since there is an infinite number of numbers, make sure not to precreate all of them :-) */
+			result = getNumber(10, name);
+		} else if(name[0] == '#' && isdigit(name[1])) {
+			char* p;
 			errno = 0;
-			if(strchr(name, '.')) {
-				NativeFloat value = strtod(name, NULL);
-				if(errno == 0)
-					return internNativeInt(value);
-			} else {
-				NativeInt value = strtol(name, NULL, 10);
-				if(errno == 0)
-					return internNativeInt(value);
-				else {
-					NodeT base = internNativeInt((NativeInt) 10);
-					NodeT result = internNativeInt((NativeInt) 0);
-					for(;isdigit(*name);++name) {
-						char c = *name;
-						int off = c - '0';
-						result = integerMul(result, base);
-						result = integerAddU(result, off);
-					}
-					return result;
-				}
+			NativeInt base = strtol(&name[1], &p, 10);
+			if(errno == 0 && p && *p) {
+				++p; /* skip 'r' */
+				result = getNumber(base, p);
 			}
 		}
 	}
+	if(result)
+		return result;
 	fprintf(stderr, "info: expression was: ");
 	print(stderr, sym);
 	fprintf(stderr, "\n");
@@ -483,6 +506,8 @@ static NodeT collect(FILE* file, int* linenumber, int prefix, bool (*continueP)(
 	FILE* sst;
 	char s[2049];
 	sst = fmemopen(s, 2048, "w");
+	if(!sst)
+		abort();
 	/* FIXME open_memstream */
 	fputc(prefix, sst);
 	while((c = GETC) != EOF && (*continueP)(c))
@@ -507,6 +532,8 @@ static NodeT collectC(FILE* file, int* linenumber, int prefix, bool (*continueP)
 	FILE* sst;
 	char s[2049];
 	sst = fmemopen(s, 2048, "w");
+	if(!sst)
+		abort();
 	fputc(prefix, sst);
 	while((c = GETC) != EOF && (*continueP)(c)) {
 		if(c == '\\') {
@@ -584,6 +611,8 @@ static NodeT collectUnicodeID(FILE* file, int* linenumber, int prefix, const cha
 	FILE* sst;
 	char s[2049];
 	sst = fmemopen(s, 2048, "w");
+	if(!sst)
+		abort();
 	fputc(prefix, sst);
 	fputs(prev, sst);
 	while((c = GETC) != EOF && unicodeIDRestCharP(c)) {
@@ -623,8 +652,21 @@ static int collectNumeric3(FILE* file, int* linenumber, int base, bool (*continu
 	return(2);
 }
 static NodeT collectNumeric2(FILE* file, int* linenumber, int base, bool (*continueP)(int input)) {
-	abort(); // FIXME
-	return(nil);
+	FILE* sst;
+	char s[2049];
+	sst = fmemopen(s, 2048, "w");
+	if(!sst)
+		abort();
+	int c, digit;
+	fprintf(sst, "#%dr", base);
+	while((c = GETC) != EOF && (digit = digitInBase(base, c)) != -1) {
+		fputc(c, sst);
+	}
+	fflush(sst);
+	UNGETC(c);
+	NodeT result = s[0] ? symbolFromStr(GCx_strdup(s)) : error("<value>", "<nothing>");
+	fclose(sst);
+	return(result);
 }
 static NodeT readShebang(FILE* file, int* linenumber, int c) {
 	return collect(file, linenumber, c, shebangBodyCharP);
