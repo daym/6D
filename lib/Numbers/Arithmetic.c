@@ -12,6 +12,7 @@ static NodeT Sshr;
 static NodeT Slessequal;
 static NodeT Sequal;
 static NodeT int0;
+static NodeT Sdivmod;
 /* TODO promotion */
 static NodeT addA(NodeT a, NodeT b) {
 	return integerAdd(a, b);
@@ -27,10 +28,13 @@ static NodeT multiplyA(NodeT a, NodeT b) {
 }
 DEFINE_STRICT_BINARY_FN(multiply, multiplyA(env, argument))
 static NodeT divideA(NodeT a, NodeT b) {
-	printf("DIVIDING\n");
-	return a;
+	return integerDiv(a, b);
 }
 DEFINE_STRICT_BINARY_FN(divide, divideA(env, argument))
+static NodeT divmodA(NodeT a, NodeT b) {
+	return integerDivmod(a, b);
+}
+DEFINE_STRICT_BINARY_FN(divmod, divmodA(env, argument))
 /* swapped arguments, sorry */
 static NodeT shlA(NodeT amount, NodeT b) {
 	/* FIXME */
@@ -64,6 +68,7 @@ void initArithmetic(void) {
 	Sshr = symbolFromStr("shr");
 	Slessequal = symbolFromStr("<=");
 	Sequal = symbolFromStr("=");
+	Sdivmod = symbolFromStr("divmod");
 	initIntegers();
 	initFloats();
 	int0 = internNativeUInt(0);
@@ -75,6 +80,7 @@ void initArithmetic(void) {
 	INIT_BINARY_FN(shr)
 	INIT_BINARY_FN(equalP)
 	INIT_BINARY_FN(leP)
+	INIT_BINARY_FN(divmod)
 }
 NODET withArithmetic(NODET body) {
 	return closeOver(Splus, add, 
@@ -85,6 +91,7 @@ NODET withArithmetic(NODET body) {
 	       closeOver(Sshr, shr,
 	       closeOver(Sequal, equalP,
 	       closeOver(Slessequal, leP,
-	       body))))))));
+	       closeOver(Sdivmod, divmod,
+	       body)))))))));
 }
 END_NAMESPACE_6D(Arithmetic)

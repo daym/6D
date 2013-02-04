@@ -30,5 +30,6 @@ NativeInt integerCompareU(NODET aP, NativeInt b);
 NativeInt integerCompare(NODET aP, NODET b);
 NativeInt integerDivmodU(NODET aP, NativeInt b);
 NODET integerDivmod(NODET aP, NODET bP);
+NODET integerDiv(NODET aP, NODET bP);
 END_NAMESPACE_6D(FFIs)
 #endif /* ndef __NUMBERS_INTEGER2_H */

@@ -294,7 +294,11 @@ NodeT internNativeUInt(NativeUInt value) {
 	} else
 		return intA(value);
 }
-NODET integerDivmod(NODET aP, NODET bP) {
+NodeT integerDivmod(NODET aP, NODET bP) { /* return pair */
+	abort();
+	return aP;
+}
+NodeT integerDiv(NODET aP, NODET bP) {
 	abort();
 	return aP;
 }
