@@ -2,6 +2,7 @@
 #define __6D_VALUES_H
 #include <stdio.h>
 #include <stdlib.h>
+#define INLINE __inline
 #define NODET NodeT
 #define MNODET NodeT
 //struct Node*
