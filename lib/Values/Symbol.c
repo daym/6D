@@ -6,10 +6,10 @@
 #include "Values/Hashtable"
 BEGIN_NAMESPACE_6D(Values)
 
-static inline unsigned int hash(NodeT key) {
+static INLINE unsigned int hash(NodeT key) {
 	return hashSymbol(key); 
 }
-static inline bool equalP(NodeT a, NodeT b) {
+static INLINE bool equalP(NodeT a, NodeT b) {
 	/* TODO type check */
 	return eqSymbol(a, b) 
 	    || strcmp(getSymbol1Name(a), getSymbol1Name(b)) == 0;

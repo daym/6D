@@ -65,7 +65,7 @@ int getFreeVariables(NodeT freeNames, NodeT root) {
 	getFreeVariablesImpl(boundNames, 0, freeNames, &freeNamesCount, root);
 	return freeNamesCount;
 }
-static inline NodeT error(const char* expectedText, const char* gotText, NodeT context) {
+static INLINE NodeT error(const char* expectedText, const char* gotText, NodeT context) {
 	return evalError(strC(expectedText), strC(gotText), context);
 }
 static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, NodeT boundNamesSet, NodeT root) {
@@ -109,7 +109,7 @@ NodeT annotate(NodeT dynEnv, NodeT root) {
 	NodeT boundNamesSet = makeHashtable();
 	return(annotateImpl(dynEnv, nil, boundNamesSet, root));
 }
-static inline NodeT ensureCall(NodeT term, NodeT fn, NodeT argument) {
+static INLINE NodeT ensureCall(NodeT term, NodeT fn, NodeT argument) {
 	return REUSE_6D((getCallCallable(term) == fn && getCallArgument(term) == argument) ? term : )call(fn, argument);
 }
 static NodeT shift(NodeT argument, int index, NodeT term) {
@@ -136,7 +136,7 @@ static NodeT shift(NodeT argument, int index, NodeT term) {
 		return(term);
 }
 static int recursionLevel = 0;
-static inline NodeT remember(NodeT app, NodeT result) {
+static INLINE NodeT remember(NodeT app, NodeT result) {
 	setCallResult(app, result);
 	return(result);
 }

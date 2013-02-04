@@ -73,14 +73,14 @@ static bool symbolsEqP(NodeT a, NodeT b) {
 static bool symbolsLEP(NodeT a, NodeT b) {
 	return a <= b;
 }
-static inline NodeT marshalStr(NodeT (*cb)(const char* s), NodeT argument) {
+static INLINE NodeT marshalStr(NodeT (*cb)(const char* s), NodeT argument) {
 	char* value;
 	if(!stringFromNode(argument, &value))
 		return evalError(strC("<str>"), strC("<junk>"), argument);
 	else
 		return (*cb)(value);
 }
-static inline NodeT marshalInt(NodeT (*cb)(int s), NodeT argument) {
+static INLINE NodeT marshalInt(NodeT (*cb)(int s), NodeT argument) {
 	int value;
 	if(!intFromNode(argument, &value))
 		return evalError(strC("<int>"), strC("<junk>"), argument);

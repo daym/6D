@@ -6,7 +6,7 @@
 BEGIN_NAMESPACE_6D(Combinators)
 extern NODET Identity;
 extern NODET Konstant;
-static inline NODET constanter(NODET argument) {
+static INLINE NODET constanter(NODET argument) {
 	return call(Konstant, argument);
 }
 void initCombinators(void);

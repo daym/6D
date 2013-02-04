@@ -5,10 +5,10 @@
 
 BEGIN_NAMESPACE_6D(SpecialForms)
 DECLARE_SPECIAL_FORM(Quoter)
-static inline bool quote2P(NODET node) {
+static INLINE bool quote2P(NODET node) {
 	return node == Quoter;
 }
-static inline NODET quote2(NODET node) {
+static INLINE NODET quote2(NODET node) {
 	return call(Quoter, node);
 }
 

@@ -4,7 +4,7 @@
 
 BEGIN_NAMESPACE_6D(FFIs)
 /* conversions */
-static inline NODET internNativeNode(NODET value) {
+static INLINE NODET internNativeNode(NODET value) {
 	return value;
 }
 NODET internNativeBool(bool value) G_5D_PURE;
@@ -51,15 +51,15 @@ bool longDoubleFromNode(NODET root, long double* result);
 bool doubleFromNode(NODET root, double* result);
 bool sizedIntFromNode(int bitCount, NODET root, long long* result);
 /* this will eventually be used to force the entire lazy cons (one level) to be evaluated. Use with care (infinite lists aren't gonna like that). */
-static inline bool consFromNode(NODET root, NODET* result) {
+static INLINE bool consFromNode(NODET root, NODET* result) {
 	*result = root;
 	return true;
 }
-static inline bool pairFromNode(NODET root, NODET* result) {
+static INLINE bool pairFromNode(NODET root, NODET* result) {
 	*result = root;
 	return true;
 }
-static inline bool nodeFromNode(NODET root, NODET* result) {
+static INLINE bool nodeFromNode(NODET root, NODET* result) {
 	*result = root;
 	return true;
 }

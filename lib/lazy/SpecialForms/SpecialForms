@@ -4,10 +4,10 @@
 #include "SpecialForms/Quoter"
 BEGIN_NAMESPACE_6D(SpecialForms)
 
-static inline bool fnSpecialFormP(NODET fn) G_5D_PURE {
+static INLINE bool fnSpecialFormP(NODET fn) G_5D_PURE {
 	return true;
 }
-static inline bool fnWantsItsArgumentReducedP(NODET fn) G_5D_PURE {
+static INLINE bool fnWantsItsArgumentReducedP(NODET fn) G_5D_PURE {
 	return !fnSpecialFormP(fn);
 }
 

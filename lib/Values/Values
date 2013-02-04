@@ -34,7 +34,7 @@ enum {
 	TAG_Opaque,
 	TAG_Hashtable,
 };
-static inline struct Node* Node_initTag(struct Node* node, int tag) {
+static INLINE struct Node* Node_initTag(struct Node* node, int tag) {
 	node->tag = tag;
 	return node;
 }
@@ -46,7 +46,7 @@ BEGIN_STRUCT_6D(Call)
 	NodeT result;
 	int resultGeneration;
 END_STRUCT_6D(Call)
-static inline int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundNames) {
+static INLINE int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundNames) {
 	if(boundNames == nil)
 		return(-1);
 	else if(getConsHead(boundNames) == needle)
@@ -55,7 +55,7 @@ static inline int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundName
 		return(indexOfSymbol(needle, startingIndex + 1, getConsTail(boundNames)));
 }
 void setCallResult(NodeT call, NodeT result);
-static inline const void* getCXXInstance(NodeT n) {
+static INLINE const void* getCXXInstance(NodeT n) {
 	return n;
 }
 void increaseGeneration(void);

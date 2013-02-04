@@ -1,7 +1,7 @@
 #include "6D/Allocators"
 #include "Values/Values"
 #include "Values/Hashtable"
-static inline const struct HashtableEntry* Hashtable_findEntry(const struct Hashtable* self, NodeT key) {
+static INLINE const struct HashtableEntry* Hashtable_findEntry(const struct Hashtable* self, NodeT key) {
 	if(self->capacity == 0)
 		return(NULL);
 	int index = hash(key) % self->capacity;

@@ -19,7 +19,7 @@ static double log2(double n) {
 
 BEGIN_NAMESPACE_6D(Values)
 
-static inline uint32_t jenkinsOneAtATimeHash(const char* key, size_t len) {
+static INLINE uint32_t jenkinsOneAtATimeHash(const char* key, size_t len) {
 	uint32_t hash, i;
 	for(hash = i = 0; i < len; ++i) {
 		hash += key[i];
@@ -31,7 +31,7 @@ static inline uint32_t jenkinsOneAtATimeHash(const char* key, size_t len) {
 	hash += (hash << 15);
 	return hash;
 }
-static inline uint32_t jenkinsOneAtATimeHashC(const char* key) {
+static INLINE uint32_t jenkinsOneAtATimeHashC(const char* key) {
 	uint32_t hash, i;
 	for(hash = i = 0; key[i]; ++i) {
 		hash += key[i];
@@ -43,14 +43,14 @@ static inline uint32_t jenkinsOneAtATimeHashC(const char* key) {
 	hash += (hash << 15);
 	return hash;
 }
-static inline uint32_t hashSymbol(NodeT sym) {
+static INLINE uint32_t hashSymbol(NodeT sym) {
 	const char* str = getSymbol1Name(sym);
 	return jenkinsOneAtATimeHashC(str);
 }
-static inline bool eqSymbol(NodeT a, NodeT b) {
+static INLINE bool eqSymbol(NodeT a, NodeT b) {
 	return a == b;
 }
-static inline bool ltSymbol(NodeT a, NodeT b) {
+static INLINE bool ltSymbol(NodeT a, NodeT b) {
 	return a < b;
 }
 enum HashtableEntryState {

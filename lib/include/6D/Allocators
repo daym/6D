@@ -21,7 +21,7 @@ END_NAMESPACE_6D(Allocators)
 #endif
 BEGIN_NAMESPACE_6D(Allocators)
 void initAllocators(void);
-static inline char* GCx_strdup(const char* value) {
+static INLINE char* GCx_strdup(const char* value) {
 #ifdef GC_STRDUP
 	return(GC_STRDUP(value));
 #else
@@ -31,7 +31,7 @@ static inline char* GCx_strdup(const char* value) {
 	return(result);
 #endif
 }
-static inline char* GCx_strdupNoGC(const char* value) {  
+static INLINE char* GCx_strdupNoGC(const char* value) {  
 	char* result;
 	result = (char*) malloc(strlen(value) + 1);
 	memcpy(result, value, strlen(value) + 1);

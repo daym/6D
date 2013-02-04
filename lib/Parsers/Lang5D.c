@@ -67,10 +67,10 @@ static NodeT Sdot;
 static NodeT Shasht;
 static NodeT Shashf;
 //NodeT Sdot;
-static inline NodeT merror(const char* expectedPart, const char* gotPart) {
+static INLINE NodeT merror(const char* expectedPart, const char* gotPart) {
 	return parseError(strC(expectedPart), strC(gotPart));
 }
-static inline const char* nvl(const char* a, const char* b) {
+static INLINE const char* nvl(const char* a, const char* b) {
 	return a ? a : b;
 }
 static int digitInBase(int base, int c) {
@@ -82,7 +82,7 @@ static int digitInBase(int base, int c) {
 		result = -1;
 	return result;
 }
-static inline NodeT getNumber(int baseI, const char* name) {
+static INLINE NodeT getNumber(int baseI, const char* name) {
 	errno = 0;
 	if(strchr(name, '.')) { /* TODO other bases for float */
 		NativeFloat value = strtod(name, NULL);
@@ -105,7 +105,7 @@ static inline NodeT getNumber(int baseI, const char* name) {
 	}
 	return nil;
 }
-static inline NodeT getDynEnvEntry(NodeT sym) {
+static INLINE NodeT getDynEnvEntry(NodeT sym) {
 	const char* name = getSymbol1Name(sym);
 	NodeT result = nil;
 	if(name) {

@@ -1,26 +1,26 @@
 #include "Formatters/TExpression"
 #include "Parsers/ShuntingYardParser"
 /* BEGIN env interface */
-static inline int env_operatorArgcount(NodeT env, NodeT operator_) { return operatorArgcount(operator_); }
-static inline NodeT env_operatorPrefixNeutral(NodeT env, NodeT operator_) { return operatorPrefixNeutral(operator_); }
-static inline bool env_errorP(NodeT env, NodeT node) { return errorP(node); }
-static inline bool env_closingParenP(NodeT env, NodeT node) { return closingParenP(node); }
-static inline bool env_openingParenP(NodeT env, NodeT node) { return openingParenP(node); }
-static inline bool env_operatorP(NodeT env, NodeT node) { return operatorP(node); }
-static inline bool env_operatorLE(NodeT env, NodeT a, NodeT b) { return operatorLE(a, b); }
-static inline int env_callRpnOperator(NodeT env, NodeT operator_, MNODET* result) { return callRpnOperator(operator_, result); }
-static inline NodeT env_openingParenOf(NodeT env, NodeT operator_) { return openingParenOf(operator_); }
-static inline NodeT env_error(NodeT env, const char* expected, const char* got) { return error(expected, got); }
-static inline bool env_macroStarterP(NodeT env, NodeT operator_) { return macroStarterP(operator_); }
-static inline NodeT env_startMacro(NodeT env, NodeT node, struct Scanner* tokenizer) { return startMacro(node, tokenizer); }
-static inline NodeT env_SopeningParen(NodeT env) { return SopeningParen; }
-static inline NodeT env_SEOF(NodeT env) { return SEOF; }
-static inline NodeT env_Sapply(NodeT env) { return Sapply; }
-static inline NodeT env_Sleftparen(NodeT env) { return Sleftparen; }
-static inline NodeT env_Srightparen(NodeT env) { return Srightparen; }
-static inline NodeT env_Sindent(NodeT env) { return Sindent; }
-static inline NodeT env_Sdedent(NodeT env) { return Sdedent; }
-static inline NodeT env_readToken(NodeT env, FILE* file, int* linenumber) { return readToken(file, linenumber); }
+static INLINE int env_operatorArgcount(NodeT env, NodeT operator_) { return operatorArgcount(operator_); }
+static INLINE NodeT env_operatorPrefixNeutral(NodeT env, NodeT operator_) { return operatorPrefixNeutral(operator_); }
+static INLINE bool env_errorP(NodeT env, NodeT node) { return errorP(node); }
+static INLINE bool env_closingParenP(NodeT env, NodeT node) { return closingParenP(node); }
+static INLINE bool env_openingParenP(NodeT env, NodeT node) { return openingParenP(node); }
+static INLINE bool env_operatorP(NodeT env, NodeT node) { return operatorP(node); }
+static INLINE bool env_operatorLE(NodeT env, NodeT a, NodeT b) { return operatorLE(a, b); }
+static INLINE int env_callRpnOperator(NodeT env, NodeT operator_, MNODET* result) { return callRpnOperator(operator_, result); }
+static INLINE NodeT env_openingParenOf(NodeT env, NodeT operator_) { return openingParenOf(operator_); }
+static INLINE NodeT env_error(NodeT env, const char* expected, const char* got) { return error(expected, got); }
+static INLINE bool env_macroStarterP(NodeT env, NodeT operator_) { return macroStarterP(operator_); }
+static INLINE NodeT env_startMacro(NodeT env, NodeT node, struct Scanner* tokenizer) { return startMacro(node, tokenizer); }
+static INLINE NodeT env_SopeningParen(NodeT env) { return SopeningParen; }
+static INLINE NodeT env_SEOF(NodeT env) { return SEOF; }
+static INLINE NodeT env_Sapply(NodeT env) { return Sapply; }
+static INLINE NodeT env_Sleftparen(NodeT env) { return Sleftparen; }
+static INLINE NodeT env_Srightparen(NodeT env) { return Srightparen; }
+static INLINE NodeT env_Sindent(NodeT env) { return Sindent; }
+static INLINE NodeT env_Sdedent(NodeT env) { return Sdedent; }
+static INLINE NodeT env_readToken(NodeT env, FILE* file, int* linenumber) { return readToken(file, linenumber); }
 /* END env interface */
 
 #include "Scanners/Scanner.inc"
@@ -78,7 +78,7 @@ NODET Parser_applyAndPush(struct Parser* self, int argcount, bool bUnary, NODET 
 	}
 	return input;
 }
-static inline void Parser_pushOperand(struct Parser* self, NODET input) {
+static INLINE void Parser_pushOperand(struct Parser* self, NODET input) {
 	self->result = cons(input, self->result);
 	++self->executionResultCount;
 }

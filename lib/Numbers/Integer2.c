@@ -34,7 +34,7 @@ void initIntegers(void) {
 		ints[i].value = i;
 	}
 }
-static inline NodeT intA(NativeUInt value) {
+static INLINE NodeT intA(NativeUInt value) {
 	if(value >= 0U && value < 256U)
 		return(&ints[value]);
 	return makeInt(value);

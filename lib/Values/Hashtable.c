@@ -3,8 +3,8 @@
 #include "Values/Values"
 #include "Values/Hashtable"
 BEGIN_NAMESPACE_6D(Values)
-static inline unsigned int hash(NodeT key) { return hashSymbol(key); }
-static inline bool equalP(NodeT a, NodeT b) { return eqSymbol(a, b); }
+static INLINE unsigned int hash(NodeT key) { return hashSymbol(key); }
+static INLINE bool equalP(NodeT a, NodeT b) { return eqSymbol(a, b); }
 #include "Values/Hashtable.inc"
 NodeT getHashtableValueByKey(NodeT hashtableP, NodeT key, NodeT fallback) {
 	const struct Hashtable* hashtable = (const struct Hashtable*) getCXXInstance(hashtableP);
