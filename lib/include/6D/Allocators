@@ -46,7 +46,6 @@ void efree(void* beginning);
 #define ALLOCATOR_VECTOR , gc_allocator<NODET>
 #define ALLOCATOR_VECTOR2(t) , gc_allocator<t>
 #define GC_BASECLASS
-#endif
 #else
 #define ALLOCATOR_STACK
 #define ALLOCATOR_VECTOR
