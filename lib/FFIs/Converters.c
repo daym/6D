@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <sys/types.h>
 #include "6D/Values"
 #include "6D/FFIs"
 #include "Numbers/Integer2"
@@ -85,5 +86,7 @@ bool stringSizeFromNode(NodeT root, size_t* result) {
 	} else
 		return false;
 }
-
+NODET internNativeSize_t(size_t value) {
+	return internNativeUInt(value); /* FIXME more general, bigger version? */
+}
 END_NAMESPACE_6D(FFIs)

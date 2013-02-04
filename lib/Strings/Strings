@@ -8,6 +8,6 @@ NodeT listFromStr(NodeT str);
 NodeT strFromList(NodeT l);
 void initStrings(void);
 DECLARE_BINARY_FN(Bconcat)
-DECLARE_FFI_FN(BstrFromList)
+DECLARE_FN(BstrFromList)
 END_NAMESPACE_6D(Strings)
 #endif /* ndef __STRINGS_STRINGS_H */

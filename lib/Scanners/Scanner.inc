@@ -71,6 +71,7 @@ END_STRUCT_6D(Scanner)
 		return false;
 	}
 	void Scanner_init(struct Scanner* self, NodeT aEnv) {
+		initIntegers();
 		self->value = nil;
 		self->name = NULL;
 		self->linenumber = 1;

@@ -60,6 +60,12 @@ static INLINE const void* getCXXInstance(NodeT n) {
 }
 void increaseGeneration(void);
 int getGeneration(void) G_5D_PURE;
+static INLINE bool symbolsEqP(NodeT a, NodeT b) {
+	return a == b;
+}
+static INLINE bool symbolsLEP(NodeT a, NodeT b) {
+	return a <= b;
+}
 
 END_NAMESPACE_6D(Values)
 #endif /* ndef __VALUES_H */

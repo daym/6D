@@ -2,6 +2,7 @@
 #LIBGC_LD_WRAP_CFLAGS = -D_REENTRANT -DGC_THREADS -DUSE_LD_WRAP
 #LIBGC_LD_WRAP_LDFLAGS = -Wl,--wrap -Wl,read -Wl,--wrap -Wl,dlopen -Wl,--wrap -Wl,pthread_create -Wl,--wrap -Wl,pthread_join -Wl,--wrap -Wl,pthread_detach -Wl,--wrap -Wl,pthread_sigmask -Wl,--wrap -Wl,sleep
 
+OBJDUMP ?= objdump
 PACKAGE = 6d
 VERSION = 0.0.1
 DISTFILES = \
@@ -127,6 +128,7 @@ $(PACKAGE)-$(VERSION)/Numbers/Ratio \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio.c \
 $(PACKAGE)-$(VERSION)/Numbers/Real \
 $(PACKAGE)-$(VERSION)/Numbers/Arithmetic.c \
+$(PACKAGE)-$(VERSION)/Numbers/Arithmetic \
 $(PACKAGE)-$(VERSION)/Strings/Strings \
 $(PACKAGE)-$(VERSION)/Strings/Strings.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math2.c \
@@ -222,7 +224,8 @@ $(NUMBERS) \
 $(STRINGS) \
 Modulesystem/Exports.o \
 Modulesystem/Memoizer.o \
-Builtins/Builtins.o
+Builtins/Builtins.o \
+Builtins/wrapper.o
 
 SILLY_GC_OBJECTS = Allocators/SillyGC.o
 LIB = lib6dbuiltins.so.1
@@ -247,7 +250,8 @@ Formatters/Math2.o: Formatters/Math2.c Formatters/Math2 Values/Values include/6D
 Formatters/TExpression.o: Formatters/TExpression.c Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms include/6D/Operations lazy/SpecialForms/SpecialForms
 Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc
 Scanners/Scanner.o: Scanners/Scanner.c Scanners/Scanner  include/6D/Values include/6D/FFIs
-Values/Values.o: Values/Values.c Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
+Values/Values.c.proto Values/Values.o: Values/Values.c Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
+	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 Values/Keyword.o: Values/Keyword.c Values/Keyword Values/Hashtable include/6D/Allocators include/6D/Values
 Values/Symbol.o: Values/Symbol.c Values/Symbol Values/Hashtable include/6D/Allocators include/6D/Values
 Values/Error.o: Values/Error.c Values/Error Values/Values include/6D/Values
@@ -271,6 +275,11 @@ Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/S
 FFIs/Converters.o: FFIs/Converters.c FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
 Values/Hashtable.o: Values/Hashtable.c Values/Hashtable Values/Values include/6D/Values include/6D/Allocators
 Strings/Strings.o: Strings/Strings.c Strings/Strings include/6D/Values include/6D/Allocators Numbers/Integer2
+Builtins/wrapper.c: Values/Values.o Numbers/Arithmetic.o Makefile generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto
+	$(OBJDUMP) -t Values/Values.o Numbers/Arithmetic.o |grep 'F \.text' | awk '{ print $$6 }' | ./generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
+Builtins/wrapper.o: Builtins/wrapper.c include/6D/Values include/6D/Allocators Numbers/Integer2 Numbers/Arithmetic 
+Numbers/Arithmetic.c.proto Numbers/Arithmetic.o: Numbers/Arithmetic.c Numbers/Arithmetic include/6D/Allocators Numbers/Integer2 include/6D/Values
+	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
 	Tests/03_Numbers/run

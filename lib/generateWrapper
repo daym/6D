@@ -1,25 +1,117 @@
-BEGIN_NAMESPACE_6D(Builtins) 
+#!/usr/bin/env python
+import sys
+import re
+import string
+rCComment = re.compile("/\*.*?\*/",re.DOTALL )
+def removeComments(string):
+	string = re.sub(rCComment, "" ,string) # remove all occurance streamed comments (/*COMMENT */) from string
+	#string = re.sub(re.compile("//.*?\n" ), "" ,string) # remove all occurance singleline comments (//COMMENT\n ) from string
+	return string
+
+def loadProtoFile(name):
+	result = {}
+	with open(name, "r") as f:
+		for line in f.readlines():
+			line = removeComments(line).strip()
+			if line.startswith("extern "):
+				line = line[len("extern "):].strip()
+			parts = line.split(" ")
+			if len(parts) < 3:
+				continue
+			ag = line.split("(", 1)[1]
+			uargs = [x.strip().upper() for x in ag.split(")")[0].split(",")]
+			if any([x != "NODET" for x in uargs]): # unsupported
+				continue
+			result[parts[1]] = (parts, line)
+	return result
+protos = {}
+for n in sys.argv[1:]:
+	d = loadProtoFile(n)
+	protos.update(d)
+
+def getArgcount(name):
+	p = protos.get(name)
+	if p is None or p[0][0] == "void": # we don't support setters for now.
+		return None
+	line = p[1]
+	return line.count(",") + 1
+def getConverter(typename):
+	if typename == "NodeT" or typename == "NODET":
+		typename = "Node"
+	return "internNative%s" % (string.capitalize(typename))
+# TODO prefix stripping in the symbol values
+# TODO make more generic, not Builtins
+names = [line.strip() for line in sys.stdin.readlines() if getArgcount(line.strip()) is not None and getArgcount(line.strip()) <= 3]
+print """#include "6D/Values"
+#include "6D/Operations"
+#include "6D/FFIs"
+#include "SpecialForms/SpecialForms"
+#include "Strings/Strings"
+#include "Numbers/Arithmetic"
+#include "Values/Values"
+BEGIN_NAMESPACE_6D(Builtins)
 USE_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(FFIs)
 USE_NAMESPACE_6D(SpecialForms)
-USE_NAMESPACE_6D(Strings)  
-static NodeT SConstanter;  
-static NodeT Srem;
-DEFINE_STRICT_BINARY_FN(BsymbolsEqP, internNativeBool(symbolsEqP(env, argument)))
-DEFINE_STRICT_BINARY_FN(BsymbolsLEP, internNativeBool(symbolsLEP(env, argument)))
-DEFINE_STRICT_FN(BsymbolFromStr, marshalStr(symbolFromStr, argument))
-static NodeT builtin(NodeT node) {
-        //Modulesystem::exportsQ("Constanter rem memoize", SpecialForms::Constanter, SpecialForms::Identer, Modulesystem::Memoizer);
-        return (node == SConstanter) ? Constanter : 
-               (node == Srem) ? Identer : 
-               (node == Smemoize) ? Memoizer : 
-DEFINE_STRICT_FN(Builtins, builtin(argument))  
-NodeT initBuiltins(void) {
-        initStrings();
-        SConstanter = symbolFromStr("Constanter");
-        Srem = symbolFromStr("rem");
-        Shashexports = symbolFromStr("#exports");
-        Smemoize = symbolFromStr("memoize"); 
-        INIT_FFI_FN(BfloatP)  
-        INIT_BINARY_FN(Bpair)
-END_NAMESPACE_6D(Builtins)
+USE_NAMESPACE_6D(Strings)"""
+def unescapeSName(s):
+	if s.endswith("P"):
+		s = "%s?" % (s[:-1], )
+	return s.replace("comma", ",").replace("backslash", "\\").replace("slash", "/").replace("star", "*").replace("hash", "#")
+for name in names:
+	print "static NodeT S%s;" % (name, )
+	argcount = getArgcount(name)
+	mname = "DEFINE_STRICT_FN"
+	converter = getConverter(protos[name][0][0])
+	if argcount == 2:
+		mname = "DEFINE_STRICT_BINARY_FN"
+		params = "env, argument"
+	elif argcount == 1:
+		mname = "DEFINE_STRICT_FN"
+		params = "argument"
+	elif argcount == 3:
+		mname = "DEFINE_STRICT_TERNARY_FN"
+		params = "getPairFst(env), getPairSnd(env), argument"
+	else:
+		print >>sys.stderr, "note: unsupported argcount %d for %r" % (argcount, name)
+	print "%s(W_%s, %s(%s(%s)))" % (mname, name, converter, name, params)
+print "static NodeT Sexports;"
+print "static NodeT exports;"
+print "static NodeT dispatch(NodeT sym) { /* TODO replace by ordinary module system, if possible */"
+print "return \\"
+for name in names:
+	print "       (sym == S%s) ? W_%s : " % (name, name)
+print "       (sym == Sexports) ? exports : "
+print "       evalError(strC(\"<known-symbol>\"), strC(\"<unknown-symbol>\"), sym);"
+print "}"
+def exportsCtor(names):
+	if len(names) == 0:
+		return "nil"
+	else:
+		return "cons(S%s, \n\t%s)" % (names[0], exportsCtor(names[1:]))
+# Modulesystem::exportsQ("Constanter rem memoize", SpecialForms::Constanter, SpecialForms::Identer, Modulesystem::Memoizer);
+# TODO Modulesystem::memoize
+# DEFINE_STRICT_FN(Builtins, dispatch(Modulesystem::exportsQ("Constanter rem memoize", SpecialForms::Constanter, SpecialForms::Identer, Modulesystem::Memoizer)))
+print "DEFINE_STRICT_FN(Builtins, dispatch(argument))"
+print "NodeT initBuiltins(void) {"
+print "\tinitStrings();"
+for name in names:
+	print "\tS%s = symbolFromStr(\"%s\");" % (name, unescapeSName(name))
+for name in names:
+	argcount = getArgcount(name)
+	mname = "DEFINE_STRICT_FN"
+	if argcount == 2:
+		mname = "INIT_BINARY_FN"
+	elif argcount == 1:
+		mname = "INIT_FN"
+	elif argcount == 3:
+		mname = "INIT_TERNARY_FN"
+	else:
+		raise NotImplementedError("unsupported argcount")
+	print "\t%s(W_%s)" % (mname, name)	
+print "\tSexports = symbolFromStr(\"exports\");"
+print "\texports = %s;" % (exportsCtor(names), )
+print "\tINIT_FN(Builtins)"
+print "\treturn Builtins;"
+print "}"
+print "END_NAMESPACE_6D(Builtins)"

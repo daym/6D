@@ -5,6 +5,6 @@
 BEGIN_NAMESPACE_6D(Modulesystem)
 /* TODO more than 1 argument */
 NODET memoizer(NODET fn); /* for builtins */
-DECLARE_FFI_FN(Memoizer)
+DECLARE_FN(Memoizer)
 END_NAMESPACE_6D(Modulesystem)
 #endif /* ndef __6D_MODULE_SYSTEM_MEMOIZER_H */

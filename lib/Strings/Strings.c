@@ -58,6 +58,6 @@ DEFINE_STRICT_BINARY_FN(Bconcat, concat(env, argument))
 DEFINE_STRICT_FN(BstrFromList, strFromList(argument))
 void initStrings(void) {
 	INIT_BINARY_FN(Bconcat)
-	INIT_FFI_FN(BstrFromList)
+	INIT_FN(BstrFromList)
 }
 END_NAMESPACE_6D(Strings)

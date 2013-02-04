@@ -12,10 +12,10 @@ BEGIN_NAMESPACE_6D(Values)
 	bool ratioP(NODET n);
 	NODET getRatioA(NODET n) G_5D_PURE;
 	NODET getRatioB(NODET n) G_5D_PURE;
-DECLARE_FFI_FN(RatioMaker)
-DECLARE_FFI_FN(RatioP)
-DECLARE_FFI_FN(RatioNumeratorGetter)
-DECLARE_FFI_FN(RatioDenominatorGetter)
+DECLARE_FN(RatioMaker)
+DECLARE_FN(RatioP)
+DECLARE_FN(RatioNumeratorGetter)
+DECLARE_FN(RatioDenominatorGetter)
 
 END_NAMESPACE_6D(Values)
 

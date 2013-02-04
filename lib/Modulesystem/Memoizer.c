@@ -26,7 +26,7 @@ DEFINE_STRICT_FN(Memoizer2, memoized(env, argument))
 NodeT memoizer(NodeT fn) {
 	if(!dummy)
 		dummy = NEW(Call);
-	return CLOSED_FFI_FN(Memoizer2, pair(makeHashtable(), fn));
+	return CLOSED_FN(Memoizer2, pair(makeHashtable(), fn));
 }
 DEFINE_STRICT_FN(Memoizer, memoizer(argument))
 END_NAMESPACE_6D(Modulesystem)

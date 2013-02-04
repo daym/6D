@@ -399,7 +399,7 @@ NodeT initLang5D(void) {
 		Shashf = symbolFromStr("#f");
 		assert(operatorP(symbolFromStr("+")));
 		assert(operatorP(symbolFromStr("(")));
-		INIT_FFI_FN(DynEnv);
+		INIT_FN(DynEnv);
 		/*defaultDynEnv = DynEnv;*/
 	}
 	return DynEnv;

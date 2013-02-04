@@ -84,7 +84,7 @@ int main() {
 		FILE* f = fmemopen((char*) s, strlen(s), "r");
 		input = L_parse1(f, "<stdin>");
 		fclose(f);
-		input = closeOver(symbolFromStr("Builtins"), builtins, withArithmetic(L_withDefaultEnv(input)));
+		input = closeOver(symbolFromStr("Builtins"), builtins, L_withDefaultEnv(input));
 		//print(stderr, prog);
 		//fprintf(stderr, "\n");
 		//fflush(stderr);

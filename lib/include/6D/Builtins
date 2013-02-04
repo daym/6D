@@ -3,7 +3,7 @@
 #include "6D/Values"
 #include "6D/Operations"
 BEGIN_NAMESPACE_6D(Builtins)
-DECLARE_FFI_FN(Builtins)
+DECLARE_FN(Builtins)
 NODET initBuiltins(void);
 END_NAMESPACE_6D(Builtins)
 #endif /* ndef __6D_BUILTINS_H */

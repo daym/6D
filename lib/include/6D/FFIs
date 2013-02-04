@@ -1,5 +1,6 @@
 #ifndef __5D_FFI
 #define __5D_FFI
+#include <sys/types.h>
 #include "6D/Values"
 
 BEGIN_NAMESPACE_6D(FFIs)
@@ -11,6 +12,7 @@ NODET internNativeBool(bool value) G_5D_PURE;
 
 NODET internNativeLL(long long value);
 NODET internNativeULL(unsigned long long value);
+NODET internNativeSize_t(size_t value);
 
 #if defined(__VFP_FP__) || defined(__ARM_EABI__)
 /* ARM doesn't have extended-precision floating point */
@@ -66,6 +68,20 @@ static INLINE bool nodeFromNode(NODET root, NODET* result) {
 
 bool toNativeFloat(NODET node, NATIVEFLOAT* result) G_5D_PURE;
 bool toNativeInt(NODET node, NATIVEINT* result) G_5D_PURE;
+static INLINE NodeT marshalStr(NodeT (*cb)(const char* s), NodeT argument) {
+	char* value;
+	if(!stringFromNode(argument, &value))
+		return evalError(strC("<str>"), strC("<junk>"), argument);
+	else
+		return (*cb)(value);
+}
+static INLINE NodeT marshalInt(NodeT (*cb)(int s), NodeT argument) {
+	int value;
+	if(!intFromNode(argument, &value))
+		return evalError(strC("<int>"), strC("<junk>"), argument);
+	else
+		return (*cb)(value);
+}
 
 END_NAMESPACE_6D(FFIs)
 #endif
