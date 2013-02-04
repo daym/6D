@@ -1,0 +1,25 @@
+BEGIN_NAMESPACE_6D(Builtins) 
+USE_NAMESPACE_6D(Values)
+USE_NAMESPACE_6D(FFIs)
+USE_NAMESPACE_6D(SpecialForms)
+USE_NAMESPACE_6D(Strings)  
+static NodeT SConstanter;  
+static NodeT Srem;
+DEFINE_STRICT_BINARY_FN(BsymbolsEqP, internNativeBool(symbolsEqP(env, argument)))
+DEFINE_STRICT_BINARY_FN(BsymbolsLEP, internNativeBool(symbolsLEP(env, argument)))
+DEFINE_STRICT_FN(BsymbolFromStr, marshalStr(symbolFromStr, argument))
+static NodeT builtin(NodeT node) {
+        //Modulesystem::exportsQ("Constanter rem memoize", SpecialForms::Constanter, SpecialForms::Identer, Modulesystem::Memoizer);
+        return (node == SConstanter) ? Constanter : 
+               (node == Srem) ? Identer : 
+               (node == Smemoize) ? Memoizer : 
+DEFINE_STRICT_FN(Builtins, builtin(argument))  
+NodeT initBuiltins(void) {
+        initStrings();
+        SConstanter = symbolFromStr("Constanter");
+        Srem = symbolFromStr("rem");
+        Shashexports = symbolFromStr("#exports");
+        Smemoize = symbolFromStr("memoize"); 
+        INIT_FFI_FN(BfloatP)  
+        INIT_BINARY_FN(Bpair)
+END_NAMESPACE_6D(Builtins)
