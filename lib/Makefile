@@ -136,10 +136,8 @@ $(PACKAGE)-$(VERSION)/Formatters/TExpression.c \
 $(PACKAGE)-$(VERSION)/Formatters/GenericFormatter.inc \
 $(PACKAGE)-$(VERSION)/Parsers/Lang5D.c \
 $(PACKAGE)-$(VERSION)/Parsers/ShuntingYardParser \
-$(PACKAGE)-$(VERSION)/Parsers/LangForth.c \
 $(PACKAGE)-$(VERSION)/Scanners/Scanner \
 $(PACKAGE)-$(VERSION)/Parsers/Lang5D \
-$(PACKAGE)-$(VERSION)/Parsers/LangForth \
 $(PACKAGE)-$(VERSION)/Scanners/Scanner.inc \
 $(PACKAGE)-$(VERSION)/Scanners/Scanner.c \
 $(PACKAGE)-$(VERSION)/Parsers/ShuntingYardParser.inc \
@@ -153,6 +151,8 @@ $(PACKAGE)-$(VERSION)/Values/Keyword.c \
 $(PACKAGE)-$(VERSION)/Values/Hashtable \
 $(PACKAGE)-$(VERSION)/Values/Symbol.c \
 $(PACKAGE)-$(VERSION)/Values/Values \
+$(PACKAGE)-$(VERSION)/Values/Error.c \
+$(PACKAGE)-$(VERSION)/Values/Error \
 $(PACKAGE)-$(VERSION)/WIN32/wstrings.c \
 $(PACKAGE)-$(VERSION)/WIN32/testShuntingYard.cpp \
 $(PACKAGE)-$(VERSION)/WIN32/targetver.h \

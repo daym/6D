@@ -9,13 +9,8 @@ BEGIN_NAMESPACE_6D(FFIs)
 USE_NAMESPACE_6D(Values)
 typedef long long longLong;
 typedef long double longDouble;
-#ifdef __cplusplus
-#define ERRF(typ) \
-	throw std::range_error("value out of range for " #typ);
-#else
 #define ERRF(typ) \
 	return nanxx();
-#endif
 #define IMPLEMENT_NATIVE_INT_GETTER(typ) \
 bool typ##FromNode(NodeT root, typ* result) { \
 	NativeInt result2 = 0; \

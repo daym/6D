@@ -9,10 +9,6 @@
 #endif
 #ifdef GC_THREADS
 #include <gc/gc.h>
-#ifdef __cplusplus
-#include <gc/gc_allocator.h>
-#include <gc/gc_cpp.h>
-#endif
 #else
 #define GC_MALLOC_ATOMIC Allocators::GC_malloc_atomic
 enum GCPlacement {
@@ -21,15 +17,6 @@ enum GCPlacement {
 };
 BEGIN_NAMESPACE_6D(Allocators)
 void* GC_malloc_atomic(size_t sz); /* user-provided */
-struct gc { /* user-provided */
-	virtual ~gc(void) {
-	}
-	void* operator new(size_t size);
-	void* operator new(size_t size, enum GCPlacement);
-	void* operator new(size_t size, void* p);
-	void operator delete(void*);
-	void operator delete(void*, enum GCPlacement);
-};
 END_NAMESPACE_6D(Allocators)
 #endif
 BEGIN_NAMESPACE_6D(Allocators)
@@ -58,14 +45,7 @@ void efree(void* beginning);
 #define ALLOCATOR_STACK , std::deque<NodeT, gc_allocator<NODET> > 
 #define ALLOCATOR_VECTOR , gc_allocator<NODET>
 #define ALLOCATOR_VECTOR2(t) , gc_allocator<t>
-#ifdef __cplusplus
-#define GC_BASECLASS : public gc
-#define NEW(x) new x
-#define NEW_NOGC(x) new (NoGC) x
-#else
 #define GC_BASECLASS
-#define NEW(x) (struct x*) Node_initTag((struct Node*) GC_MALLOC(sizeof(struct x)), TAG_##x)
-#define NEW_NOGC(x) (struct x*) Node_initTag((struct Node*) GC_MALLOC_UNCOLLECTABLE(sizeof(struct x)), TAG_##x)
 #endif
 #else
 #define ALLOCATOR_STACK
@@ -73,5 +53,7 @@ void efree(void* beginning);
 #define ALLOCATOR_VECTOR2(t) 
 #define GC_BASECLASS : public Allocators::gc
 #endif
+#define NEW(x) (struct x*) Node_initTag((struct Node*) GC_MALLOC(sizeof(struct x)), TAG_##x)
+#define NEW_NOGC(x) (struct x*) Node_initTag((struct Node*) GC_MALLOC_UNCOLLECTABLE(sizeof(struct x)), TAG_##x)
 END_NAMESPACE_6D(Allocators)
 #endif /* ndef __6D_ALLOCATORS_H */
