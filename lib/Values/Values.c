@@ -247,5 +247,13 @@ bool callP(NodeT node) {
 bool consP(NodeT node) {
 	return tagOfNode(node) == TAG_Cons;
 }
-
+bool pairP(NodeT node) {
+	if(!consP(node))
+		return false;
+	NodeT tl = getConsTail(node);
+	return(!nilP(tl) && !consP(tl)); /* tradition :-( */
+}
+NodeT call5(NodeT a, NodeT b, NodeT c, NodeT d, NodeT e) {
+	return call(call(call(call(a, b), c), d), e);
+}
 END_NAMESPACE_6D(Values)

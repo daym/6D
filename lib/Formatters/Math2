@@ -1,0 +1,12 @@
+#ifndef __FORMATTERS_MATH2_H
+#define __FORMATTERS_MATH2_H
+#include <stdio.h>
+#include "6D/Values"
+#include "6D/Operations"
+BEGIN_NAMESPACE_6D(Formatters)
+struct Formatter;
+NodeT Formatter_print(struct Formatter* self, NodeT node);
+void Formatter_init(struct Formatter* self, FILE* outputStream, int hposition, int maxWidthAccu, NodeT names, int operatorPrecedenceLevel, NodeT levelOfOperator, NodeT argcountOfOperator, int indentation);
+void initMathFormatters(void);
+END_NAMESPACE_6D(Formatters)
+#endif /* __FORMATTERS_MATH_H */

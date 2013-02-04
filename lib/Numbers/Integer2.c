@@ -248,6 +248,10 @@ NativeInt integerCompareU(NODET aP, NativeInt b) {
 	} else
 		abort();
 }
+NativeInt integerDivmodU(NODET aP, NativeInt b) {
+	abort();
+	return b;
+}
 END_NAMESPACE_6D(Values)
 BEGIN_NAMESPACE_6D(FFIs)
 USE_NAMESPACE_6D(Values)
@@ -290,5 +294,8 @@ NodeT internNativeUInt(NativeUInt value) {
 	} else
 		return intA(value);
 }
-
+NODET integerDivmod(NODET aP, NODET bP) {
+	abort();
+	return aP;
+}
 END_NAMESPACE_6D(FFIs)

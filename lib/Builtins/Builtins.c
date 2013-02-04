@@ -60,7 +60,7 @@ static NodeT SratioP;
 static NodeT SratioA;
 static NodeT SratioB;
 static NodeT SparseError;
-//static NodeT SevalError;
+static NodeT SevalError;
 static NodeT SerrorP;
 static NodeT SerrorKind;
 static NodeT SerrorExpectedInput;
@@ -123,7 +123,7 @@ DEFINE_STRICT_FN(BratioP, internNativeBool(ratioP(argument)))
 DEFINE_STRICT_FN(BratioA, getRatioA(argument))
 DEFINE_STRICT_FN(BratioB, getRatioB(argument))
 DEFINE_STRICT_BINARY_FN(BparseError, parseError(env, argument))
-//TODO DEFINE_STRICT_FN(BevalError, evalError(argument))
+DEFINE_STRICT_TERNARY_FN(BevalError, evalError(getPairFst(env), getPairSnd(env), argument))
 DEFINE_STRICT_FN(BerrorP, internNativeBool(errorP(argument)))
 DEFINE_STRICT_FN(BerrorKind, getErrorKind(argument))
 DEFINE_STRICT_FN(BerrorExpectedInput, getErrorExpectedInput(argument))
@@ -173,7 +173,7 @@ static NodeT builtin(NodeT node) {
 	       (node == SratioA) ? BratioA : 
 	       (node == SratioB) ? BratioB : 
 	       (node == SparseError) ? BparseError : 
-	       //(node == SevalError) ? BevalError : 
+	       (node == SevalError) ? BevalError : 
 	       (node == SerrorP) ? BerrorP : 
 	       (node == SerrorKind) ? BerrorKind : 
 	       (node == SerrorExpectedInput) ? BerrorExpectedInput : 
@@ -231,7 +231,7 @@ NodeT initBuiltins(void) {
 	SratioA = symbolFromStr("ratioA");
 	SratioB = symbolFromStr("ratioB");
 	SparseError = symbolFromStr("parseError");
-	//SevalError = symbolFromStr("evalError");
+	SevalError = symbolFromStr("evalError");
 	SerrorP = symbolFromStr("error?");
 	SerrorKind = symbolFromStr("errorKind");
 	SerrorExpectedInput = symbolFromStr("errorExpectedInput");
@@ -281,6 +281,7 @@ NodeT initBuiltins(void) {
 	INIT_FFI_FN(BerrorGotInput)
 	INIT_FFI_FN(BerrorContext)
 	INIT_FFI_FN(Builtins)
+	INIT_TERNARY_FN(BevalError)
 	/* FIXME exports */
 	return Builtins;
 }

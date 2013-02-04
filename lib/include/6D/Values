@@ -111,6 +111,7 @@ void str(NodeT, FILE*);
 NodeT pair(NodeT a, NodeT b) G_5D_PURE;
 NodeT getPairFst(NodeT p) G_5D_PURE;
 NodeT getPairSnd(NodeT p) G_5D_PURE;
+bool pairP(NodeT p) G_5D_PURE;
 
 static INLINE NodeT closeOver(NodeT /* symbol */ parameter, NodeT argument, NodeT body) {
 	return call(fn(parameter, body), argument);
@@ -141,6 +142,7 @@ NodeT getErrorContext(NodeT node) G_5D_PURE;
 
 void initIntegers(void);
 void initFloats(void);
+NodeT call5(NodeT a, NodeT b, NodeT c, NodeT d, NodeT e) G_5D_PURE;
 END_NAMESPACE_6D(Values)
 BEGIN_NAMESPACE_6D(Strings)
 NodeT concat(NodeT a, NodeT b);

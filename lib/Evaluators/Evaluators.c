@@ -3,8 +3,6 @@
 #include <string.h>
 #include "Evaluators/Evaluators"
 #include "Values/Values"
-#include "Formatters/Math"
-#include "Formatters/TExpression"
 #include "6D/Values"
 #include "6D/Operations"
 #include "6D/Allocators"
@@ -141,9 +139,6 @@ static INLINE NodeT remember(NodeT app, NodeT result) {
 	return(result);
 }
 NodeT eval1(NodeT term) {
-	//Formatters::TExpression::print(stderr, term);
-	//fprintf(stderr, "\n");
-	//fflush(stderr);
 	if(!callP(term))
 		return term;
 	const struct Call* call = (const struct Call*)getCXXInstance(term);

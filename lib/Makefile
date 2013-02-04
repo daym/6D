@@ -129,8 +129,8 @@ $(PACKAGE)-$(VERSION)/Numbers/Real \
 $(PACKAGE)-$(VERSION)/Numbers/Arithmetic.c \
 $(PACKAGE)-$(VERSION)/Strings/Strings \
 $(PACKAGE)-$(VERSION)/Strings/Strings.c \
-$(PACKAGE)-$(VERSION)/Formatters/Math.c \
-$(PACKAGE)-$(VERSION)/Formatters/Math \
+$(PACKAGE)-$(VERSION)/Formatters/Math2.c \
+$(PACKAGE)-$(VERSION)/Formatters/Math2 \
 $(PACKAGE)-$(VERSION)/Formatters/TExpression \
 $(PACKAGE)-$(VERSION)/Formatters/TExpression.c \
 $(PACKAGE)-$(VERSION)/Formatters/GenericFormatter.inc \
@@ -205,7 +205,7 @@ Numbers/Real.o \
 Numbers/Ratio.o \
 Numbers/Arithmetic.o
 STRINGS = Strings/Strings.o
-OBJECTS = Formatters/Math.o \
+OBJECTS = Formatters/Math2.o \
 Formatters/TExpression.o \
 Parsers/Lang5D.o \
 Scanners/Scanner.o \
@@ -243,7 +243,7 @@ Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS) $(SILLY_G
 	$(CC) -o $@ $^ $(LDFLAGS)
 Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS)
-Formatters/Math.o: Formatters/Math.c Formatters/Math Values/Values include/6D/Values Formatters/GenericFormatter.inc
+Formatters/Math2.o: Formatters/Math2.c Formatters/Math2 Values/Values include/6D/Values Formatters/GenericFormatter.inc include/6D/Operations include/6D/Evaluators include/6D/FFIs strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms strict/SpecialForms/Quoter Builtins/Builtins
 Formatters/TExpression.o: Formatters/TExpression.c Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms include/6D/Operations lazy/SpecialForms/SpecialForms
 Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc
 Scanners/Scanner.o: Scanners/Scanner.c Scanners/Scanner  include/6D/Values include/6D/FFIs
