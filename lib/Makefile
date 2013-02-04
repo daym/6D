@@ -280,6 +280,7 @@ Builtins/wrapper.c: Values/Values.o Numbers/Arithmetic.o Makefile generateWrappe
 Builtins/wrapper.o: Builtins/wrapper.c include/6D/Values include/6D/Allocators Numbers/Integer2 Numbers/Arithmetic 
 Numbers/Arithmetic.c.proto Numbers/Arithmetic.o: Numbers/Arithmetic.c Numbers/Arithmetic include/6D/Allocators Numbers/Integer2 include/6D/Values
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
+Numbers/Arithmetic.o: Numbers/Arithmetic.c  Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values include/6D/Evaluators
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
 	Tests/03_Numbers/run

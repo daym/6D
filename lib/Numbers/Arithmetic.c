@@ -1,11 +1,21 @@
 #include "6D/Values"
 #include "6D/Arithmetic"
+#include "6D/Evaluators"
 #include "Numbers/Integer2"
 #include "Numbers/Real"
 #include "Builtins/Builtins"
 #include "Numbers/Arithmetic"
 BEGIN_NAMESPACE_6D(Arithmetic)
 static NodeT int0;
+static NodeT Splus;
+static NodeT Sdash;
+static NodeT Sstar;
+static NodeT Sslash;
+static NodeT Sdivmod;
+static NodeT Sshl;
+static NodeT Sshr;
+static NodeT Slessequal;
+static NodeT Sequal;
 /* TODO promotion */
 NodeT add(NodeT a, NodeT b) {
 	return integerAdd(a, b);
@@ -43,8 +53,34 @@ NodeT equalP(NodeT a, NodeT b) {
 	/* TODO make this less brittle */
 	return internNativeBool(a == b || subtract(a, b) == int0);
 }
+static NodeT builtins;
 void initArithmetic(void) {
+	builtins = initBuiltins();
+	Splus = symbolFromStr("+");
+	Sdash = symbolFromStr("-");
+	Sstar = symbolFromStr("/");
+	Sslash = symbolFromStr("/");
+	Sdivmod = symbolFromStr("divmod");
+	Sshl = symbolFromStr("shl");
+	Sshr = symbolFromStr("shr");
+	Slessequal = symbolFromStr("<=");
+	Sequal = symbolFromStr("=");
 	initIntegers();
 	int0 = internNativeUInt((NativeUInt) 0U);
+}
+static NodeT builtin(NodeT sym) {
+	return eval(call(builtins, sym));
+}
+NODET withArithmetic(NODET body) {
+	return closeOver(Splus, builtin(symbolFromStr("add")), 
+	       closeOver(Sdash, builtin(symbolFromStr("subtract")), 
+	       closeOver(Sstar, builtin(symbolFromStr("multiply")), 
+	       closeOver(Sslash, builtin(symbolFromStr("divide")), 
+	       closeOver(Sdivmod, builtin(symbolFromStr("divmod")),
+	       closeOver(Sshl, builtin(symbolFromStr("shl")),
+	       closeOver(Sshr, builtin(symbolFromStr("shr")), 
+	       closeOver(Slessequal, builtin(symbolFromStr("le?")),
+	       closeOver(Sequal, builtin(symbolFromStr("equal?")),
+	       body)))))))));
 }
 END_NAMESPACE_6D(Arithmetic)
