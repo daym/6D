@@ -174,6 +174,7 @@ $(PACKAGE)-$(VERSION)/strict/SpecialForms/Constanter.c \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer.c \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Quoter.c \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/SpecialForms.c \
 $(PACKAGE)-$(VERSION)/strict/Logic/Logic \
 $(PACKAGE)-$(VERSION)/strict/Logic/Logic.c \
 $(PACKAGE)-$(VERSION)/design/symbols.py \
@@ -189,7 +190,9 @@ $(PACKAGE)-$(VERSION)/Modulesystem/Modulesystem \
 $(PACKAGE)-$(VERSION)/Modulesystem/Exports.c \
 $(PACKAGE)-$(VERSION)/Allocators/SillyGC \
 $(PACKAGE)-$(VERSION)/Allocators/SillyGC.c \
-$(PACKAGE)-$(VERSION)/FFIs/Converters.c
+$(PACKAGE)-$(VERSION)/FFIs/Converters \
+$(PACKAGE)-$(VERSION)/FFIs/Converters.c \
+$(PACKAGE)-$(VERSION)/generateWrapper
 
 BUILTINS_LIB = lib6dbuiltins.so.1
 CFLAGS += $(shell pkg-config --cflags glib-2.0 gthread-2.0)
