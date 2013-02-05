@@ -1,3 +1,4 @@
+#include "6D/Values"
 #include "SpecialForms/SpecialForms"
 BEGIN_NAMESPACE_6D(SpecialForms)
 void initSpecialForms(void) {
