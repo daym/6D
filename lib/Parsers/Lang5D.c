@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
+#include <alloca.h>
 #include "6D/Allocators"
 #include "Values/Values"
 #include "Parsers/Lang5D"
