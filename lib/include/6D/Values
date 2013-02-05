@@ -9,11 +9,16 @@
 #define NATIVEUINT NativeUInt
 #define NATIVEFLOAT NativeFloat
 #define NATIVEINT NativeInt
+#ifndef __cplusplus
 typedef int bool;
 #define true 1
 #define false 0
 #define BEGIN_NAMESPACE_6D(name) 
 #define END_NAMESPACE_6D(name) 
+#else
+#define BEGIN_NAMESPACE_6D(name) extern "C" {
+#define END_NAMESPACE_6D(name) }
+#endif
 #define USE_NAMESPACE_6D(name)
 #define BEGIN_STRUCT_6D(name) struct name { \
 	struct Node super;

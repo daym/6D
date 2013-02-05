@@ -10,13 +10,13 @@
 #ifdef GC_THREADS
 #include <gc/gc.h>
 #else
-#define GC_MALLOC_ATOMIC Allocators::GC_malloc_atomic
-enum GCPlacement {
-	UseGC,
-	NoGC,
-};
+#define GC_MALLOC_ATOMIC GC_malloc_atomic
+#define GC_MALLOC GC_malloc
+#define GC_MALLOC_UNCOLLECTABLE GC_malloc_uncollectable
 BEGIN_NAMESPACE_6D(Allocators)
 void* GC_malloc_atomic(size_t sz); /* user-provided */
+void* GC_malloc(size_t sz); /* user-provided */
+void* GC_malloc_uncollectable(size_t sz); /* user-provided */
 END_NAMESPACE_6D(Allocators)
 #endif
 BEGIN_NAMESPACE_6D(Allocators)
@@ -50,7 +50,7 @@ void efree(void* beginning);
 #define ALLOCATOR_STACK
 #define ALLOCATOR_VECTOR
 #define ALLOCATOR_VECTOR2(t) 
-#define GC_BASECLASS : public Allocators::gc
+#define GC_BASECLASS 
 #endif
 #define NEW(x) (struct x*) Node_initTag((struct Node*) GC_MALLOC(sizeof(struct x)), TAG_##x)
 #define NEW_NOGC(x) (struct x*) Node_initTag((struct Node*) GC_MALLOC_UNCOLLECTABLE(sizeof(struct x)), TAG_##x)
