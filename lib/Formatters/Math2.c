@@ -160,13 +160,11 @@ static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) 
 		status = status ? status : Formatter_printChar(self, '(');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) < 0;
 	status = status ? status : Formatter_print(self, a);
-	if(o != Sspace || a != Sbackslash) { /* lambda */	
-		if(precedence <= self->plusLevel)
-			status = status ? status : Formatter_printChar(self, ' ');
-		status = status ? status : Formatter_printSymbol(self, o);
-		if(precedence <= self->plusLevel)
-			status = status ? status : Formatter_printChar(self, ' ');
-	}
+	if(precedence <= self->plusLevel)
+		status = status ? status : Formatter_printChar(self, ' ');
+	status = status ? status : Formatter_printSymbol(self, o);
+	if(precedence <= self->plusLevel)
+		status = status ? status : Formatter_printChar(self, ' ');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) > 0;
 	status = status ? status : Formatter_print(self, b);
 	self->bParenEqualLevels = false;
@@ -180,7 +178,7 @@ static NodeT Formatter_printPrefixOperation(struct Formatter* self, NodeT node) 
 	NodeT o = getCallCallable(node);
 	NodeT b = getCallArgument(node);
 	NodeT o2 = o;
-	if(callP(o2)) { /* \x */
+	if(callP(o2)) { /* (\x) x */
 		o2 = getCallCallable(o2);
 	}
 	int oldLimit = self->operatorPrecedenceLimit;
@@ -191,7 +189,7 @@ static NodeT Formatter_printPrefixOperation(struct Formatter* self, NodeT node) 
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, '(');
 	status = status ? status : Formatter_print/*Symbol*/(self, o);
-	if(precedence <= self->plusLevel)
+	if(precedence <= self->plusLevel && o != Sbackslash)
 		status = status ? status : Formatter_printChar(self, ' ');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o2) < 0;
 	status = status ? status : Formatter_print(self, b);
