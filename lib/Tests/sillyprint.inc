@@ -11,22 +11,35 @@ static void S_printSymbol(NodeT n) {
 static void S_printKeyword(NodeT n) {
 	printf("@%s", getKeyword1Name(n));
 }
-static void S_printCall(NodeT n) {
+static void S_printCall1(NodeT n) {
 	NodeT fn = getCallCallable(n);
 	NodeT arg = getCallArgument(n);
-	printf("(");
-	S_print(fn);
+	if(callP(fn))
+		S_printCall1(fn);
+	else
+		S_print(fn);
 	printf(" ");
 	S_print(arg);
+}
+static void S_printCall(NodeT n) {
+	printf("(");
+	S_printCall1(n);
 	printf(")");
 }
-static void S_printFn(NodeT n) {
+static void S_printFn1(NodeT n) {
 	NodeT param = getFnParameter(n);
 	NodeT body = getFnBody(n);
-	printf("(\\");
+	printf("\\");
 	S_print(param);
 	printf(" ");
-	S_print(body);
+	if(fnP(body))
+		S_printFn1(body);
+	else
+		S_print(body);
+}
+static void S_printFn(NodeT n) {
+	printf("(");
+	S_printFn1(n);
 	printf(")");
 }
 static void S_printCons(NodeT n) {
@@ -39,7 +52,7 @@ static void S_printCons(NodeT n) {
 	printf(")");
 }
 static void S_printNil(NodeT n) {
-	printf("nil");
+	printf("[]");
 }
 static void S_printRatio(NodeT n) {
 	NodeT a = getRatioA(n);

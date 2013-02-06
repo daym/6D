@@ -133,7 +133,6 @@ $(PACKAGE)-$(VERSION)/Strings/Strings \
 $(PACKAGE)-$(VERSION)/Strings/Strings.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math2.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math2 \
-$(PACKAGE)-$(VERSION)/Formatters/GenericFormatter.inc \
 $(PACKAGE)-$(VERSION)/Parsers/Lang5D.c \
 $(PACKAGE)-$(VERSION)/Parsers/ShuntingYardParser \
 $(PACKAGE)-$(VERSION)/Scanners/Scanner \
@@ -251,7 +250,7 @@ Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS) $(SILLY_G
 	$(CC) -o $@ $^ $(LDFLAGS)
 Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS)
-Formatters/Math2.o: Formatters/Math2.c Formatters/Math2 Values/Values include/6D/Values Formatters/GenericFormatter.inc include/6D/Operations include/6D/Evaluators include/6D/FFIs strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms strict/SpecialForms/Quoter Builtins/Builtins
+Formatters/Math2.o: Formatters/Math2.c Formatters/Math2 Values/Values include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms strict/SpecialForms/Quoter Builtins/Builtins
 Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc include/6D/Evaluators include/6D/Builtins
 Scanners/Scanner.o: Scanners/Scanner.c Scanners/Scanner  include/6D/Values include/6D/FFIs
 Values/Values.c.proto Values/Values.o: Values/Values.c Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
@@ -260,9 +259,9 @@ Values/Keyword.o: Values/Keyword.c Values/Keyword Values/Hashtable include/6D/Al
 Values/Symbol.o: Values/Symbol.c Values/Symbol Values/Hashtable include/6D/Allocators include/6D/Values
 Values/Error.o: Values/Error.c Values/Error Values/Values include/6D/Values
 Allocators/Allocators.o: Allocators/Allocators.c Allocators/Allocators include/6D/Allocators
-Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.c Parsers/Lang5D Formatters/Math2 include/6D/Values include/6D/Allocators
-Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.c Parsers/Lang5D Formatters/Math2 include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins
-Tests/03_Numbers/main.o: Tests/03_Numbers/main.c Parsers/Lang5D Formatters/Math2 include/6D/Allocators include/6D/Values include/6D/Evaluators
+Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.c Parsers/Lang5D Formatters/Math2 include/6D/Values include/6D/Allocators Tests/sillyprint.inc
+Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.c Parsers/Lang5D Formatters/Math2 include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins Tests/sillyprint.inc
+Tests/03_Numbers/main.o: Tests/03_Numbers/main.c Parsers/Lang5D Formatters/Math2 include/6D/Allocators include/6D/Values include/6D/Evaluators Tests/sillyprint.inc
 Values/wstrings.o: Values/wstrings.c include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.c strict/SpecialForms/SpecialForms include/6D/Operations  lazy/SpecialForms/SpecialForms Values/Values
 Numbers/Integer2.o: Numbers/Integer2.c Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
@@ -290,6 +289,7 @@ OPLs/MinimalOPL.o: OPLs/MinimalOPL.c include/6D/Values include/6D/Allocators Num
 Numbers/Arithmetic.c.proto Numbers/Arithmetic.o: Numbers/Arithmetic.c Numbers/Arithmetic include/6D/Allocators Numbers/Integer2 include/6D/Values
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 Allocators/SillyGC.o: Allocators/SillyGC.cc Allocators/SillyGC include/6D/Values
+	$(CXX) -o $@ -c $< $(CFLAGS)
 Numbers/Arithmetic.o: Numbers/Arithmetic.c  Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values include/6D/Evaluators
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
