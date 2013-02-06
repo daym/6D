@@ -308,7 +308,7 @@ static NodeT Formatter_printError(struct Formatter* self, NodeT node) {
 	NodeT expectedInput = getErrorExpectedInput(node);
 	NodeT gotInput = getErrorGotInput(node);
 	NodeT context = getErrorContext(node);
-	return Formatter_print(self, call5(evalErrorF, kind, expectedInput, gotInput, context));
+	return Formatter_print(self, call5(SevalError, kind, expectedInput, gotInput, context));
 }
 NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	int i;
@@ -356,7 +356,7 @@ void initMathFormatters(void) {
 		minimalOperatorArgcount = dcall(builtins, SminimalOPLArgcount);
 	}
 }
-//include "Parsers/sillyprint.inc"
+//nclude "Parsers/sillyprint.inc"
 /* just for backwards compat, not exactly fast or correct or reliable: */
 void print(FILE* f, NodeT node) {
 	struct Formatter fmt;

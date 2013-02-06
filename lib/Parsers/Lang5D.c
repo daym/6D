@@ -865,7 +865,10 @@ NodeT Lang_parse1OPL(NodeT OPL, FILE* f, const char* name) {
 	Scanner_push(scanner, f, 1, name);
 	Scanner_consume(scanner);
 	if(OPL == nil) {
-		printf("%s\n", getSymbol1Name(Scanner_getToken(scanner))); /* FIXME use */
+		const char* name = getSymbol1Name(Scanner_getToken(scanner));
+		if(name && name[0] == '#') {
+			; /* FIXME use */
+		}
 		OPL = minimalOPLN;
 	}
 	Lang_init(lang, OPL);
