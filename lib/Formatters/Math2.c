@@ -306,11 +306,11 @@ static NodeT Formatter_printQuote2(struct Formatter* self, NodeT node) {
 static NodeT Formatter_printInt2(struct Formatter* self, NativeInt value) {
 	NodeT status = nil;
 	NativeInt quot, rem;
-	quot = (NativeInt) value/10;
+	quot = (NativeInt) (value/10);
 	rem = value%10;
 	/* C oddity */
 	if(rem < 0)
-		rem = -rem; /* FIXME test whether that's 10 + rem instead */
+		rem = -rem;
 	if(quot != 0)
 		status = status ? status : Formatter_printInt2(self, quot);
 	status = status ? status : Formatter_printChar(self, hexdigits[rem]);
