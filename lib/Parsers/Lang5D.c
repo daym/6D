@@ -811,7 +811,7 @@ static int Lang_callRpnOperator(struct Lang* self, NodeT operator_, MNODET* valu
 			print(stderr, a);
 			fprintf(stderr, "\n");
 			*values = getConsTail(*values);
-			if(Lang_macroStarterP(self, operator_)) {
+			if(!nilP(*values) && Lang_macroStarterP(self, operator_)) {
 				operator_ = getConsHead(*values);
 				*values = getConsTail(*values);
 			}
