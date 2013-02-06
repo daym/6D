@@ -279,11 +279,13 @@ NodeT integerDivmodU(NODET aP, NativeInt b) {
 		const struct Int* a = (const struct Int*) getCXXInstance(aP);
 		if(b == 0)
 			return evalError(strC("<nonzero-divisor>"), strC("0"), aP);
+		printf("A %ld B %ld\n", a->value, b);
 		NativeInt quot = (NativeInt) (a->value/b);
 		NativeInt rem = a->value % b;
-		/* C standard says that the remainder has the sign of the dividend. */
-		if(rem < 0)
-			rem = -rem;
+		/* C standard says that the remainder has the sign of the dividend, mathematics says the remainder is always positive(!). */
+		if(rem < 0) {
+			rem += b;
+		}
 		/*if(a->value < 0)
 			rem = -rem;*/
 		/* FIXME positive remainder */
@@ -343,7 +345,9 @@ NodeT integerDivmod(NODET aP, NODET bP) { /* return pair */
 	return aP;
 }
 NodeT integerDiv(NODET aP, NODET bP) {
-	abort();
-	return aP;
+	NodeT result = integerDivmod(aP, bP);
+	if(errorP(result))
+		return result;
+	return getPairFst(result);
 }
 END_NAMESPACE_6D(FFIs)

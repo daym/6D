@@ -9,7 +9,7 @@ BEGIN_STRUCT_6D(Integer)
 	NODET tail; /* Integer or Int */
 	NATIVEUINT value;
 END_STRUCT_6D(Integer)
-DECLARE_SMALL_VALUE(Int, NATIVEUINT)
+DECLARE_SMALL_VALUE(Int, NATIVEINT)
 void initIntegers(void);
 bool intP(NODET node);
 bool integerP(NODET node);
