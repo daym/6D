@@ -33,6 +33,22 @@ def members(dom, pnode):
 		else:
 			print >>sys.stderr, "warning: did not find element with id %r" % (id, )
 baseTypesById = {}
+def Sif(cond, trueBranch, falseBranch):
+	return ["if", cond, trueBranch, falseBranch]
+def Snot(expr):
+	return ["!", expr]
+def begin(list):
+	return ["{", list, "}"]
+def call(fn, *arguments):
+	return [fn] + arguments
+def addr(expr):
+	return ["&", expr]
+def argMarshaller(i, ty, name):
+	return Sif(SNot(call("%sFromNode" % (ty, ), "a%d" % (i, ), addr())))
+def demarshalRet(ty, name):
+	pass
+def marshalCall(signature):
+	return [marshalArg(ty, name) for i, (ty, name) in enumerate(signature[:-1])] + [demarshalRet(signature[-1][0])]
 def fundamentalTypeP(element):
 	return element.name == "FundamentalType"
 def pointerTypeP(element):
@@ -74,7 +90,8 @@ def argumentP(node):
 def processArgument(dom, indentation, pnode):
 	name = pnode.prop("name") # can be None
 	print "%*s%s : %s" % (indentation*2, "", name, baseTypeById(dom, pnode.prop("type")))
-def processFunction(dom, indentation, pnode):
+def processPureFn(dom, indentation, pnode):
+	# TODO if not bPure add monadic wrapper - otherwise the same.
 	returns = pnode.prop("returns")
 	mangled = pnode.prop("mangled")
 	rtypeStr = baseTypeById(dom, returns)
@@ -82,6 +99,18 @@ def processFunction(dom, indentation, pnode):
 	for argument in childElements(pnode):
 		if argumentP(argument):
 			processArgument(dom, indentation + 1, argument)
+def wrapMonadic(dom, body):
+	# FIXME
+	return body
+def processFunction(dom, indentation, pnode):
+	attributes = set((pnode.prop("attributes") or "").split(" "))
+	if "" in attributes:
+		attributes.remove("")
+	bPure = "pure" in attributes
+	if not bPure:
+		return wrapMonadic(dom, processPureFn(dom, indentation, pnode))
+	else:
+		return processPureFn(dom, indentation, pnode)
 def processMethod(dom, indentation, pnode):
 	return processFunction(dom, indentation, pnode)
 def processNamespace(dom, indentation, pnode): # or class
