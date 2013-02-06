@@ -35,10 +35,14 @@ def members(dom, pnode):
 baseTypesById = {}
 def fundamentalTypeP(element):
 	return element.name == "FundamentalType"
+def pointerTypeP(element):
+	return element.name == "PointerType"
 def calcBaseTypeById(dom, id):
 	element = elementById(dom, id)
 	if fundamentalTypeP(element):
 		return element.prop("name")
+	elif pointerTypeP(element):
+		return "void*"
 	else:
 		print element.name, "unknown"
 		assert(False)
@@ -68,17 +72,17 @@ def argumentP(node):
 	return node.name == "Argument"
 # TODO constructor, destructor
 def processArgument(dom, indentation, pnode):
-	print "%*s%s : %s" % (indentation*2, "", pnode.prop("name"), baseTypeById(dom, pnode.prop("type")))
+	name = pnode.prop("name") # can be None
+	print "%*s%s : %s" % (indentation*2, "", name, baseTypeById(dom, pnode.prop("type")))
 def processFunction(dom, indentation, pnode):
-	print "%*s%s" % (indentation*2, "", pnode.prop("name"))
+	returns = pnode.prop("returns")
+	rtypeStr = baseTypeById(dom, returns)
+	print "%*s%s => %s" % (indentation*2, "", pnode.prop("name"), rtypeStr)
 	for argument in childElements(pnode):
 		if argumentP(argument):
-			processArgument(dom, indentation + 1, pnode)
+			processArgument(dom, indentation + 1, argument)
 def processMethod(dom, indentation, pnode):
-	print "%*s%s" % (indentation*2, "", pnode.prop("name"))
-	for element in childElements(pnode):
-		if argumentP(element):
-			processArgument(dom, indentation + 1, element)
+	return processFunction(dom, indentation, pnode)
 def processNamespace(dom, indentation, pnode): # or class
 	print "%*s%s" % (indentation*2, "", pnode.prop("name"))
 	for element in members(dom, pnode):
