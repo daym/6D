@@ -1,3 +1,4 @@
+nil
 NOGC operations (i.e. modules) will refer to their environment which will be eventually reclaimed. If this is built by exports() macro, that's fine.
 However, the memoizer uses eval in order to evaluate unknown results for the hashtable. These are GCable and will eventually be reclaimed.
 Therefore, there needs to be an ability to clone result trees (as much as I dislike that) so the memoizer can safely store away results (that, or the ability to deregister nodes from GC - both have the same complexity).

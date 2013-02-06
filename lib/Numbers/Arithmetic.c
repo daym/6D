@@ -5,6 +5,11 @@
 #include "Numbers/Real"
 #include "Builtins/Builtins"
 #include "Numbers/Arithmetic"
+/* TODO: non-integer arithmetic, namely:
+	rational arithmetic.
+	float arithmetic.
+	complex arithmetic.
+*/
 BEGIN_NAMESPACE_6D(Arithmetic)
 static NodeT int0;
 static NodeT Splus;
