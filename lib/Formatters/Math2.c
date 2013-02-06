@@ -461,7 +461,6 @@ void initMathFormatters(void) {
 		}
 	}
 }
-#include "Parsers/sillyprint.inc"
 /* just for backwards compat, not exactly fast or correct or reliable: */
 void print(FILE* f, NodeT node) {
 	struct Formatter fmt;

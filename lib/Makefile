@@ -270,8 +270,7 @@ Numbers/Ratio.o: Numbers/Ratio.c Numbers/Ratio Numbers/Small Numbers/Real Number
 strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.c strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations include/6D/Values
 strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.c strict/SpecialForms/Constanter strict/SpecialForms/SpecialForms include/6D/Operations include/6D/Values
 strict/SpecialForms/Unapplier.o: strict/SpecialForms/Unapplier.c strict/SpecialForms/Unapplier strict/SpecialForms/SpecialForms include/6D/Operations include/6D/Values include/6D/Evaluators
-strict/SpecialForms/SpecialForms.c.proto strict/SpecialForms/SpecialForms.o: strict/SpecialForms/SpecialForms.c strict/SpecialForms/SpecialForms include/6D/FFIs include/6D/Values Values/Values
-	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
+strict/SpecialForms/SpecialForms.o: strict/SpecialForms/SpecialForms.c strict/SpecialForms/SpecialForms include/6D/FFIs include/6D/Values Values/Values
 lazy/Logic/Logic.o: lazy/Logic/Logic.c lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs
 strict/Logic/Logic.o: strict/Logic/Logic.c strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms include/6D/Operations  Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.c Combinators/Combinators include/6D/Operations include/6D/Evaluators
@@ -281,8 +280,8 @@ Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/S
 FFIs/Converters.o: FFIs/Converters.c FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
 Values/Hashtable.o: Values/Hashtable.c Values/Hashtable Values/Values include/6D/Values include/6D/Allocators
 Strings/Strings.o: Strings/Strings.c Strings/Strings include/6D/Values include/6D/Allocators Numbers/Integer2
-Builtins/wrapper.c: Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o Makefile generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto strict/SpecialForms/SpecialForms.c.proto
-	$(OBJDUMP) -t Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o |grep 'g.....F' | awk '{ print $$6 }' | ./generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto strict/SpecialForms/SpecialForms.c.proto OPLs/MinimalOPL.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
+Builtins/wrapper.c: Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o Makefile generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto
+	$(OBJDUMP) -t Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o |grep 'g.....F' | awk '{ print $$6 }' | ./generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto OPLs/MinimalOPL.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
 Builtins/wrapper.o: Builtins/wrapper.c include/6D/Values include/6D/Allocators Numbers/Integer2 Numbers/Arithmetic 
 OPLs/MinimalOPL.o: OPLs/MinimalOPL.c include/6D/Values include/6D/Allocators Numbers/Integer2 include/6D/Operations include/6D/Evaluators include/6D/FFIs
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
