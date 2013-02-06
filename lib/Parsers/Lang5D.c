@@ -293,6 +293,8 @@ static NodeT Lang_error(struct Lang* self, const char* expectedPart, const char*
 }
 static int Lang_operatorLevel(struct Lang* self, NodeT node) {
 	int result;
+	if(!getSymbol1Name(node))
+		return NO_OPERATOR;
 	NodeT n = dcall(self->operatorLevel, node);
 	if(!intFromNode(n, &result)) {
 		S_print(n);
@@ -307,6 +309,8 @@ static int Lang_operatorLevel(struct Lang* self, NodeT node) {
 }
 static int Lang_operatorArgcount(struct Lang* self, NodeT node) {
 	int result;
+	if(!getSymbol1Name(node))
+		return NO_OPERATOR;
 	NodeT n = dcall(self->operatorArgcount, node);
 	if(!intFromNode(n, &result)) {
 		abort();

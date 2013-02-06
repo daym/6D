@@ -53,7 +53,7 @@ struct Formatter {
 };
 static int Formatter_levelOfOperator(struct Formatter* self, NodeT operator_) {
 	int result;
-	if(!self->levelOfOperator)
+	if(!self->levelOfOperator || !getSymbol1Name(operator_))
 		return (NO_OPERATOR);
 	NodeT node = dcall(self->levelOfOperator, operator_);
 	if(!intFromNode(node, &result))
@@ -62,6 +62,8 @@ static int Formatter_levelOfOperator(struct Formatter* self, NodeT operator_) {
 }
 static int Formatter_argcountOfOperator(struct Formatter* self, NodeT operator_) {
 	int result;
+	if(!self->levelOfOperator || !getSymbol1Name(operator_))
+		return (NO_OPERATOR);
 	NodeT node = dcall(self->argcountOfOperator, operator_);
 	if(!intFromNode(node, &result))
 		abort();
@@ -177,7 +179,7 @@ static INLINE int xabs(int value) {
 static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 	if(binaryOperationP(node)) {
 		NodeT operator_ = getOperationOperator(node);
-		if(getSymbol1Name(operator_) && Formatter_levelOfOperator(self, operator_) != NO_OPERATOR && xabs(Formatter_argcountOfOperator(self, operator_)) == 2)
+		if(Formatter_levelOfOperator(self, operator_) != NO_OPERATOR && xabs(Formatter_argcountOfOperator(self, operator_)) == 2)
 			return Formatter_printBinaryOperation(self, node);
 	}
 	{
