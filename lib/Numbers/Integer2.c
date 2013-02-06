@@ -92,6 +92,16 @@ NODET integerSubU(NODET aP, NATIVEUINT amount) {
 	NativeUInt value2 = value - amount;
 	return intA(value2);
 }
+NODET integerSub(NODET aP, NODET bP) {
+	if(intP(bP)) {
+		const struct Int* b = (const struct Int*) getCXXInstance(bP);
+		assert(b->value >= 0);
+		return integerSubU(aP, b->value);
+	} else {
+		abort();
+		return nil;
+	}
+}
 /* only suitable for adding "negative" amounts */
 NodeT integerAddN(NodeT aP, NativeUInt amount) {
 	NativeUInt value;
@@ -114,7 +124,7 @@ NodeT integerAddN(NodeT aP, NativeUInt amount) {
 		NodeT newMS = intA(SIGNEXTENSION(value)); /* sign extend */
 		return integerpart(value2, newMS);
 	}
-	return tail ? integerpart(value2, integerAddN(integerAddU(tail, (value2 < value) ? 1 : 0), SIGNEXTENSION(value))) : intA(value2);
+	return tail ? integerpart(value2, integerAddN(integerAddN(tail, (value2 < value) ? 1 : 0), SIGNEXTENSION(value))) : intA(value2);
 }
 NodeT integerAdd(NodeT aP, NodeT bP) {
 	NativeUInt avalue;
@@ -271,6 +281,7 @@ NodeT integerDivmodU(NODET aP, NativeInt b) {
 			return evalError(strC("<nonzero-divisor>"), strC("0"), aP);
 		NativeInt quot = (NativeInt) (a->value/b);
 		NativeInt rem = a->value % b;
+		/* C standard says that the remainder has the sign of the dividend. */
 		if(rem < 0)
 			rem = -rem;
 		/*if(a->value < 0)

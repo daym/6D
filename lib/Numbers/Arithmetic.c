@@ -21,8 +21,7 @@ NodeT add(NodeT a, NodeT b) {
 	return integerAdd(a, b);
 }
 NodeT subtract(NodeT a, NodeT b) {
-	printf("SUBTRACTING\n");
-	return a;
+	return integerSub(a, b);
 }
 NodeT multiply(NodeT a, NodeT b) {
 	return integerMul(a, b);
