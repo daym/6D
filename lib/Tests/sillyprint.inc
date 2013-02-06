@@ -85,7 +85,7 @@ static void S_printStr(NodeT n) {
 	char* value;
 	if(!stringFromNode(n, &value))
 		abort();
-	printf("%s", value);
+	printf("\"%s\"", value); /* FIXME escape */
 }
 static void S_printError(NodeT n) {
 	NodeT kind = getErrorKind(n);
