@@ -76,6 +76,7 @@ def processArgument(dom, indentation, pnode):
 	print "%*s%s : %s" % (indentation*2, "", name, baseTypeById(dom, pnode.prop("type")))
 def processFunction(dom, indentation, pnode):
 	returns = pnode.prop("returns")
+	mangled = pnode.prop("mangled")
 	rtypeStr = baseTypeById(dom, returns)
 	print "%*s%s => %s" % (indentation*2, "", pnode.prop("name"), rtypeStr)
 	for argument in childElements(pnode):
