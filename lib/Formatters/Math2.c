@@ -25,6 +25,10 @@ static NodeT SminimalOPL;
 static NodeT SoperatorLevel;
 static NodeT SoperatorArgcount;
 static NodeT Splus;
+static NodeT Slet;
+static NodeT Sin;
+static NodeT Scolonequal;
+static NodeT Sequal;
 /*
 things to synthesize:
 	operations
@@ -210,6 +214,12 @@ static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 		int argcount = Formatter_levelOfOperator(self, operator_) != NO_OPERATOR ? Formatter_argcountOfOperator(self, operator_) : 0;
 		if(xabs(argcount) == 2)
 			return Formatter_printBinaryOperation(self, node);
+	} else if(fnP(callable)) {
+		NodeT parameter = getFnParameter(callable);
+		NodeT body = getFnBody(callable);
+		return Formatter_printCall(self, call(Slet, operation(Sin, operation(Sequal, parameter, argument), body)));
+		/* TODO synth let forms. Latter is replacement. callable is a Fn. */
+		printf("SYNTH LET\n");
 	} else {
 		NodeT operator_ = callable;
 		int argcount = Formatter_levelOfOperator(self, operator_) != NO_OPERATOR ? Formatter_argcountOfOperator(self, operator_) : 0;
@@ -217,7 +227,6 @@ static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 			return Formatter_printPrefixOperation(self, node);
 	}
 	{
-		/* TODO synth let forms. Latter is replacement. callable is a Fn. */
 		return Formatter_printBinaryOperation(self, operation(Sspace, callable, argument));
 	}
 }
@@ -430,6 +439,10 @@ void initMathFormatters(void) {
 		Sbackslash = symbolFromStr("\\");
 		Sslash = symbolFromStr("/");
 		Scomma = symbolFromStr(",");
+		Slet = symbolFromStr("let");
+		Sin = symbolFromStr("in");
+		Sequal = symbolFromStr("=");
+		Scolonequal = symbolFromStr(":=");
 		SevalError = symbolFromStr("evalError");
 		SminimalOPL = symbolFromStr("minimalOPL");
 		SoperatorLevel = symbolFromStr("operatorLevel");
