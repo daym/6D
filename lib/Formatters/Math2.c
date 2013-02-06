@@ -264,7 +264,7 @@ static NodeT Formatter_printRatio(struct Formatter* self, NodeT node) {
 }
 static NodeT Formatter_printQuote2(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
-	abort();
+	status = status ? status : Formatter_printChar(self, '\'');
 	return status;
 }
 static NodeT Formatter_printInt2(struct Formatter* self, NativeInt value) {
@@ -274,7 +274,7 @@ static NodeT Formatter_printInt2(struct Formatter* self, NativeInt value) {
 	rem = value%10;
 	/* C oddity */
 	if(rem < 0)
-		rem = -rem;
+		rem = -rem; /* FIXME test whether that's 10 + rem instead */
 	if(quot != 0)
 		status = status ? status : Formatter_printInt2(self, quot);
 	status = status ? status : Formatter_printChar(self, hexdigits[rem]);
@@ -302,13 +302,15 @@ static NodeT Formatter_printInt(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
 	if(!toNativeInt(node, &value))
 		return evalError(strC("<int>"), strC("<junk>"), node);
-	/* FIXME extra parens if needed (i.e. negative) */
-	if(value < 0)
+	if(value < 0) {
+		status = status ? status : Formatter_printChar(self, '(');
 		status = status ? status : Formatter_printChar(self, '-');
-	else { /* two's complement has one more on the negative side. So sorry, that's the only safe direction. */
+		status = status ? status : Formatter_printInt2(self, value);
+		status = status ? status : Formatter_printChar(self, ')');
+	} else { /* two's complement has one more on the negative side. So sorry, that's the only safe direction. */
 		value = -value;
+		status = status ? status : Formatter_printInt2(self, value);
 	}
-	status = status ? status : Formatter_printInt2(self, value);
 	return status;
 }
 static NodeT Formatter_printFloat(struct Formatter* self, NodeT node) {
@@ -327,10 +329,12 @@ static NodeT Formatter_printFloat(struct Formatter* self, NodeT node) {
 static NodeT Formatter_printInteger(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
 	if(integerCompareU(node, 0) < 0) {
-		/* FIXME extra parens if needed */
+		status = status ? status : Formatter_printChar(self, '(');
 		status = status ? status : Formatter_printChar(self, '-');
-	}
-	status = status ? status : Formatter_printInteger2(self, node);
+		status = status ? status : Formatter_printInteger2(self, node);
+		status = status ? status : Formatter_printChar(self, ')');
+	} else
+		status = status ? status : Formatter_printInteger2(self, node);
 	return status;
 }
 static NodeT Formatter_printError(struct Formatter* self, NodeT node) {
