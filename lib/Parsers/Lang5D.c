@@ -4,10 +4,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <alloca.h>
+#include "6D/Evaluators"
 #include "6D/Allocators"
+#include "6D/Values"
+#include "6D/Builtins"
 #include "Values/Values"
 #include "Parsers/Lang5D"
-#include "Formatters/TExpression"
+#include "Formatters/Math2"
 #include "Parsers/ShuntingYardParser"
 #include "SpecialForms/SpecialForms"
 #include "Modulesystem/Modulesystem"
@@ -15,6 +18,7 @@
 #include "Numbers/Integer2"
 #include "6D/FFIs"
 #include "6D/Modulesystem"
+#include "OPLs/MinimalOPL"
 #undef GETC
 #undef UNGETC
 #define GETC fgetc(file)
@@ -30,44 +34,45 @@ static NodeT Sindent;
 static NodeT Sdedent;
 static NodeT SopeningParen;
 static NodeT Sapply;
-static NodeT Sdash;
-static NodeT Szero;
-static NodeT Sunderscore;
-static NodeT Scircumflex;
-static NodeT Sstarstar;
-static NodeT Scross;
-static NodeT Scolon;
-static NodeT Squote;
-static NodeT Scomma;
-static NodeT Sdollar;
-static NodeT Selif;
-static NodeT Selse;
-static NodeT Ssemicolon;
 static NodeT Sbackslash;
 static NodeT Slet;
-static NodeT Sletexclam;
-static NodeT Simport;
+static NodeT Sin;
+static NodeT Serror;
+static NodeT Scomma;
+static NodeT Sequal;
+static NodeT Sin;
+static NodeT Sfrom;
+static NodeT Shashexports;
 static NodeT Sleftparen;
 static NodeT Sleftcurly;
 static NodeT Sleftbracket;
 static NodeT Srightparen;
 static NodeT Srightcurly;
-static NodeT Srightbracket = NULL;
-static NodeT SEOF;
-static NodeT Serror;
-static NodeT Sequal;
-static NodeT Sin;
-static NodeT Sfrom;
-static NodeT Shashexports;
-static NodeT Sif;
+static NodeT Srightbracket;
+static NodeT Squote;
 //NodeT defaultDynEnv;
 static NodeT Sexports;
 static NodeT Snil;
 static NodeT Scolonequal;
+static NodeT Scolon;
 static NodeT Sdot;
 static NodeT Shasht;
 static NodeT Shashf;
+static NodeT SEOF;
+static NodeT Simport;
+static NodeT SoperatorLevel;
+static NodeT SoperatorArgcount;
+static NodeT SoperatorPrefixNeutral;
+static NodeT minimalOPLN;
+static NodeT SminimalOPL;
+#include "sillyprint.inc"
 //NodeT Sdot;
+BEGIN_STRUCT_6D(Lang)
+	NodeT OPL;
+	NodeT operatorLevel;
+	NodeT operatorArgcount;
+	NodeT operatorPrefixNeutral;
+END_STRUCT_6D(Lang)
 static INLINE NodeT merror(const char* expectedPart, const char* gotPart) {
 	return parseError(strC(expectedPart), strC(gotPart));
 }
@@ -282,163 +287,102 @@ static NodeT mquote(NodeT a) {
 	//return quote(a);
 	return call(Squote, a);
 }
-static NodeT error(const char* expectedPart, const char* gotPart) {
+static NodeT Lang_error(struct Lang* self, const char* expectedPart, const char* gotPart) {
 	return merror(expectedPart, gotPart);
 }
-#define NO_OPERATOR (-2)
-static int level(NodeT n) {
-	return n == symbolFromStr("(") ? -1 :
-	       n == symbolFromStr("{") ? -1 :  // pseudo-operators
-	       n == symbolFromStr("[") ? -1 : 
-	       n == symbolFromStr("<indent>") ? -1 : 
-	       n == symbolFromStr("<LF>") ? 41 : 
-	       n == symbolFromStr("#exports") ? 40 : 
-	       n == symbolFromStr(".") ? 33 : 
-	       n == symbolFromStr("_") ? 32 : 
-	       n == symbolFromStr("^") ? 32 : 
-	       n == symbolFromStr("!") ? 31 : 
-	       n == symbolFromStr("**") ? 30 : 
-	       n == symbolFromStr("*") ? 29 : 
-	       n == symbolFromStr("⋅") ? 29 : 
-	       n == symbolFromStr("/") ? 29 : 
-	       n == symbolFromStr("⨯") ? 28 : 
-	       n == symbolFromStr(":") ? 27 : 
-	       n == symbolFromStr("'") ? 26 : 
-	       n == symbolFromStr("if") ? 25 : 
-	       n == symbolFromStr(" ") ? 24 : 
-	       n == symbolFromStr("++") ? 23 : 
-	       n == symbolFromStr("+") ? 22 : 
-	       n == symbolFromStr("‒") ? 22 : 
-	       n == symbolFromStr("-") ? 22 : 
-	       n == symbolFromStr("%") ? 21 : 
-	       n == symbolFromStr("∪") ? 17 : 
-	       n == symbolFromStr("∩") ? 16 : 
-	       n == symbolFromStr("∈") ? 16 : 
-	       n == symbolFromStr("⊂") ? 16 : 
-	       n == symbolFromStr("⊃") ? 16 : 
-	       n == symbolFromStr("⊆") ? 16 : 
-	       n == symbolFromStr("⊇") ? 16 : 
-	       n == symbolFromStr("=") ? 14 : 
-	       n == symbolFromStr("≟") ? 14 : 
-	       n == symbolFromStr("/=") ? 14 : 
-	       n == symbolFromStr("<") ? 13 : 
-	       n == symbolFromStr("<=") ? 13 : 
-	       n == symbolFromStr(">") ? 13 : 
-	       n == symbolFromStr(">=") ? 13 : 
-	       n == symbolFromStr("≤") ? 13 : 
-	       n == symbolFromStr("≥") ? 13 : 
-	       n == symbolFromStr("&&") ? 12 : 
-	       n == symbolFromStr("∧") ? 12 : 
-	       n == symbolFromStr("||") ? 11 : 
-	       n == symbolFromStr("∨") ? 11 : 
-	       n == symbolFromStr(",") ? 10 : 
-	       n == symbolFromStr("$") ? 9 : 
-	       n == symbolFromStr("elif") ? 8 : 
-	       n == symbolFromStr("else") ? 8 : 
-	       n == symbolFromStr("|") ? 6 : 
-	       n == symbolFromStr("=>") ? 5 : 
-	       n == symbolFromStr(";") ? 5 : 
-	       n == symbolFromStr("?;") ? 5 : 
-	       n == symbolFromStr("\\") ? 4 : 
-	       n == symbolFromStr(":=") ? 3 : 
-	       n == symbolFromStr("import") ? 2 : 
-	       n == symbolFromStr("from") ? 3 : 
-	       n == symbolFromStr("let") ? 1 : 
-	       n == symbolFromStr("in") ? 1 : 
-	       n == symbolFromStr("let!") ? 0 : 
-	       n == symbolFromStr(")") ? -1 : 
-	       n == symbolFromStr("}") ? -1 : 
-	       n == symbolFromStr("]") ? -1 : 
-	       n == symbolFromStr("<dedent>") ? -1 :
-	       NO_OPERATOR;
+static int Lang_operatorLevel(struct Lang* self, NodeT node) {
+	int result;
+	NodeT n = dcall(self->operatorLevel, node);
+	if(!intFromNode(n, &result)) {
+		S_print(n);
+		fflush(stdout);
+		printf("operatorLevel ");
+		S_print(self->operatorLevel);
+		fflush(stdout);
+		abort();
+		return NO_OPERATOR;
+	}
+	return result;
 }
-static bool operatorP(NodeT node) {
-	return level(node) != NO_OPERATOR;
+static int Lang_operatorArgcount(struct Lang* self, NodeT node) {
+	int result;
+	NodeT n = dcall(self->operatorArgcount, node);
+	if(!intFromNode(n, &result)) {
+		abort();
+		return NO_OPERATOR;
+	}
+	return result;
 }
-NodeT initLang5D(void) {
+static NodeT Lang_operatorPrefixNeutral(struct Lang* self, NodeT node) {
+	return dcall(self->operatorPrefixNeutral, node);
+}
+/* TODO make this configurable, too */
+static bool Lang_openingParenP(struct Lang* self, NodeT node) {
+	return (node == Sleftparen) || (node == Sleftcurly) || (node == Sleftbracket) || (node == Sindent);
+}
+static bool Lang_closingParenP(struct Lang* self, NodeT node) {
+	return (node == Srightparen) || (node == Srightcurly) || (node == Srightbracket) || (node == Sdedent);
+}
+static NodeT Lang_openingParenOf(struct Lang* self, NodeT node) {
+	return (node == Srightparen) ? Sleftparen : 
+	       (node == Srightcurly) ? Sleftcurly : 
+		   (node == Srightbracket) ? Sleftbracket : 
+		   (node == Sdedent) ? Sindent : 
+		   node;
+}
+static bool Lang_operatorP(struct Lang* self, NodeT node) {
+	return Lang_operatorLevel(self, node) != NO_OPERATOR;
+}
+NodeT initLang(void) {
 	if(Srightbracket == NULL) {
+		NodeT Builtins = initBuiltins();
+		SminimalOPL = symbolFromStr("minimalOPL");
+		minimalOPLN = dcall(Builtins, SminimalOPL);
+		if(errorP(minimalOPLN)) {
+			fprintf(stderr, "error: could not load minimalOPL\n");
+			abort();
+		}
 		SLF = symbolFromStr("<LF>");
 		Sindent = symbolFromStr("<indent>");
 		Sdedent = symbolFromStr("<dedent>");
 		SopeningParen = symbolFromStr("(");
 		Sapply = symbolFromStr(" ");
-		Sdash = symbolFromStr("-");
-		Szero = symbolFromStr("0");
-		Sunderscore = symbolFromStr("_");
-		Scircumflex = symbolFromStr("^");
-		Sstarstar = symbolFromStr("**");
-		Scross = symbolFromStr("⨯");
 		Scolon = symbolFromStr(":");
-		Squote = symbolFromStr("'");
-		Scomma = symbolFromStr(",");
-		Sdollar = symbolFromStr("$");
-		Selif = symbolFromStr("elif");
-		Selse = symbolFromStr("else");
-		Ssemicolon = symbolFromStr(";");
-		Sbackslash = symbolFromStr("\\");
 		Slet = symbolFromStr("let");
 		Sin = symbolFromStr("in");
 		Sfrom = symbolFromStr("from");
-		Sletexclam = symbolFromStr("let!");
 		Simport = symbolFromStr("import");
 		Sleftparen = symbolFromStr("(");
 		Sleftcurly = symbolFromStr("{");
 		Sleftbracket = symbolFromStr("[");
 		Srightparen = symbolFromStr(")");
 		Srightcurly = symbolFromStr("}");
+		Srightbracket = symbolFromStr("]");
 		SEOF = symbolFromStr("\32"); // EOF
 		Serror = symbolFromStr("<error>");
 		Sequal = symbolFromStr("=");
 		Scolonequal = symbolFromStr(":=");
 		Shashexports = symbolFromStr("#exports");
-		Sif = symbolFromStr("if");
-		Srightbracket = symbolFromStr("]");
 		Sexports = symbolFromStr("exports");
 		Snil = symbolFromStr("nil");
 		Sdot = symbolFromStr(".");
 		Shasht = symbolFromStr("#t");
 		Shashf = symbolFromStr("#f");
-		assert(operatorP(symbolFromStr("+")));
-		assert(operatorP(symbolFromStr("(")));
+		Scomma = symbolFromStr(",");
+		Sbackslash = symbolFromStr("\\");
+		SoperatorLevel = symbolFromStr("operatorLevel");
+		SoperatorArgcount = symbolFromStr("operatorArgcount");
+		SoperatorPrefixNeutral = symbolFromStr("operatorPrefixNeutral");
+		Squote = symbolFromStr("'");
 		INIT_FN(DynEnv);
 		/*defaultDynEnv = DynEnv;*/
+		//L = box(NEW_NOGC(Lang));
+		initMinimalOPL();
 	}
 	return DynEnv;
 }
-static bool macroStarterP(NodeT node) {
+static bool Lang_macroStarterP(struct Lang* self, NodeT node) {
 	return /*(node == Slet) || (node == Simport) ||*/ (node == Sbackslash) || (node == Sleftbracket) || (node == Sleftcurly);
-}
-static int operatorArgcount(NodeT node) {
-	int R = -2;
-	//int N = -2; // TODO?
-	int P = 1;
-	int S = -1;
-	return (node == Sunderscore) ? R :
-	       (node == Scircumflex) ? R : 
-	       (node == Sstarstar) ? R : 
-	       (node == Scross) ? R : 
-	       (node == Scolon) ? R : 
-	       (node == Squote) ? P : 
-	       (node == Scomma) ? R : 
-	       (node == Sdollar) ? R : 
-	       (node == Selif) ? R : 
-	       (node == Selse) ? R : 
-	       (node == Ssemicolon) ? R : 
-	       (node == Sbackslash) ? P :
-	       (node == Slet) ? P :
-	       (node == Sif) ? P :
-	       (node == Sin) ? R :
-	       (node == Sfrom) ? R :
-	       (node == Sletexclam) ? R :
-	       (node == Simport) ? P :
-	       macroStarterP(node) ? P :
-	       (node == SLF) ? S : 
-	       (node == Shashexports) ? P : 
-	       2;
-}
-//bool operatorPrefixNeutralP(NodeT node) {
-static NodeT operatorPrefixNeutral(NodeT node) {
-	return (node == Sdash) ? Szero : error("<prefix-operator>", getSymbol1Name(node));
 }
 static NodeT macroStandinOperator(NodeT c) {
 	return getConsHead(c);
@@ -452,54 +396,41 @@ static NodeT macroStandin(NodeT operator_, NodeT operand) {
 static bool macroStandinP(NodeT c) {
 	return(consP(c));
 }
-static NodeT parse0(struct Scanner* scanner, NodeT endToken);
-static NodeT parseValue(struct Scanner* scanner) {
+static NodeT Lang_parse0(struct Lang* self, struct Scanner* scanner, NodeT endToken);
+static NodeT Lang_parseValue(struct Lang* self, struct Scanner* scanner) {
 	/* TODO quoted values */
 	NodeT token = Scanner_getToken(scanner);
 	if(token == Sleftparen) {
-		return parse0(scanner, Srightparen);
+		return Lang_parse0(self, scanner, Srightparen);
 	} else
 		return Scanner_consume(scanner);
 }
-static NodeT parseListLiteral(NodeT endToken, struct Scanner* tokenizer) {
+static NodeT Lang_parseListLiteral(struct Lang* self, NodeT endToken, struct Scanner* tokenizer) {
 	if(Scanner_getToken(tokenizer) == endToken)
 		return nil;
 	else {
-		NodeT hd = parseValue(tokenizer);
+		NodeT hd = Lang_parseValue(self, tokenizer);
 		if(errorP(hd) || hd == SEOF)
 			return hd;
-		NodeT tl = parseListLiteral(endToken, tokenizer);
+		NodeT tl = Lang_parseListLiteral(self, endToken, tokenizer);
 		if(errorP(tl) || tl == SEOF)
 			return tl;
 		return mcons(hd, tl); // it is NOT allowed to construct these directly. The annotator won't see them.
 	}
 }
-static NodeT startMacro(NodeT node, struct Scanner* tokenizer) {
+static NodeT Lang_startMacro(struct Lang* self, NodeT node, struct Scanner* tokenizer) {
 	if(node == Sbackslash) {
-		return macroStandin(node, parseValue(tokenizer));
+		return macroStandin(node, Lang_parseValue(self, tokenizer));
 	} else if(node == Sleftbracket) {
-		return parseListLiteral(Srightbracket, tokenizer);
+		return Lang_parseListLiteral(self, Srightbracket, tokenizer);
 	}
 	return node;
 }
-static bool openingParenP(NodeT node) {
-	return (node == Sleftparen) || (node == Sleftcurly) || (node == Sleftbracket) || (node == Sindent);
-}
-static bool closingParenP(NodeT node) {
-	return (node == Srightparen) || (node == Srightcurly) || (node == Srightbracket) || (node == Sdedent);
-}
-static NodeT openingParenOf(NodeT node) {
-	return (node == Srightparen) ? Sleftparen : 
-	       (node == Srightcurly) ? Sleftcurly : 
-		   (node == Srightbracket) ? Sleftbracket : 
-		   (node == Sdedent) ? Sindent : 
-		   node;
-}
-static bool operatorLE(NodeT a, NodeT b) {
+static bool Lang_operatorLE(struct Lang* self, NodeT a, NodeT b) {
 	if(a == b) { /* speed optimization */
-		return operatorArgcount(b) > 1;
+		return Lang_operatorArgcount(self, b) > 1;
 	} else {
-		return level(a) < level(b) || (level(a) == level(b) && operatorArgcount(b) > 1); // latter: leave right-associative operators on stack if in doubt.
+		return Lang_operatorLevel(self, a) < Lang_operatorLevel(self, b) || (Lang_operatorLevel(self, a) == Lang_operatorLevel(self, b) && Lang_operatorArgcount(self, b) > 1); // latter: leave right-associative operators on stack if in doubt.
 	}
 }
 static NodeT collect(FILE* file, int* linenumber, int prefix, bool (*continueP)(int input)) {
@@ -515,7 +446,7 @@ static NodeT collect(FILE* file, int* linenumber, int prefix, bool (*continueP)(
 		fputc(c, sst);
 	fflush(sst);
 	UNGETC(c);
-	NodeT result = (s[0]) ? symbolFromStr(GCx_strdup(s)) : error("<value>", "<nothing>");
+	NodeT result = (s[0]) ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
 	fclose(sst);
 	return result;
 }
@@ -524,7 +455,7 @@ static NodeT collect1(FILE* file, int* linenumber, bool (*continueP)(int input))
 	assert(!continueP('\n'));
 	prefix = GETC;
 	if(prefix == EOF)
-		return error("<value>", "<EOF>");
+		return merror("<value>", "<EOF>");
 	else
 		return collect(file, linenumber, prefix, continueP);
 }
@@ -586,7 +517,7 @@ static NodeT collectC(FILE* file, int* linenumber, int prefix, bool (*continueP)
 					abort();
 				}
 			default:
-				return error("<escapedValue>", "<junk>");
+				return merror("<escapedValue>", "<junk>");
 			}
 			continue;
 		} else if(c == '\n')
@@ -595,7 +526,7 @@ static NodeT collectC(FILE* file, int* linenumber, int prefix, bool (*continueP)
 	}
 	fflush(sst);
 	UNGETC(c);
-	NodeT result = (s[0]) ? symbolFromStr(GCx_strdup(s)) : error("<value>", "<nothing>");
+	NodeT result = (s[0]) ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
 	fclose(sst);
 	return result;
 }
@@ -603,7 +534,7 @@ static NodeT collect1C(FILE* file, int* linenumber, bool (*continueP)(int input)
 	int prefix;
 	prefix = GETC;
 	if(prefix == EOF)
-		return error("<value>", "<EOF>");
+		return merror("<value>", "<EOF>");
 	else
 		return collect(file, linenumber, prefix, continueP);
 }
@@ -621,7 +552,7 @@ static NodeT collectUnicodeID(FILE* file, int* linenumber, int prefix, const cha
 	}
 	fflush(sst);
 	UNGETC(c);
-	NodeT result = s[0] ? symbolFromStr(GCx_strdup(s)) : error("<value>", "<nothing>");
+	NodeT result = s[0] ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
 	fclose(sst);
 	return result;
 }
@@ -631,10 +562,10 @@ static NodeT readUnicodeOperator3(FILE* file, int* linenumber, int c) {
 	buf[0] = c;
 	buf[1] = GETC;
 	if(buf[1] == EOF)
-		return error("<something>", "<nothing>");
+		return merror("<something>", "<nothing>");
 	buf[2] = GETC;
 	if(buf[2] == EOF)
-		return error("<something>", "<nothing>");
+		return merror("<something>", "<nothing>");
 	// TODO unicode decode buf
 	int codepoint = buf[0]; // FIXME!!!
 	if(mathUnicodeOperatorInRangeP(codepoint)) { /* standalone */
@@ -665,7 +596,7 @@ static NodeT collectNumeric2(FILE* file, int* linenumber, int base, bool (*conti
 	}
 	fflush(sst);
 	UNGETC(c);
-	NodeT result = s[0] ? symbolFromStr(GCx_strdup(s)) : error("<value>", "<nothing>");
+	NodeT result = s[0] ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
 	fclose(sst);
 	return(result);
 }
@@ -697,7 +628,7 @@ static NodeT readHashExports(FILE* file, int* linenumber, int c) {
 			}
 		}
 	}
-	return error("<special-coding>", "<junk>");
+	return merror("<special-coding>", "<junk>");
 }
 static NodeT readKeyword(FILE* file, int* linenumber, int c) {
 	return collect(file, linenumber, c, keywordBodyCharP);
@@ -729,9 +660,9 @@ static NodeT readSpecialCoding(FILE* file, int* linenumber, int c2) {
 			if(c2 == 'r' && basis >= 2 && basis <= 36) {
 				return collectNumeric2(file, linenumber, basis, raryBodyCharP);
 			} else
-				return error("<special-coding>", "<junk>");
+				return merror("<special-coding>", "<junk>");
 		} else
-				return error("<special-coding>", "<junk>");
+				return merror("<special-coding>", "<junk>");
 	}
 }
 static NodeT readString(FILE* file, int* linenumber, int c) {
@@ -741,7 +672,7 @@ static NodeT readString(FILE* file, int* linenumber, int c) {
 		if(c2 != '"') {
 			char buf[2] = {0,0};
 			buf[0] = c2;
-			return error("<doublequote>", buf);
+			return merror("<doublequote>", buf);
 		} else if(errorP(n)) {
 			return n;
 		} else {
@@ -750,9 +681,9 @@ static NodeT readString(FILE* file, int* linenumber, int c) {
 			return strC(nn); // TODO maybe we should special-case those just as we did numbers (instead of creating the strings here)?
 		}
 	} else
-		return error("<string>", "<junk>");
+		return merror("<string>", "<junk>");
 }
-static NodeT readToken(FILE* file, int* linenumber) {
+static NodeT Lang_readToken(struct Lang* self, FILE* file, int* linenumber) {
 	int c;
 	c = GETC;
 	if(c == EOF) 
@@ -780,7 +711,7 @@ static NodeT readToken(FILE* file, int* linenumber) {
 	else {
 		char buf[2] = {0,0};
 		buf[0] = c;
-		return error("<token>", GCx_strdup(buf));
+		return merror("<token>", GCx_strdup(buf));
 	}
 }
 static NodeT reflectHashExports(NodeT entries) {
@@ -824,7 +755,7 @@ static NodeT replaceIN(NodeT equation, NodeT body) {
 	/* two possibilities: */
 	/* importExpr <=> [import <source> [...]] */
 	/* x = 5 <=> ((= x) 5) */
-	if(!operationP(equation)) {
+	if(!binaryOperationP(equation)) {
 		NodeT fr, c2;
 		if(macroStandinP(equation) && macroStandinOperator(equation) == Simport && (fr = macroStandinOperand(equation)) && (c2 = getCallCallable(fr))) {
 			//consP(tl) && (tl2 = getConsTail(tl)) && consP(tl2)) {
@@ -837,14 +768,15 @@ static NodeT replaceIN(NodeT equation, NodeT body) {
 				return body;
 			}
 		} else
-			return error("<equation>", "<junk>");
+			return merror("<equation>", "<junk>");
 	}
 	if(getOperationOperator(equation) != Sequal && getOperationOperator(equation) != Scolonequal)
-		return error("<equation>", "<inequation>");
+		return merror("<equation>", "<inequation>");
 	NodeT formalParameter = getOperationArgument1(equation);
 	NodeT value = getOperationArgument2(equation);
 	return call(fn(formalParameter, body), value);
 }
+/* TODO make this configurable, too */
 static NodeT moperation(NodeT operator_, NodeT a, NodeT b) {
 	return //operator_ == Sbackslash ? fn(macroStandinOperand(a),b) :  /* CRASH HERE */
 	       operator_ == Sin ? replaceIN(a ,b) :
@@ -852,9 +784,9 @@ static NodeT moperation(NodeT operator_, NodeT a, NodeT b) {
 	       operation(operator_, a, b);
 }
 /** returns: growth of the values stack */
-static int callRpnOperator(NodeT operator_, MNODET* values) {
+static int Lang_callRpnOperator(struct Lang* self, NodeT operator_, MNODET* values) {
 	/* note that 2-operand macro operators leave their own result on #values */
-	int argcount = operatorArgcount(operator_);
+	int argcount = Lang_operatorArgcount(self, operator_);
 	if(argcount < 0)
 		argcount = -argcount;
 	if(operator_ == SLF || operator_ == Slet) { /* ignore for now */
@@ -867,14 +799,14 @@ static int callRpnOperator(NodeT operator_, MNODET* values) {
 		fprintf(stderr, "\" ");
 		if(nilP(*values)) {
 			fprintf(stderr, "NOT ENOUGH 1\n");
-			*values = cons(error("<1-arguments>", "<too-little>"), *values);
+			*values = cons(merror("<1-arguments>", "<too-little>"), *values);
 			return 1;
 		} else {
 			NodeT a = getConsHead(*values);
 			print(stderr, a);
 			fprintf(stderr, "\n");
 			*values = getConsTail(*values);
-			if(macroStarterP(operator_)) {
+			if(Lang_macroStarterP(self, operator_)) {
 				operator_ = getConsHead(*values);
 				*values = getConsTail(*values);
 			}
@@ -885,7 +817,7 @@ static int callRpnOperator(NodeT operator_, MNODET* values) {
 	assert(argcount == 2);
 	if(nilP(*values) || nilP(getConsTail(*values))) {
 		fprintf(stderr, "NOT ENOUGH for (%s)\n", getSymbol1Name(operator_));
-		*values = cons(error("<2-arguments>", "<too-little>"), *values);
+		*values = cons(merror("<2-arguments>", "<too-little>"), *values);
 		return 0;
 	} else {
 		fprintf(stderr, "TWO ARGS \"");
@@ -903,11 +835,10 @@ static int callRpnOperator(NodeT operator_, MNODET* values) {
 		return 1 - 2;
 	}
 }
-static NodeT L; /* FIXME dispatcher for all this stuff here */
-static NodeT parse0(struct Scanner* scanner, NodeT endToken) {
+static NodeT Lang_parse0(struct Lang* self, struct Scanner* scanner, NodeT endToken) {
 	NodeT result;
 	NodeT prog;
-	prog = Parser_parse(scanner, L, endToken);
+	prog = Parser_parse(scanner, box(self), endToken);
 	if(prog && consP(prog)) {
 		result = getConsHead(prog);
 		if(!getConsTail(prog))
@@ -916,27 +847,37 @@ static NodeT parse0(struct Scanner* scanner, NodeT endToken) {
 			fprintf(stderr, "junk was: ");
 			print(stderr, getConsTail(prog));
 			fprintf(stderr, "\n");
-			return error("<nothing>", "<junk>");
+			return merror("<nothing>", "<junk>");
 		}
 	} else
-		return error("<something>", "<nothing>");
+		return merror("<something>", "<nothing>");
 }
-static NodeT parse(struct Scanner* scanner) {
-	return parse0(scanner, SEOF);
+static NodeT Lang_parse(struct Lang* self, struct Scanner* scanner) {
+	return Lang_parse0(self, scanner, SEOF);
 }
-NodeT L_parse1(FILE* f, const char* name) {
+NodeT Lang_parse1OPL(NodeT OPL, FILE* f, const char* name) {
 	NodeT result;
+	struct Lang* lang;
 	struct Scanner* scanner;
 	scanner = alloca(Scanner_getSize());
-	Scanner_init(scanner, L);
+	lang = alloca(Lang_getSize());
+	Scanner_init(scanner, box(lang));
 	Scanner_push(scanner, f, 1, name);
 	Scanner_consume(scanner);
-	result = parse(scanner);
+	if(OPL == nil) {
+		printf("%s\n", getSymbol1Name(Scanner_getToken(scanner))); /* FIXME use */
+		OPL = minimalOPLN;
+	}
+	Lang_init(lang, OPL);
+	result = Lang_parse(lang, scanner);
 	if(errorP(result))
 		fprintf(stderr, "Info: the following occured near line %d\n", Scanner_getLinenumber(scanner));
 	return result;
 }
-NodeT L_withDefaultEnv(NodeT body) {
+NodeT Lang_parse1(FILE* f, const char* name) {
+	return Lang_parse1OPL(nil, f, name);
+}
+NodeT Lang_withDefaultEnv(NodeT body) {
 	return closeOver(Squote, /*SpecialForms::*/Quoter, 
 	       closeOver(Shashexports, /*Combinators*/Identity, 
 	       body));
@@ -944,12 +885,26 @@ NodeT L_withDefaultEnv(NodeT body) {
 
 //DEFINE_STRICT_MONADIC_FN(parse1, L_parse1((FILE*) pointerFromNode(argument), NULL)) /* FIXME more args */
 //DEFINE_STRICT_FN(withDefaultEnv, L_withDefaultEnv(argument))
-//DEFINE_MODULE(Lang5D, exports(parse1, withDefaultEnv))
+//DEFINE_MODULE(Lang, exports(parse1, withDefaultEnv))
 /* FFI:
-Lang5DWrapper non-monadic
+LangWrapper non-monadic
         NodeT parse1(FILE* f, const char* name) const; monadic
 	withDefaultEnv non-monadic
 */
-
+void Lang_init(struct Lang* self, NODET OPL) {
+	initLang();
+	self->OPL = OPL;
+	self->operatorLevel = dcall(self->OPL, SoperatorLevel);
+	self->operatorArgcount = dcall(self->OPL, SoperatorArgcount);
+	self->operatorPrefixNeutral = dcall(self->OPL, SoperatorPrefixNeutral);
+}
+size_t Lang_getSize(void) {
+	return sizeof(struct Lang);
+}
+struct Lang* Lang_new(NODET OPL) {
+	struct Lang* result = GC_MALLOC(Lang_getSize());
+	Lang_init(result, OPL);
+	return result;
+}
 END_NAMESPACE_6D(Parsers)
 #include "Parsers/ShuntingYardParser.inc"

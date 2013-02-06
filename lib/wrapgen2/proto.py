@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# TODO make namespaces extensible (how?!)
 import sys
 import libxml2
 def childElements(pnode):

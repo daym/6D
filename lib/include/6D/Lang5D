@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include "6D/Operations"
 BEGIN_NAMESPACE_6D(Parsers)
-NodeT initLang5D(void);    
-NodeT L_parse1(FILE* f, const char* name);
-NodeT L_withDefaultEnv(NodeT body);
+struct Lang;
+NodeT initLang(void); 
+NodeT Lang_parse1(FILE* f, const char* name);
+NodeT Lang_parse1OPL(NODET OPL, FILE* f, const char* name);
+NodeT Lang_withDefaultEnv(NodeT body);
 END_NAMESPACE_6D(Parsers)
 #endif /* ndef __6D_LANG5D_H */

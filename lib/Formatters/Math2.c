@@ -9,6 +9,7 @@
 #include "Formatters/Math2"
 #include "SpecialForms/SpecialForms"
 #include "Builtins/Builtins"
+#include "OPLs/MinimalOPL"
 BEGIN_NAMESPACE_6D(Formatters)
 USE_NAMESPACE_6D(Evaluators)
 USE_NAMESPACE_6D(Values)
@@ -19,6 +20,8 @@ static NodeT Sslash;
 static NodeT Scomma;
 static NodeT SevalError;
 static NodeT evalErrorF;
+static NodeT SminimalOPLLevel;
+static NodeT SminimalOPLArgcount;
 /*
 things to synthesize:
 	operations
@@ -38,27 +41,28 @@ struct Formatter {
 	int hposition;
 	int maxWidthAccu;
 	NodeT names;
-	int operatorPrecedenceLevel;
+	int operatorPrecedenceLimit;
 	NodeT levelOfOperator;
 	NodeT argcountOfOperator;
 	int indentation;
 };
-/* (-1) none */
 static int Formatter_levelOfOperator(struct Formatter* self, NodeT operator_) {
 	int result;
-	NodeT node = eval(call(self->levelOfOperator, quote2(operator_)));
+	if(!self->levelOfOperator)
+		return (NO_OPERATOR);
+	NodeT node = dcall(self->levelOfOperator, operator_);
 	if(!intFromNode(node, &result))
 		abort();
 	return result;
 }
 static int Formatter_argcountOfOperator(struct Formatter* self, NodeT operator_) {
 	int result;
-	NodeT node = eval(call(self->argcountOfOperator, quote2(operator_)));
+	NodeT node = dcall(self->argcountOfOperator, operator_);
 	if(!intFromNode(node, &result))
 		abort();
 	return result;
 }
-static struct Formatter silentFormatter;
+// TODO static struct Formatter silentFormatter;
 static INLINE NodeT Formatter_printChar(struct Formatter* self, char c) {
 	if(fputc(c, self->outputStream) == EOF)
 		return evalError(strC("<stream>"), strC("<broken-stream>"), nil);
@@ -132,37 +136,43 @@ static NodeT Formatter_printSymbol(struct Formatter* self, NodeT node) {
 		return evalError(strC("<symbol>"), strC("<junk>"), node);
 	return Formatter_printStr2(self, strlen(s), s);
 }
-static NodeT Formatter_printSymbolreference(struct Formatter* self, NodeT node) {
-	int ix = getSymbolreferenceIndex(node);
-	NodeT sym = getSymbolByIndex(ix, self->names);
+static NodeT Formatter_printSymbolreference(struct Formatter* self, int index) {
+	NodeT sym = getSymbolByIndex(index, self->names);
 	return Formatter_printSymbol(self, sym);
 }
-static NodeT Formatter_printOperation(struct Formatter* self, NodeT node) {
+static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
 	NodeT o = getOperationOperator(node);
 	NodeT a = getOperationArgument1(node);
 	NodeT b = getOperationArgument2(node);
-	Formatter_levelOfOperator(self, o) < self->operatorPrecedenceLevel;
-	/* TODO parens */
+	int oldLimit = self->operatorPrecedenceLimit;
+	int precedence = Formatter_levelOfOperator(self, o);
+	bool bParen = (precedence < oldLimit);
+	self->operatorPrecedenceLimit = precedence;
+	if(bParen)
+		status = status ? status : Formatter_printChar(self, '(');
 	status = status ? status : Formatter_print(self, a);
 	status = status ? status : Formatter_printSymbol(self, o);
 	status = status ? status : Formatter_print(self, b);
+	if(bParen)
+		status = status ? status : Formatter_printChar(self, ')');
+	self->operatorPrecedenceLimit = oldLimit;
 	return status;
 }
 static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
-	if(operationP(node))
-		return Formatter_printOperation(self, node);
+	if(binaryOperationP(node) && Formatter_levelOfOperator(self, node) != NO_OPERATOR)
+		return Formatter_printBinaryOperation(self, node);
 	else {
 		NodeT callable = getCallCallable(node);
 		NodeT argument = getCallArgument(node);
-		return Formatter_printOperation(self, operation(Sspace, callable, argument));
+		return Formatter_printBinaryOperation(self, operation(Sspace, callable, argument));
 	}
 }
 static NodeT Formatter_printFn(struct Formatter* self, NodeT node) {
 	NodeT parameter = getFnParameter(node);
 	NodeT body = getFnBody(node);
 	/* TODO special-case */
-	return Formatter_printOperation(self, operation(Sbackslash, parameter, body));
+	return Formatter_printBinaryOperation(self, operation(Sbackslash, parameter, body));
 }
 static NodeT Formatter_printKeyword(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
@@ -200,8 +210,10 @@ static NodeT Formatter_printCons(struct Formatter* self, NodeT node) {
 	status = status ? status : Formatter_printChar(self, '[');
 	assert(consP(node));
 	tl = getConsTail(node);
-	if(pairP(tl))
+	if(pairP(tl)) {
 		return Formatter_print(self, operation(Scomma, getPairFst(node), getPairSnd(node)));
+	}
+	/* FIXME (!!!) proper parentheses (i.e. everywhere except for single-symbol) */
 	status = status ? status : Formatter_print(self, getConsHead(node));
 	if(!status) {
 		for(node = getConsTail(node); consP(node); node = getConsTail(node)) {
@@ -209,6 +221,7 @@ static NodeT Formatter_printCons(struct Formatter* self, NodeT node) {
 			status = status ? status : Formatter_printChar(self, ' ');
 			if(status)
 				return status;
+			status = status ? status : Formatter_print(self, getConsHead(node));
 		}
 		if(!nilP(node)) {
 			status = status ? status : Formatter_printChar(self, ',');
@@ -227,7 +240,7 @@ static NodeT Formatter_printNil(struct Formatter* self, NodeT node) {
 static NodeT Formatter_printRatio(struct Formatter* self, NodeT node) {
 	NodeT a = getRatioA(node);
 	NodeT b = getRatioB(node);
-	return Formatter_printOperation(self, operation(Sslash, a, b));
+	return Formatter_printBinaryOperation(self, operation(Sslash, a, b));
 }
 static NodeT Formatter_printQuote2(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
@@ -239,22 +252,27 @@ static NodeT Formatter_printInt2(struct Formatter* self, NativeInt value) {
 	NativeInt quot, rem;
 	quot = (NativeInt) value/10;
 	rem = value%10;
-	assert(rem >= 0); /* rem positive for negative value */
-	status = status ? status : Formatter_printChar(self, hexdigits[rem]);
+	/* C oddity */
+	if(rem < 0)
+		rem = -rem;
 	if(quot != 0)
 		status = status ? status : Formatter_printInt2(self, quot);
+	status = status ? status : Formatter_printChar(self, hexdigits[rem]);
 	return status;
 }
 static NodeT Formatter_printInteger2(struct Formatter* self, NodeT value) {
 	NodeT status = nil;
 	NodeT remN;
 	NativeInt rem;
-	value, remN = integerDivmodU(value, 10);
+	NodeT qr;
+	qr = integerDivmodU(value, 10);
+	value = getPairFst(qr);
+	remN = getPairSnd(qr);
 	if(!toNativeInt(remN, &rem) || rem < 0)
 		return evalError(strC("<integer-remainder>"), strC("<junk>"), remN);
-	status = status ? status : Formatter_printChar(self, hexdigits[rem]);
 	if(value != 0)
 		status = status ? status : Formatter_printInteger2(self, value);
+	status = status ? status : Formatter_printChar(self, hexdigits[rem]);
 	return status;
 }
 static NodeT Formatter_printInt(struct Formatter* self, NodeT node) {
@@ -286,7 +304,6 @@ static NodeT Formatter_printInteger(struct Formatter* self, NodeT node) {
 	return status;
 }
 static NodeT Formatter_printError(struct Formatter* self, NodeT node) {
-	NodeT status = nil;
 	NodeT kind = getErrorKind(node);
 	NodeT expectedInput = getErrorExpectedInput(node);
 	NodeT gotInput = getErrorGotInput(node);
@@ -294,7 +311,8 @@ static NodeT Formatter_printError(struct Formatter* self, NodeT node) {
 	return Formatter_print(self, call5(evalErrorF, kind, expectedInput, gotInput, context));
 }
 NodeT Formatter_print(struct Formatter* self, NodeT node) {
-	return symbolreferenceP(node) ? Formatter_printSymbolreference(self, node) : 
+	int i;
+	return (i = getSymbolreferenceIndex(node)) != -1 ? Formatter_printSymbolreference(self, i) : 
 	       symbolP(node) ? Formatter_printSymbol(self, node) : 
 	       keywordP(node) ? Formatter_printKeyword(self, node) : 
 	       callP(node) ? Formatter_printCall(self, node) : 
@@ -311,23 +329,39 @@ NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	       boxP(node) ? Formatter_printBox(self, node) : 
 	       evalError(strC("<printable>"), strC("<unprintable>"), node);
 }
-void Formatter_init(struct Formatter* self, FILE* outputStream, int hposition, int maxWidthAccu, NodeT names, int operatorPrecedenceLevel, NodeT levelOfOperator, NodeT argcountOfOperator, int indentation) {
+static NodeT minimalOperatorLevel;
+static NodeT minimalOperatorArgcount;
+void Formatter_init(struct Formatter* self, FILE* outputStream, int hposition, int maxWidthAccu, NodeT names, int operatorPrecedenceLimit, NodeT levelOfOperator, NodeT argcountOfOperator, int indentation) {
 	self->outputStream = outputStream;
 	self->hposition = hposition;
 	self->maxWidthAccu = maxWidthAccu;
 	self->names = names;
-	self->operatorPrecedenceLevel = operatorPrecedenceLevel;
+	self->operatorPrecedenceLimit = operatorPrecedenceLimit;
 	self->levelOfOperator = levelOfOperator;
 	self->argcountOfOperator = argcountOfOperator;
 	self->indentation = indentation;
 }
 void initMathFormatters(void) {
-	NodeT builtins = initBuiltins();
-	Sspace = symbolFromStr(" ");
-	Sbackslash = symbolFromStr("\\");
-	Sslash = symbolFromStr("/");
-	Scomma = symbolFromStr(",");
-	SevalError = symbolFromStr("evalError");
-	evalErrorF = eval(call(builtins, quote2(SevalError)));
+	if(!Sspace) {
+		NodeT builtins = initBuiltins();
+		Sspace = symbolFromStr(" ");
+		Sbackslash = symbolFromStr("\\");
+		Sslash = symbolFromStr("/");
+		Scomma = symbolFromStr(",");
+		SevalError = symbolFromStr("evalError");
+		SminimalOPLLevel = symbolFromStr("minimalOPLLevel");
+		SminimalOPLArgcount = symbolFromStr("minimalOPLArgcount");
+		evalErrorF = dcall(builtins, quote2(SevalError));
+		minimalOperatorLevel = dcall(builtins, SminimalOPLLevel);
+		minimalOperatorArgcount = dcall(builtins, SminimalOPLArgcount);
+	}
+}
+//include "Parsers/sillyprint.inc"
+/* just for backwards compat, not exactly fast or correct or reliable: */
+void print(FILE* f, NodeT node) {
+	struct Formatter fmt;
+	initMathFormatters();
+	Formatter_init(&fmt, f, 0, 0, nil, 0, nil/*minimalOperatorLevel*/, minimalOperatorArgcount, 0);
+	Formatter_print(&fmt, node);
 }
 END_NAMESPACE_6D(Formatters)

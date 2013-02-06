@@ -9,5 +9,9 @@ NODET eval(NODET node);
 NODET execute(NODET term);
 void increaseGeneration(void);
 END_NAMESPACE_6D(Evaluators)
+/* this is used if we want to eval something simple from the C++ side (usually FN dispatch & sym), so be sure not to do complicated things in argument */
+static INLINE NodeT dcall(NodeT fn, NodeT argument) {
+	return eval(call(fn, argument));
+}
 
 #endif /* ndef __6D_EVALUATORS_H */

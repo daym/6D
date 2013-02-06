@@ -5,5 +5,6 @@ void initSpecialForms(void) {
 	INIT_FN(Quoter);
 	INIT_FN(Constanter);
 	INIT_FN(Identer);
+	INIT_FN(Unapplier);
 }
 END_NAMESPACE_6D(SpecialForms)

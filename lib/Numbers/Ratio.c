@@ -9,7 +9,7 @@ NODET ratio(NodeT aa, NodeT bb) {
 	struct Ratio* result = NEW(Ratio);
 	result->a = aa;
 	result->b = bb;
-	return(result);
+	return(refCXXInstance(result));
 }
 bool ratioP(NodeT n) {
 	return(tagOfNode(n) == TAG_Ratio);
@@ -23,7 +23,7 @@ NodeT getRatioB(NodeT n) {
 	return r->b;
 }
 
-DEFINE_STRICT_FN(RatioP, ratioP(argument))
+DEFINE_STRICT_FN(RatioP, internNativeBool(ratioP(argument)))
 DEFINE_STRICT_FN(RatioNumeratorGetter, getRatioA(argument))
 DEFINE_STRICT_FN(RatioDenominatorGetter, getRatioB(argument))
 

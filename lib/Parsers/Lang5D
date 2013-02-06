@@ -7,9 +7,13 @@
 #include "6D/Values"
 #include "6D/Operations"
 BEGIN_NAMESPACE_6D(Parsers)
-
-NodeT initLang5D(void);
-NodeT L_parse1(FILE* f, const char* name);
-NodeT L_withDefaultEnv(NodeT body);
+struct Lang;
+NodeT initLang(void);
+NodeT Lang_parse1(FILE* f, const char* name);
+NodeT Lang_parse1OPL(NODET OPL, FILE* f, const char* name);
+NodeT Lang_withDefaultEnv(NODET body);
+void Lang_init(struct Lang* self, NODET OPL);
+size_t Lang_getSize(void);
+struct Lang* Lang_new(NODET OPL);
 END_NAMESPACE_6D(Parsers)
 #endif /* ndef __LANG5_D_H */

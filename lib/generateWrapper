@@ -49,6 +49,7 @@ print """#include "6D/Values"
 #include "Strings/Strings"
 #include "Numbers/Arithmetic"
 #include "Values/Values"
+#include "OPLs/MinimalOPL"
 BEGIN_NAMESPACE_6D(Builtins)
 USE_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(FFIs)
@@ -94,6 +95,7 @@ def exportsCtor(names):
 # DEFINE_STRICT_FN(Builtins, dispatch(Modulesystem::exportsQ("Constanter rem memoize", SpecialForms::Constanter, SpecialForms::Identer, Modulesystem::Memoizer)))
 print "DEFINE_STRICT_FN(Builtins, dispatch(argument))"
 print "NodeT initBuiltins(void) {"
+print "\tif(S%s)\n\t\treturn Builtins;" % (names[0],)
 print "\tinitStrings();"
 for name in names:
 	print "\tS%s = symbolFromStr(\"%s\");" % (name, unescapeSName(name))

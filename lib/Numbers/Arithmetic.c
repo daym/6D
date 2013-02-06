@@ -69,7 +69,7 @@ void initArithmetic(void) {
 	int0 = internNativeUInt((NativeUInt) 0U);
 }
 static NodeT builtin(NodeT sym) {
-	return eval(call(builtins, sym));
+	return dcall(builtins, sym);
 }
 NODET withArithmetic(NODET body) {
 	return closeOver(Splus, builtin(symbolFromStr("add")), 

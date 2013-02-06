@@ -187,7 +187,7 @@ NodeT eval(NodeT node) {
 /* only here for speed. Think of it as FFI. */
 #define WORLD nil
 NodeT execute(NodeT term) {
-	NodeT r = eval(call(term, WORLD));
+	NodeT r = dcall(term, WORLD);
 	// TODO error check
 	return(getConsHead(r));
 }

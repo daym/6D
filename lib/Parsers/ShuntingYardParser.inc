@@ -1,18 +1,23 @@
-#include "Formatters/TExpression"
 #include "Parsers/ShuntingYardParser"
 /* BEGIN env interface */
-static INLINE int env_operatorArgcount(NodeT env, NodeT operator_) { return operatorArgcount(operator_); }
-static INLINE NodeT env_operatorPrefixNeutral(NodeT env, NodeT operator_) { return operatorPrefixNeutral(operator_); }
+static void* unbox(NodeT n) {
+	void* result;
+	if(!pointerFromNode(n, &result))
+		abort();
+	return result;
+}
+static INLINE int env_operatorArgcount(NodeT env, NodeT operator_) { return Lang_operatorArgcount(unbox(env), operator_); }
+static INLINE NodeT env_operatorPrefixNeutral(NodeT env, NodeT operator_) { return Lang_operatorPrefixNeutral(unbox(env), operator_); }
 static INLINE bool env_errorP(NodeT env, NodeT node) { return errorP(node); }
-static INLINE bool env_closingParenP(NodeT env, NodeT node) { return closingParenP(node); }
-static INLINE bool env_openingParenP(NodeT env, NodeT node) { return openingParenP(node); }
-static INLINE bool env_operatorP(NodeT env, NodeT node) { return operatorP(node); }
-static INLINE bool env_operatorLE(NodeT env, NodeT a, NodeT b) { return operatorLE(a, b); }
-static INLINE int env_callRpnOperator(NodeT env, NodeT operator_, MNODET* result) { return callRpnOperator(operator_, result); }
-static INLINE NodeT env_openingParenOf(NodeT env, NodeT operator_) { return openingParenOf(operator_); }
-static INLINE NodeT env_error(NodeT env, const char* expected, const char* got) { return error(expected, got); }
-static INLINE bool env_macroStarterP(NodeT env, NodeT operator_) { return macroStarterP(operator_); }
-static INLINE NodeT env_startMacro(NodeT env, NodeT node, struct Scanner* tokenizer) { return startMacro(node, tokenizer); }
+static INLINE bool env_closingParenP(NodeT env, NodeT node) { return Lang_closingParenP(unbox(env), node); }
+static INLINE bool env_openingParenP(NodeT env, NodeT node) { return Lang_openingParenP(unbox(env), node); }
+static INLINE bool env_operatorP(NodeT env, NodeT node) { return Lang_operatorP(unbox(env), node); }
+static INLINE bool env_operatorLE(NodeT env, NodeT a, NodeT b) { return Lang_operatorLE(unbox(env), a, b); }
+static INLINE int env_callRpnOperator(NodeT env, NodeT operator_, MNODET* result) { return Lang_callRpnOperator(unbox(env), operator_, result); }
+static INLINE NodeT env_openingParenOf(NodeT env, NodeT operator_) { return Lang_openingParenOf(unbox(env), operator_); }
+static INLINE NodeT env_error(NodeT env, const char* expected, const char* got) { return Lang_error(unbox(env), expected, got); }
+static INLINE bool env_macroStarterP(NodeT env, NodeT operator_) { return Lang_macroStarterP(unbox(env), operator_); }
+static INLINE NodeT env_startMacro(NodeT env, NodeT node, struct Scanner* tokenizer) { return Lang_startMacro(unbox(env), node, tokenizer); }
 static INLINE NodeT env_SopeningParen(NodeT env) { return SopeningParen; }
 static INLINE NodeT env_SEOF(NodeT env) { return SEOF; }
 static INLINE NodeT env_Sapply(NodeT env) { return Sapply; }
@@ -20,7 +25,7 @@ static INLINE NodeT env_Sleftparen(NodeT env) { return Sleftparen; }
 static INLINE NodeT env_Srightparen(NodeT env) { return Srightparen; }
 static INLINE NodeT env_Sindent(NodeT env) { return Sindent; }
 static INLINE NodeT env_Sdedent(NodeT env) { return Sdedent; }
-static INLINE NodeT env_readToken(NodeT env, FILE* file, int* linenumber) { return readToken(file, linenumber); }
+static INLINE NodeT env_readToken(NodeT env, FILE* file, int* linenumber) { return Lang_readToken(unbox(env), file, linenumber); }
 /* END env interface */
 
 #include "Scanners/Scanner.inc"

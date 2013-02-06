@@ -18,10 +18,12 @@ NodeT keywordFromStr(const char* name) {
 		return keyword;
 	{
 		struct Keyword* keyword;
+		NODET result;
 		keyword = NEW_NOGC(Keyword);
 		keyword->text = name;
-		setHashtableEntry(keywords, key, keyword);
-		return keyword;
+		result = refCXXInstance(keyword);
+		setHashtableEntry(keywords, key, result);
+		return result;
 	}
 	
 }

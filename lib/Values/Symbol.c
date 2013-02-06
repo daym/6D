@@ -23,19 +23,22 @@ bool symbolP(NodeT node) {
 static struct Hashtable* symbols;
 NodeT symbolFromStr(const char* name) {
 	if(UNLIKELY_6D(symbols == NULL))
-		symbols = makeHashtableNoGC();
+		symbols = (struct Hashtable*) getCXXInstance(makeHashtableNoGC());
 	struct Symbol key;
 	Node_initTag((struct Node*) &key, TAG_Symbol);
 	key.text = name;
-	const struct HashtableEntry* entry = Hashtable_findEntry(symbols, &key);
+	NODET keyN = refCXXInstance(&key);
+	const struct HashtableEntry* entry = Hashtable_findEntry(symbols, keyN);
 	if(LIKELY_6D(entry))
 		return entry->second;
 	{
 		struct Symbol* value;
+		NODET result;
 		value = NEW_NOGC(Symbol);
 		value->text = name;
-		Hashtable_actualPut(symbols, value, value);
-		return value;
+		result = refCXXInstance(value);
+		Hashtable_actualPut(symbols, result, result);
+		return result;
 	}
 }
 const char* getSymbol1Name(NodeT node) {

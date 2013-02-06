@@ -22,12 +22,12 @@ static struct Int ints[256];
 static NodeT makeInt(NativeUInt value) {
 	struct Int* result = NEW(Int);
 	result->value = value;
-	return result;
+	return refCXXInstance(result);
 }
 static struct Integer zerozerozerozero; // self { value = 0, tail = self }
 void initIntegers(void) {
 	int i;
-	zerozerozerozero.tail = &zerozerozerozero;
+	zerozerozerozero.tail = refCXXInstance(&zerozerozerozero);
 	zerozerozerozero.value = 0U;
 	for(i = 0; i < 256; ++i) {
 		Node_initTag((struct Node*) &ints[i], TAG_Int);
@@ -36,7 +36,7 @@ void initIntegers(void) {
 }
 static INLINE NodeT intA(NativeUInt value) {
 	if(value >= 0U && value < 256U)
-		return(&ints[value]);
+		return(refCXXInstance(&ints[value]));
 	return makeInt(value);
 }
 NodeT integerpart(NativeUInt value, NodeT tail) {
@@ -44,7 +44,7 @@ NodeT integerpart(NativeUInt value, NodeT tail) {
 	assert(tail);
 	result->tail = tail;
 	result->value = value;
-	return result;
+	return refCXXInstance(result);
 }
 /* FIXME determine size */
 #define HIGHBIT 63
@@ -75,6 +75,22 @@ NodeT integerAddU(NodeT aP, NativeUInt amount) {
 		return integerpart(value2, newMS);
 	}
 	return tail ? integerpart(value2, (value2 < value) ? integerAddU(tail, 1) : tail) : intA(value2);
+}
+NODET integerSubU(NODET aP, NATIVEUINT amount) {
+	NativeUInt value;
+	//NodeT tail;
+	if(amount == 0U)
+		return aP;
+	if(intP(aP)) {
+		const struct Int* a = (const struct Int*) getCXXInstance(aP);
+		value = a->value;
+		//tail = nil;
+	} else if(integerP(aP)) {
+		abort();
+	} else 
+		return evalError(strC("<integer>"), strC("<junk>"), aP);
+	NativeUInt value2 = value - amount;
+	return intA(value2);
 }
 /* only suitable for adding "negative" amounts */
 NodeT integerAddN(NodeT aP, NativeUInt amount) {
@@ -128,9 +144,9 @@ NodeT integerAdd(NodeT aP, NodeT bP) {
 	} else
 		return evalError(strC("<integer>"), strC("<junk>"), bP);
 	if(atail && !btail)
-		btail = &zerozerozerozero;
+		btail = refCXXInstance(&zerozerozerozero);
 	if(btail && !atail)
-		atail = &zerozerozerozero;
+		atail = refCXXInstance(&zerozerozerozero);
 	// here, either both tails are nil or both tails are not nil.
 	NativeUInt value2 = avalue + bvalue;
 	if(UNLIKELY_6D(!atail && 
@@ -248,9 +264,9 @@ NativeInt integerCompareU(NODET aP, NativeInt b) {
 	} else
 		abort();
 }
-NativeInt integerDivmodU(NODET aP, NativeInt b) {
+NodeT integerDivmodU(NODET aP, NativeInt b) {
 	abort();
-	return b;
+	return aP;
 }
 END_NAMESPACE_6D(Values)
 BEGIN_NAMESPACE_6D(FFIs)
@@ -272,7 +288,7 @@ bool toNearestNativeInt(NodeT node, NativeInt* result) {
 	}
 	if(intP(node)) {
 		const struct Int* a = (const struct Int*) getCXXInstance(node);
-		NativeUInt result2 = 1U << HIGHBIT;
+		NativeUInt result2 = 1ULL << HIGHBIT;
 		if(a->value&HIGHBIT) { /* negative */
 			*result = (NativeInt) result2;
 		} else {

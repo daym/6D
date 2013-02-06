@@ -28,11 +28,11 @@ enum {
 	TAG_Box = 10,
 	TAG_Str = 11,
 	/* convenience */
-	TAG_Keyword,
-	TAG_Symbol,
-	TAG_Error,
-	TAG_Opaque,
-	TAG_Hashtable,
+	TAG_Keyword = 12,
+	TAG_Symbol = 13,
+	TAG_Error = 14,
+	TAG_Opaque = 15,
+	TAG_Hashtable = 16,
 };
 static INLINE struct Node* Node_initTag(struct Node* node, int tag) {
 	node->tag = tag;
@@ -57,6 +57,9 @@ static INLINE int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundName
 void setCallResult(NodeT call, NodeT result);
 static INLINE const void* getCXXInstance(NodeT n) {
 	return n;
+}
+static INLINE NodeT refCXXInstance(const void* p) {
+	return (NodeT) p;
 }
 void increaseGeneration(void);
 int getGeneration(void) G_5D_PURE;

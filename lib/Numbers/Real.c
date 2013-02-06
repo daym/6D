@@ -9,7 +9,7 @@ USE_NAMESPACE_6D(Values)
 NodeT internNativeFloat(NativeFloat value) {
 	struct Float* result = NEW(Float);
 	result->value = value;
-	return result;
+	return refCXXInstance(result);
 }
 bool toNativeFloat(NodeT node, NativeFloat* result) {
 	*result = 0.0;
@@ -55,6 +55,8 @@ REGISTER_BUILTIN(FloatP, 1, 0, symbolFromStr("float?"))
 
 static struct Float nanFloat;
 static struct Float infinityFloat;
+static NodeT nanFloatN;
+static NodeT infinityFloatN;
 
 #ifdef _MSC_VER
 double nanxx(void) {
@@ -80,11 +82,13 @@ void initFloats(void) {
 	nanFloat.value = nanxx();
 	Node_initTag((struct Node*) &infinityFloat, TAG_Float);
 	infinityFloat.value = infxx();
+	nanFloatN = refCXXInstance(&nanFloat);
+	infinityFloatN = refCXXInstance(&infinityFloat);
 }
 NodeT nanA(void) {
-	return(&nanFloat);
+	return(nanFloatN);
 }
 NodeT infinityA(void) {
-	return(&infinityFloat);
+	return(infinityFloatN);
 }
 END_NAMESPACE_6D(Values)

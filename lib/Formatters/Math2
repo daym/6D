@@ -8,5 +8,7 @@ struct Formatter;
 NodeT Formatter_print(struct Formatter* self, NodeT node);
 void Formatter_init(struct Formatter* self, FILE* outputStream, int hposition, int maxWidthAccu, NodeT names, int operatorPrecedenceLevel, NodeT levelOfOperator, NodeT argcountOfOperator, int indentation);
 void initMathFormatters(void);
+/* just for backwards compat, not exactly fast or correct or reliable: */
+void print(FILE* f, NodeT node);
 END_NAMESPACE_6D(Formatters)
 #endif /* __FORMATTERS_MATH_H */

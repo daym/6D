@@ -42,6 +42,9 @@ NodeT symbolFromStr(const char* name) G_5D_PURE;
 /* given two nodes, constructs a "Cons" with a head and tail and return it */
 NodeT cons(NodeT head, NodeT tail) G_5D_PURE;
 
+/* boxes an unknown value so we don't get scared by it */
+NodeT box(void*) G_5D_PURE;
+
 /* given a string, somehow puts it into something resembling a NodeT */
 NodeT strC(const char* value) G_5D_PURE;
 
@@ -107,7 +110,7 @@ NodeT operation(NodeT callable, NodeT argument1, NodeT argument2) G_5D_PURE;
 NodeT getOperationArgument1(NodeT o) G_5D_PURE;
 NodeT getOperationArgument2(NodeT o) G_5D_PURE;
 NodeT getOperationOperator(NodeT o) G_5D_PURE;
-bool operationP(NodeT o) G_5D_PURE;
+bool binaryOperationP(NodeT o) G_5D_PURE;
 /*extern NodeT nil;*/
 #define nil NULL
 

@@ -26,12 +26,12 @@ void removeHashtableEntry(NodeT hashtableP, NodeT key) {
 NodeT makeHashtable(void) {
 	struct Hashtable* result = NEW(Hashtable);
 	Hashtable_init1(result, true);
-	return result;
+	return refCXXInstance(result);
 }
 NodeT makeHashtableNoGC(void) {
 	struct Hashtable* result = NEW_NOGC(Hashtable);
 	Hashtable_init1(result, false);
-	return result;
+	return refCXXInstance(result);
 }
 
 END_NAMESPACE_6D(Values)

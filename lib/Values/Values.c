@@ -3,7 +3,6 @@
 #include "Values/Symbol"
 #include "Values/Keyword"
 #include "Allocators/Allocators"
-#include "Formatters/TExpression"
 #include "Numbers/Integer2"
 #include "Numbers/Real"
 #include "Numbers/Ratio"
@@ -31,7 +30,7 @@ NodeT getOperationOperator(NodeT o) {
 	NodeT o2 = getCallCallable(o);
 	return getCallCallable(o2);
 }
-bool operationP(NodeT o) {
+bool binaryOperationP(NodeT o) {
 	return callP(o) && callP(getCallCallable(o));
 }
 BEGIN_STRUCT_6D(Fn)
@@ -49,7 +48,7 @@ NodeT cons(NodeT head, NodeT tail) {
 	struct Cons* result = NEW(Cons);
 	result->head = head;
 	result->tail = tail;
-	return result;
+	return refCXXInstance(result);
 }
 /* given a Call, returns its callable. */
 NodeT getCallCallable(NodeT node) {
@@ -67,7 +66,7 @@ NodeT fn(NodeT formalParameter, NodeT body) {
 	struct Fn* result = NEW(Fn);
 	result->parameter = formalParameter;
 	result->body = body;
-	return result;
+	return refCXXInstance(result);
 }
 
 /* given a callable and argument, returns a node that represents a Call */
@@ -77,7 +76,7 @@ NodeT call(NodeT callable, NodeT argument) {
 	result->callable = callable;
 	result->argument = argument;
 	result->resultGeneration = -1;
-	return result;
+	return refCXXInstance(result);
 }
 
 /* given a Fn, returns its formal parameter. */
@@ -95,6 +94,14 @@ NodeT getFnBody(NodeT node) {
 BEGIN_STRUCT_6D(Box)
 	void* nativePointer;
 END_STRUCT_6D(Box)
+/* boxes an unknown value so we don't get scared by it */
+NodeT box(void* p) {
+	struct Box* result;
+	result = NEW(Box);
+	result->nativePointer = p;
+	return refCXXInstance(result);
+}
+
 BEGIN_STRUCT_6D(Str) /* TODO derive from Box? */
 	void* nativePointer;
 	size_t size;
@@ -117,7 +124,7 @@ NodeT strC(const char* value) {
 	struct Str* result = NEW(Str);
 	result->size = strlen(value);
 	result->nativePointer = (void*) value;
-	return result;
+	return refCXXInstance(result);
 }
 size_t getStrSize(NodeT n) {
 	const struct Str* s = (const struct Str*) getCXXInstance(n);
@@ -148,7 +155,7 @@ NodeT FFIFn(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	struct CFFIFn* result = NEW(CFFIFn);
 	result->env = aEnv;
 	result->nativePointer = callback;
-	return result;
+	return refCXXInstance(result);
 }
 NodeT FFIFnNoGC(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	/* TODO put name => this into some reflection hideout */
@@ -156,7 +163,7 @@ NodeT FFIFnNoGC(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	struct CFFIFn* result = NEW_NOGC(CFFIFn);
 	result->env = aEnv;
 	result->nativePointer = callback;
-	return result;
+	return refCXXInstance(result);
 }
 NodeT execFFIFn(NodeT node, NodeT argument) {
 	const struct CFFIFn* f = (const struct CFFIFn*) getCXXInstance(node);
@@ -192,13 +199,13 @@ NodeT symbolreference(int index) {
 			struct Symbolreference* ref;
 			ref = NEW_NOGC(Symbolreference);
 			ref->index = index;
-			symbolreferences[index] = ref;
+			symbolreferences[index] = refCXXInstance(ref);
 		} /* Note: could also just stack-allocate them */
 		return symbolreferences[index];
 	} else {
 		struct Symbolreference* ref = NEW(Symbolreference);
 		ref->index = index;
-		return ref;
+		return refCXXInstance(ref);
 	}
 }
 bool symbolreferenceP(NodeT n) {

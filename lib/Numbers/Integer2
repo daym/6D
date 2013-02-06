@@ -18,6 +18,7 @@ NODET integerMul(NODET aP, NODET bP);
 bool integerEqualsP(NODET aP, NODET bP);
 bool integerEqualsIntP(NODET aP, NATIVEINT value);
 NODET integerAddU(NODET aP, NATIVEUINT amount);
+NODET integerSubU(NODET aP, NATIVEUINT amount);
 NODET integerShl(NODET aP, unsigned amount);
 NODET integerShr(NODET aP, unsigned amount);
 END_NAMESPACE_6D(Values)
@@ -28,7 +29,7 @@ NODET internNativeInt(NativeInt value);
 NODET internNativeUInt(NativeUInt value);
 NativeInt integerCompareU(NODET aP, NativeInt b);
 NativeInt integerCompare(NODET aP, NODET b);
-NativeInt integerDivmodU(NODET aP, NativeInt b);
+NODET integerDivmodU(NODET aP, NativeInt b);
 NODET integerDivmod(NODET aP, NODET bP);
 NODET integerDiv(NODET aP, NODET bP);
 END_NAMESPACE_6D(FFIs)

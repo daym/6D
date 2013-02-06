@@ -14,7 +14,7 @@ static NodeT memoized(NodeT env, NodeT key) {
 	NodeT fn = getPairSnd(env);
 	NodeT result = getHashtableValueByKey(hashtable, key, dummy);
 	if(result == dummy) {
-		result = eval(call(fn, key)); /* XXX is this closed over all variables? */
+		result = dcall(fn, key); /* XXX is this closed over all variables? */
 		/* check for error? makes no difference, just cache the error, too. */
 		setHashtableEntry(hashtable, key, result);
 	}
@@ -25,7 +25,7 @@ DEFINE_STRICT_FN(Memoizer2, memoized(env, argument))
 /* memoizer: given a function, results in a memoizer for that function. */
 NodeT memoizer(NodeT fn) {
 	if(!dummy)
-		dummy = NEW(Call);
+		dummy = refCXXInstance(NEW(Call));
 	return CLOSED_FN(Memoizer2, pair(makeHashtable(), fn));
 }
 DEFINE_STRICT_FN(Memoizer, memoizer(argument))

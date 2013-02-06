@@ -7,7 +7,7 @@ NodeT parseError(NodeT aExpectedInput, NodeT aGotInput) {
 	result->expectedInput = aExpectedInput;
 	result->gotInput = aGotInput;
 	result->context = nil;
-	return result;
+	return refCXXInstance(result);
 }
 bool errorP(NodeT n) {
 	return tagOfNode(n) == TAG_Error;
@@ -18,7 +18,7 @@ NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) {
 	result->expectedInput = aExpectedInput;
 	result->gotInput = aGotInput;
 	result->context = aContext;
-	return result;
+	return refCXXInstance(result);
 }
 NodeT getErrorKind(NodeT node) {
 	const struct Error* error = (const struct Error*) getCXXInstance(node);

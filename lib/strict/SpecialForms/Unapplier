@@ -1,0 +1,10 @@
+#ifndef __6D_SPECIAL_FORMS_UNAPPLIER_H
+#define __6D_SPECIAL_FORMS_UNAPPLIER_H
+#include "6D/Values"
+#include "6D/Operations"
+BEGIN_NAMESPACE_6D(SpecialForms)
+DECLARE_SPECIAL_FORM(Unapplier)
+DECLARE_ENV_SPECIAL_FORM(Unapplier2)
+DECLARE_ENV_SPECIAL_FORM(Unapplier3)
+END_NAMESPACE_6D(SpecialForms)
+#endif /* ndef __6D_SPECIAL_FORMS_UNAPPLIER_H */

@@ -133,8 +133,6 @@ $(PACKAGE)-$(VERSION)/Strings/Strings \
 $(PACKAGE)-$(VERSION)/Strings/Strings.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math2.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math2 \
-$(PACKAGE)-$(VERSION)/Formatters/TExpression \
-$(PACKAGE)-$(VERSION)/Formatters/TExpression.c \
 $(PACKAGE)-$(VERSION)/Formatters/GenericFormatter.inc \
 $(PACKAGE)-$(VERSION)/Parsers/Lang5D.c \
 $(PACKAGE)-$(VERSION)/Parsers/ShuntingYardParser \
@@ -173,6 +171,8 @@ $(PACKAGE)-$(VERSION)/strict/SpecialForms/Constanter \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Constanter.c \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer.c \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Identer \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Unapplier.c \
+$(PACKAGE)-$(VERSION)/strict/SpecialForms/Unapplier \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/Quoter.c \
 $(PACKAGE)-$(VERSION)/strict/SpecialForms/SpecialForms.c \
 $(PACKAGE)-$(VERSION)/strict/Logic/Logic \
@@ -192,17 +192,19 @@ $(PACKAGE)-$(VERSION)/Allocators/SillyGC \
 $(PACKAGE)-$(VERSION)/Allocators/SillyGC.c \
 $(PACKAGE)-$(VERSION)/FFIs/Converters \
 $(PACKAGE)-$(VERSION)/FFIs/Converters.c \
-$(PACKAGE)-$(VERSION)/generateWrapper
+$(PACKAGE)-$(VERSION)/generateWrapper \
+$(PACKAGE)-$(VERSION)/OPLs/MinimalOPL.c \
+$(PACKAGE)-$(VERSION)/OPLs/MinimalOPL
 
 BUILTINS_LIB = lib6dbuiltins.so.1
 CFLAGS += $(shell pkg-config --cflags glib-2.0 gthread-2.0)
 LDFLAGS += $(shell pkg-config --libs glib-2.0 gthread-2.0) -lm
-CFLAGS += -Wall -fPIC -O0 -g3 -Wall -Istrict -I. -Iinclude -fno-strict-overflow -Wno-deprecated $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include -DSTRICT_EVAL
+CFLAGS += -Wall -Werror -fPIC -O0 -g3 -Wall -Istrict -I. -Iinclude -fno-strict-overflow -Wno-deprecated $(LIBGC_LD_WRAP_CFLAGS) -D_FILE_OFFSET_BITS=64 -Wno-unused-function -Ilib/Builtins/include -DSTRICT_EVAL
 ifdef LIBGC_LD_WRAP_CFLAGS
 LDFLAGS += -lgc
 endif
 LDFLAGS += -lpthread $(LIBGC_LD_WRAP_LDFLAGS)
-STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/SpecialForms/Constanter.o strict/SpecialForms/Identer.o strict/SpecialForms/SpecialForms.o
+STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/SpecialForms/Constanter.o strict/SpecialForms/Identer.o strict/SpecialForms/SpecialForms.o strict/SpecialForms/Unapplier.o
 
 EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o FFIs/Converters.o
 NUMBERS = Numbers/Integer2.o \
@@ -211,7 +213,6 @@ Numbers/Ratio.o \
 Numbers/Arithmetic.o
 STRINGS = Strings/Strings.o
 OBJECTS = Formatters/Math2.o \
-Formatters/TExpression.o \
 Parsers/Lang5D.o \
 Scanners/Scanner.o \
 Values/Values.o \
@@ -228,7 +229,8 @@ $(STRINGS) \
 Modulesystem/Exports.o \
 Modulesystem/Memoizer.o \
 Builtins/Builtins.o \
-Builtins/wrapper.o
+Builtins/wrapper.o \
+OPLs/MinimalOPL.o
 
 SILLY_GC_OBJECTS = Allocators/SillyGC.o
 LIB = lib6dbuiltins.so.1
@@ -250,8 +252,7 @@ Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS) $(SILLY_G
 Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 Formatters/Math2.o: Formatters/Math2.c Formatters/Math2 Values/Values include/6D/Values Formatters/GenericFormatter.inc include/6D/Operations include/6D/Evaluators include/6D/FFIs strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms strict/SpecialForms/Quoter Builtins/Builtins
-Formatters/TExpression.o: Formatters/TExpression.c Formatters/TExpression Values/Values  include/6D/Values strict/SpecialForms/SpecialForms include/6D/Operations lazy/SpecialForms/SpecialForms
-Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc
+Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc include/6D/Evaluators include/6D/Builtins
 Scanners/Scanner.o: Scanners/Scanner.c Scanners/Scanner  include/6D/Values include/6D/FFIs
 Values/Values.c.proto Values/Values.o: Values/Values.c Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
@@ -259,16 +260,19 @@ Values/Keyword.o: Values/Keyword.c Values/Keyword Values/Hashtable include/6D/Al
 Values/Symbol.o: Values/Symbol.c Values/Symbol Values/Hashtable include/6D/Allocators include/6D/Values
 Values/Error.o: Values/Error.c Values/Error Values/Values include/6D/Values
 Allocators/Allocators.o: Allocators/Allocators.c Allocators/Allocators include/6D/Allocators
-Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.c Parsers/Lang5D Formatters/TExpression include/6D/Values include/6D/Allocators
-Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.c Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins
-Tests/03_Numbers/main.o: Tests/03_Numbers/main.c Parsers/Lang5D Formatters/TExpression include/6D/Allocators include/6D/Values include/6D/Evaluators
+Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.c Parsers/Lang5D Formatters/Math2 include/6D/Values include/6D/Allocators
+Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.c Parsers/Lang5D Formatters/Math2 include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins
+Tests/03_Numbers/main.o: Tests/03_Numbers/main.c Parsers/Lang5D Formatters/Math2 include/6D/Allocators include/6D/Values include/6D/Evaluators
 Values/wstrings.o: Values/wstrings.c include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.c strict/SpecialForms/SpecialForms include/6D/Operations  lazy/SpecialForms/SpecialForms Values/Values
 Numbers/Integer2.o: Numbers/Integer2.c Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
 Numbers/Real.o: Numbers/Real.c Numbers/Real Numbers/Small Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
 Numbers/Ratio.o: Numbers/Ratio.c Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
-strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.c strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations  include/6D/Operations
-strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.c strict/SpecialForms/Constanter strict/SpecialForms/SpecialForms include/6D/Operations
+strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.c strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations include/6D/Values
+strict/SpecialForms/Constanter.o: strict/SpecialForms/Constanter.c strict/SpecialForms/Constanter strict/SpecialForms/SpecialForms include/6D/Operations include/6D/Values
+strict/SpecialForms/Unapplier.o: strict/SpecialForms/Unapplier.c strict/SpecialForms/Unapplier strict/SpecialForms/SpecialForms include/6D/Operations include/6D/Values include/6D/Evaluators
+strict/SpecialForms/SpecialForms.c.proto strict/SpecialForms/SpecialForms.o: strict/SpecialForms/SpecialForms.c strict/SpecialForms/SpecialForms include/6D/FFIs include/6D/Values Values/Values
+	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 lazy/Logic/Logic.o: lazy/Logic/Logic.c lazy/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs
 strict/Logic/Logic.o: strict/Logic/Logic.c strict/Logic/Logic include/6D/Values include/6D/Operations include/6D/Evaluators strict/SpecialForms/SpecialForms include/6D/Operations  Combinators/Combinators
 Combinators/Combinators.o: Combinators/Combinators.c Combinators/Combinators include/6D/Operations include/6D/Evaluators
@@ -278,9 +282,11 @@ Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/S
 FFIs/Converters.o: FFIs/Converters.c FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
 Values/Hashtable.o: Values/Hashtable.c Values/Hashtable Values/Values include/6D/Values include/6D/Allocators
 Strings/Strings.o: Strings/Strings.c Strings/Strings include/6D/Values include/6D/Allocators Numbers/Integer2
-Builtins/wrapper.c: Values/Values.o Numbers/Arithmetic.o Makefile generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto
-	$(OBJDUMP) -t Values/Values.o Numbers/Arithmetic.o |grep 'F \.text' | awk '{ print $$6 }' | ./generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
+Builtins/wrapper.c: Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o Makefile generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto strict/SpecialForms/SpecialForms.c.proto
+	$(OBJDUMP) -t Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o |grep 'g.....F' | awk '{ print $$6 }' | ./generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto strict/SpecialForms/SpecialForms.c.proto OPLs/MinimalOPL.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
 Builtins/wrapper.o: Builtins/wrapper.c include/6D/Values include/6D/Allocators Numbers/Integer2 Numbers/Arithmetic 
+OPLs/MinimalOPL.o: OPLs/MinimalOPL.c include/6D/Values include/6D/Allocators Numbers/Integer2 include/6D/Operations include/6D/Evaluators include/6D/FFIs
+	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 Numbers/Arithmetic.c.proto Numbers/Arithmetic.o: Numbers/Arithmetic.c Numbers/Arithmetic include/6D/Allocators Numbers/Integer2 include/6D/Values
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 Allocators/SillyGC.o: Allocators/SillyGC.cc Allocators/SillyGC include/6D/Values

@@ -2,14 +2,24 @@
 #define __6D_SPECIAL_FORMS_H
 #include "SpecialForms/Quoter"
 #include "SpecialForms/Constanter"
+#include "SpecialForms/Unapplier"
 #include "6D/Values"
 BEGIN_NAMESPACE_6D(SpecialForms)
 DECLARE_SPECIAL_FORM(Constanter)
 DECLARE_ENV_SPECIAL_FORM(Constanter2)
 DECLARE_SPECIAL_FORM(Identer)
 DECLARE_ENV_SPECIAL_FORM(Identer2)
+DECLARE_SPECIAL_FORM(Unapplier)
+DECLARE_ENV_SPECIAL_FORM(Unapplier2)
+DECLARE_ENV_SPECIAL_FORM(Unapplier3)
 static INLINE bool fnSpecialFormP(NODET fn) {
-	return (SPECIAL_FORM_EQUAL_P(fn, Quoter) || SPECIAL_FORM_EQUAL_P(fn, Constanter) || SPECIAL_FORM_EQUAL_P(fn, Constanter2) || SPECIAL_FORM_EQUAL_P(fn, Identer));
+	return (SPECIAL_FORM_EQUAL_P(fn, Quoter) || 
+	        SPECIAL_FORM_EQUAL_P(fn, Constanter) || 
+	        SPECIAL_FORM_EQUAL_P(fn, Constanter2) || 
+	        SPECIAL_FORM_EQUAL_P(fn, Identer) || 
+	        SPECIAL_FORM_EQUAL_P(fn, Unapplier) || 
+	        SPECIAL_FORM_EQUAL_P(fn, Unapplier2) || 
+	        SPECIAL_FORM_EQUAL_P(fn, Unapplier3));
 }
 static INLINE bool fnWantsItsArgumentReducedP(NODET fn) {
 	return !fnSpecialFormP(fn);

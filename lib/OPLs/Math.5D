@@ -1,0 +1,38 @@
+#!/usr/bin/5D
+import [nil (:) (,)] from Builtins in 
+let L := \s (s, 'left) in 
+let R := \s (s, 'right) in 
+let P := \s (s, 'prefix) in 
+let N := \s (s, 'none) in 
+let S := \s (s, 'postfix) in 
+let table := [
+[(L'(.))]
+[(R'(_)) (R'(^))]
+[(R'(**))]
+[(L'(*)) (L'(⋅)) (L'(/)) (L'(&)) (L'(<<)) (L'(>>))]
+[(R'(⨯))]
+[(R'(:))]
+[(P'('))]
+[(P'(if))]
+[(L (symbolFromStr " "))]
+[(L'(++))]
+[(L'(+)) (L'(-))]
+[(L'(%))]
+[(L'(∩))]
+[(L'(∪))]
+[(N'(∈)) (N'(⊂)) (N'(⊃)) (N'(⊆)) (N'(⊇))]
+[(N'(=)) (N'(≟)) (N'(/=))]
+[(N'(<)) (N'(<=)) (N'(>)) (N'(>=)) (N'(≤)) (N'(≥))]
+[(L'(&&)) (L'(∧))]
+[(L'(||)) (L'(∨))]
+[(R'(,))]
+[(R'($))]
+[(R'(elif)) (R'(else))]
+[(L'(|))]
+[(L'(=>)) (R'(;)) (L'(?;))]
+[(P'(\))]
+[(?'(:=)) (R'(from))]
+[(P'(import))]
+[(P'(let)) (R'(in)) (P'(let!))]
+] in 
+(requireModule "Composition").dispatch1 #exports[table]
