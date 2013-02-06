@@ -23,6 +23,8 @@ static NodeT evalErrorF;
 static NodeT SminimalOPL;
 static NodeT SoperatorLevel;
 static NodeT SoperatorArgcount;
+static NodeT Splus;
+/* replace self->operatorPrecedenceLimit by self->operator_ */
 /*
 things to synthesize:
 	operations
@@ -43,9 +45,11 @@ struct Formatter {
 	int maxWidthAccu;
 	NodeT names;
 	int operatorPrecedenceLimit;
+	bool bParenEqualLevels;
 	NodeT levelOfOperator;
 	NodeT argcountOfOperator;
 	int indentation;
+	int plusLevel;
 };
 static int Formatter_levelOfOperator(struct Formatter* self, NodeT operator_) {
 	int result;
@@ -148,13 +152,20 @@ static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) 
 	NodeT b = getOperationArgument2(node);
 	int oldLimit = self->operatorPrecedenceLimit;
 	int precedence = Formatter_levelOfOperator(self, o);
-	bool bParen = (precedence < oldLimit);
+	bool bParen = (precedence < oldLimit) || (precedence == oldLimit && self->bParenEqualLevels);
 	self->operatorPrecedenceLimit = precedence;
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, '(');
+	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) < 0;
 	status = status ? status : Formatter_print(self, a);
+	if(precedence <= self->plusLevel)
+		status = status ? status : Formatter_printChar(self, ' ');
 	status = status ? status : Formatter_printSymbol(self, o);
+	if(precedence <= self->plusLevel)
+		status = status ? status : Formatter_printChar(self, ' ');
+	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) > 0;
 	status = status ? status : Formatter_print(self, b);
+	self->bParenEqualLevels = false;
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, ')');
 	self->operatorPrecedenceLimit = oldLimit;
@@ -357,6 +368,8 @@ void Formatter_init(struct Formatter* self, FILE* outputStream, int hposition, i
 	self->levelOfOperator = levelOfOperator;
 	self->argcountOfOperator = argcountOfOperator;
 	self->indentation = indentation;
+	self->bParenEqualLevels = false;
+	self->plusLevel = Formatter_levelOfOperator(self, Splus);
 }
 void initMathFormatters(void) {
 	if(!Sspace) {
@@ -369,10 +382,15 @@ void initMathFormatters(void) {
 		SminimalOPL = symbolFromStr("minimalOPL");
 		SoperatorLevel = symbolFromStr("operatorLevel");
 		SoperatorArgcount = symbolFromStr("operatorArgcount");
+		Splus = symbolFromStr("+");
 		evalErrorF = dcall(builtins, quote2(SevalError));
 		NodeT minimalOPL = dcall(builtins, SminimalOPL);
 		minimalOperatorLevel = dcall(minimalOPL, SoperatorLevel);
 		minimalOperatorArgcount = dcall(minimalOPL, SoperatorArgcount);
+		if(errorP(minimalOperatorLevel) || errorP(minimalOperatorArgcount)) {
+			fprintf(stderr, "error: Math Formatter could not find minimal OPL\n");
+			abort();
+		}
 	}
 }
 //nclude "Parsers/sillyprint.inc"
