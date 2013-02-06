@@ -1,5 +1,7 @@
 #ifndef __VALUES_H
 #define __VALUES_H
+#include <stdlib.h>
+#include <limits.h>
 #include "6D/Values"
 #include "Allocators/Allocators"
 
@@ -51,8 +53,11 @@ static INLINE int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundName
 		return(-1);
 	else if(getConsHead(boundNames) == needle)
 		return(startingIndex);
-	else
+	else {
+		if(UNLIKELY_6D(startingIndex == INT_MAX))
+			abort();
 		return(indexOfSymbol(needle, startingIndex + 1, getConsTail(boundNames)));
+	}
 }
 void setCallResult(NodeT call, NodeT result);
 static INLINE const void* getCXXInstance(NodeT n) {
