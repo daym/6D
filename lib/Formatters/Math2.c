@@ -215,6 +215,8 @@ static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 		if(xabs(argcount) == 2)
 			return Formatter_printBinaryOperation(self, node);
 	} else if(fnP(callable)) {
+		/* TODO many of these lets could be collected into one import, too. 
+		   One would have to group the lets by argument and then emit imports for each of the arguments */
 		NodeT parameter = getFnParameter(callable);
 		NodeT body = getFnBody(callable);
 		return Formatter_printCall(self, call(Slet, operation(Sin, operation(Sequal, parameter, argument), body)));
