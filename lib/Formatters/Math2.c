@@ -218,6 +218,7 @@ static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 		NodeT parameter = getFnParameter(callable);
 		NodeT body = getFnBody(callable);
 		return Formatter_printCall(self, call(Slet, operation(Sin, operation(Sequal, parameter, argument), body)));
+		//return Formatter_printCall(self, operation(Sin, operation(Scolonequal, parameter, argument), body));
 		/* TODO synth let forms. Latter is replacement. callable is a Fn. */
 		printf("SYNTH LET\n");
 	} else {
