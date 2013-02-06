@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <ctype.h>
 #include "Numbers/Integer2"
 #include "6D/Values"
 #include "6D/Operations"
@@ -193,7 +194,7 @@ static NodeT Formatter_printPrefixOperation(struct Formatter* self, NodeT node) 
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, '(');
 	status = status ? status : Formatter_print/*Symbol*/(self, o);
-	if(precedence <= self->plusLevel && o != Sbackslash)
+	if((precedence <= self->plusLevel || isalpha(getSymbol1Name(o)[0])) && o != Sbackslash)
 		status = status ? status : Formatter_printChar(self, ' ');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o2) < 0;
 	status = status ? status : Formatter_print(self, b);

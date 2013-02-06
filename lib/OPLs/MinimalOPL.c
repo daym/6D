@@ -31,72 +31,46 @@ static NodeT SoperatorLevel;
 static NodeT SoperatorArgcount;
 static NodeT SoperatorPrefixNeutral;
 static NodeT Sexports;
+#define S(x) symbolFromStr(x)
 static int operatorLevel(NodeT n) {
-	return n == symbolFromStr("(") ? -1 :
-	       n == symbolFromStr("{") ? -1 :  // pseudo-operators
-	       n == symbolFromStr("[") ? -1 : 
-	       n == symbolFromStr("<indent>") ? -1 : 
-	       n == symbolFromStr("<LF>") ? 41 : 
-	       n == symbolFromStr("#exports") ? 40 : 
-	       n == symbolFromStr(".") ? 33 : 
-	       n == symbolFromStr("_") ? 32 : 
-	       n == symbolFromStr("^") ? 32 : 
-	       n == symbolFromStr("!") ? 31 : 
-	       n == symbolFromStr("**") ? 30 : 
-	       n == symbolFromStr("*") ? 29 : 
-	       n == symbolFromStr("⋅") ? 29 : 
-	       n == symbolFromStr("/") ? 29 : 
-	       n == symbolFromStr("⨯") ? 28 : 
-	       n == symbolFromStr(":") ? 27 : 
-	       n == symbolFromStr("'") ? 26 : 
-	       n == symbolFromStr("if") ? 25 : 
-	       n == symbolFromStr(" ") ? 24 : 
-	       n == symbolFromStr("++") ? 23 : 
-	       n == symbolFromStr("+") ? 22 : 
-	       n == symbolFromStr("‒") ? 22 : 
-	       n == symbolFromStr("-") ? 22 : 
-	       n == symbolFromStr("%") ? 21 : 
-	       n == symbolFromStr("∪") ? 17 : 
-	       n == symbolFromStr("∩") ? 16 : 
-	       n == symbolFromStr("∈") ? 16 : 
-	       n == symbolFromStr("⊂") ? 16 : 
-	       n == symbolFromStr("⊃") ? 16 : 
-	       n == symbolFromStr("⊆") ? 16 : 
-	       n == symbolFromStr("⊇") ? 16 : 
-	       n == symbolFromStr("=") ? 14 : 
-	       n == symbolFromStr("≟") ? 14 : 
-	       n == symbolFromStr("/=") ? 14 : 
-	       n == symbolFromStr("<") ? 13 : 
-	       n == symbolFromStr("<=") ? 13 : 
-	       n == symbolFromStr(">") ? 13 : 
-	       n == symbolFromStr(">=") ? 13 : 
-	       n == symbolFromStr("≤") ? 13 : 
-	       n == symbolFromStr("≥") ? 13 : 
-	       n == symbolFromStr("&&") ? 12 : 
-	       n == symbolFromStr("∧") ? 12 : 
-	       n == symbolFromStr("||") ? 11 : 
-	       n == symbolFromStr("∨") ? 11 : 
-	       n == symbolFromStr(",") ? 10 : 
-	       n == symbolFromStr("$") ? 9 : 
-	       n == symbolFromStr("elif") ? 8 : 
-	       n == symbolFromStr("else") ? 8 : 
-	       n == symbolFromStr("|") ? 6 : 
-	       n == symbolFromStr("=>") ? 5 : 
-	       n == symbolFromStr(";") ? 5 : 
-	       n == symbolFromStr("?;") ? 5 : 
-	       n == symbolFromStr("\\") ? 4 : 
-	       n == symbolFromStr(":=") ? 3 : 
-	       n == symbolFromStr("from") ? 3 : 
-	       n == symbolFromStr("import") ? 2 : 
-	       n == symbolFromStr("let") ? 1 : 
-	       n == symbolFromStr("in") ? 1 : 
-	       n == symbolFromStr("let!") ? 0 : 
-	       n == symbolFromStr(")") ? -1 : 
-	       n == symbolFromStr("}") ? -1 : 
-	       n == symbolFromStr("]") ? -1 : 
-	       n == symbolFromStr("<dedent>") ? -1 :
+	return n == S("(") || n == S("{") || n == S("[") ? -1 : // pseudo-operators
+	       n == S("<indent>") ? -1 : 
+	       n == S("<LF>") ? 41 : 
+	       n == S("#exports") ? 40 : 
+	       n == S(".") ? 33 : 
+	       n == S("_") || n == S("^") ? 32 : 
+	       n == S("!") ? 31 : 
+	       n == S("**") ? 30 : 
+	       n == S("*") || n == S("⋅") || n == S("/") ? 29 : 
+	       n == S("⨯") ? 28 : 
+	       n == S(":") ? 27 : 
+	       n == S("'") ? 26 : 
+	       n == S("if") ? 25 : 
+	       n == S(" ") ? 24 : 
+	       n == S("++") ? 23 : 
+	       n == S("+") || n == S("-") ? 22 : 
+	       n == S("%") ? 21 : 
+	       n == S("∩") ? 17 : 
+	       n == S("∪") || n == S("∈") || n == S("⊂") || n == S("⊃") || n == S("⊆") || n == S("⊇") ? 16 : 
+	       n == S("=") || n == S("≟") || n == S("/=") ? 14 : 
+	       n == S("<") || n == S("<=") || n == S(">") || n == S(">=") || n == S("≤") || n == S("≥") ? 13 : 
+	       n == S("&&") || n == S("∧") ? 12 : 
+	       n == S("||") || n == S("||") ? 11 : 
+	       n == S(",") ? 10 : 
+	       n == S("$") ? 9 : 
+	       n == S("elif") || n == S("else") ? 8 : 
+	       n == S("|") ? 6 : 
+	       n == S("=>") || n == S(";") || n == S("?;") ? 5 : 
+	       n == S("\\") ? 4 : 
+	       n == S(":=") || n == S("from") ? 3 : 
+	       n == S("import") ? 2 : 
+	       n == S("let") || n == S("in") ? 1 : 
+	       n == S("let!") ? 0 : 
+	       n == S(")") || n == S("}") || n == S("]") ? -1 : 
+	       n == S("<dedent>") ? -1 :
 	       NO_OPERATOR;
 }
+#undef S
 static int operatorArgcount(NodeT node) {
 	int R = -2;
 	//int N = -2; // TODO?
