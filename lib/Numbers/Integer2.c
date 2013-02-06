@@ -265,6 +265,19 @@ NativeInt integerCompareU(NODET aP, NativeInt b) {
 		abort();
 }
 NodeT integerDivmodU(NODET aP, NativeInt b) {
+	if(intP(aP)) {
+		const struct Int* a = (const struct Int*) getCXXInstance(aP);
+		if(b == 0)
+			return evalError(strC("<nonzero-divisor>"), strC("0"), aP);
+		NativeInt quot = (NativeInt) (a->value/b);
+		NativeInt rem = a->value % b;
+		if(rem < 0)
+			rem = -rem;
+		/*if(a->value < 0)
+			rem = -rem;*/
+		/* FIXME positive remainder */
+		return pair(internNativeInt(quot), internNativeInt(rem));
+	}
 	abort();
 	return aP;
 }
@@ -311,17 +324,11 @@ NodeT internNativeUInt(NativeUInt value) {
 		return intA(value);
 }
 NodeT integerDivmod(NODET aP, NODET bP) { /* return pair */
-	if(intP(aP) && intP(bP)) {
-		const struct Int* a = (const struct Int*) getCXXInstance(aP);
+	if(intP(bP)) {
 		const struct Int* b = (const struct Int*) getCXXInstance(bP);
-		if(b->value == 0)
-			return evalError(strC("<nonzero-divisor>"), strC("0"), bP);
-		NativeInt quot = (NativeInt) (a->value/b->value);
-		NativeInt rem = a->value % b->value;
-		/* FIXME positive remainder */
-		return pair(internNativeInt(quot), internNativeInt(rem));
-	}
-	abort();
+		return integerDivmodU(aP, b->value);
+	} else
+		abort();
 	return aP;
 }
 NodeT integerDiv(NODET aP, NODET bP) {
