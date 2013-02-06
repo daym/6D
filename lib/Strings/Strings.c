@@ -4,7 +4,7 @@
 BEGIN_NAMESPACE_6D(Strings)
 static NodeT concatLists(NodeT newTail, NodeT a) {
 	if(consP(a))
-		return cons(getConsHead(a), concatLists(newTail, getConsTail(a)));
+		return cons(consHead(a), concatLists(newTail, consTail(a)));
 	else
 		return newTail;
 }
@@ -21,14 +21,14 @@ NodeT listFromStr(NodeT str) {
 		char* s;
 		if(!stringFromNode(str, &s))
 			return evalError(strC("<str>"), strC("<junk>"), str);
-		return listFromStr2(s, getStrSize(str));
+		return listFromStr2(s, strSize(str));
 	} else
 		return str;
 }
 static int getListLength(NodeT a) {
 	/* TODO handle overflow */
 	if(consP(a))
-		return 1 + getListLength(getConsTail(a));
+		return 1 + getListLength(consTail(a));
 	else
 		return 0;
 }
@@ -36,9 +36,9 @@ NodeT strFromList(NodeT l) {
 	int len = getListLength(l);
 	char* result = GC_MALLOC_ATOMIC(len + 1);
 	char* p = result;
-	for(; len > 0; --len, ++p, l = getConsTail(l)) {
+	for(; len > 0; --len, ++p, l = consTail(l)) {
 		int v;
-		if(!intFromNode(getConsHead(l), &v) || v < 0 || v > 255)
+		if(!intFromNode(consHead(l), &v) || v < 0 || v > 255)
 			return evalError(strC("<int-list>"), strC("<junk>"), l);
 		*p = v;
 	}

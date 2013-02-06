@@ -44,9 +44,9 @@ static char* command_generator(const char* text, int state) {
 	if(!boundNames)
 		return NULL;
 	while(consP(boundNames)) {
-		NodeT key = getConsHead(boundNames);
-		const char* ktext = getSymbol1Name(key);
-		boundNames = getConsTail(boundNames);
+		NodeT key = consHead(boundNames);
+		const char* ktext = symbolName(key);
+		boundNames = consTail(boundNames);
 		if(ktext && strncmp(ktext, text, len) == 0)
 			return strdup(ktext);
 	}

@@ -65,7 +65,6 @@ static NodeT SoperatorArgcount;
 static NodeT SoperatorPrefixNeutral;
 static NodeT minimalOPLN;
 static NodeT SminimalOPL;
-#include "sillyprint.inc"
 //NodeT Sdot;
 BEGIN_STRUCT_6D(Lang)
 	NodeT OPL;
@@ -113,7 +112,7 @@ static INLINE NodeT getNumber(int baseI, const char* name) {
 	return nil;
 }
 static INLINE NodeT getDynEnvEntry(NodeT sym) {
-	const char* name = getSymbol1Name(sym);
+	const char* name = symbolName(sym);
 	NodeT result = nil;
 	if(name) {
 		if(isdigit(name[0])) { /* since there is an infinite number of numbers, make sure not to precreate all of them :-) */
@@ -134,7 +133,7 @@ static INLINE NodeT getDynEnvEntry(NodeT sym) {
 	print(stderr, sym);
 	fprintf(stderr, "\n");
 	fflush(stderr);
-	return merror("<dynamic-variable>", nvl(getSymbol1Name(sym), "???"));
+	return merror("<dynamic-variable>", nvl(symbolName(sym), "???"));
 }
 DEFINE_STRICT_FN(DynEnv, getDynEnvEntry(argument))
 
@@ -270,18 +269,18 @@ static NodeT mpair(NodeT hd, NodeT tl) {
 static bool mnilP(NodeT c) {
 	return nilP(c) || c == Snil;
 }
-static NodeT mgetConsHead(NodeT c) {
-	NodeT c2 = getCallCallable(c);
+static NodeT mconsHead(NodeT c) {
+	NodeT c2 = callCallable(c);
 	assert(c2);
-	assert(getCallCallable(c2) == Scolon);
-	NodeT a0 = getCallArgument(c2);
+	assert(callCallable(c2) == Scolon);
+	NodeT a0 = callArgument(c2);
 	return a0;
 }
-static NodeT mgetConsTail(NodeT c) {
-	NodeT c2 = getCallCallable(c);
+static NodeT mconsTail(NodeT c) {
+	NodeT c2 = callCallable(c);
 	assert(c2);
-	assert(getCallCallable(c2) == Scolon);
-	NodeT a1 = getCallArgument(c);
+	assert(callCallable(c2) == Scolon);
+	NodeT a1 = callArgument(c);
 	return a1;
 }
 static NodeT mquote(NodeT a) {
@@ -293,15 +292,15 @@ static NodeT Lang_error(struct Lang* self, const char* expectedPart, const char*
 }
 static int Lang_operatorLevel(struct Lang* self, NodeT node) {
 	int result;
-	if(!getSymbol1Name(node))
+	if(!symbolName(node))
 		return NO_OPERATOR;
 	NodeT n = dcall(self->operatorLevel, node);
 	if(!intFromNode(n, &result)) {
-		S_print(n);
-		fflush(stdout);
-		printf("operatorLevel ");
-		S_print(self->operatorLevel);
-		fflush(stdout);
+		//S_print(n);
+		//fflush(stdout);
+		//printf("operatorLevel ");
+		//S_print(self->operatorLevel);
+		//fflush(stdout);
 		abort();
 		return NO_OPERATOR;
 	}
@@ -309,7 +308,7 @@ static int Lang_operatorLevel(struct Lang* self, NodeT node) {
 }
 static int Lang_operatorArgcount(struct Lang* self, NodeT node) {
 	int result;
-	if(!getSymbol1Name(node))
+	if(!symbolName(node))
 		return NO_OPERATOR;
 	NodeT n = dcall(self->operatorArgcount, node);
 	if(!intFromNode(n, &result)) {
@@ -390,10 +389,10 @@ static bool Lang_macroStarterP(struct Lang* self, NodeT node) {
 	return /*(node == Slet) || (node == Simport) ||*/ (node == Sbackslash) || (node == Sleftbracket) || (node == Sleftcurly);
 }
 static NodeT macroStandinOperator(NodeT c) {
-	return getConsHead(c);
+	return consHead(c);
 }
 static NodeT macroStandinOperand(NodeT c) {
-	return getConsHead(getConsTail(c));
+	return consHead(consTail(c));
 }
 static NodeT macroStandin(NodeT operator_, NodeT operand) {
 	return cons(operator_, cons(operand, nil));
@@ -681,7 +680,7 @@ static NodeT readString(FILE* file, int* linenumber, int c) {
 		} else if(errorP(n)) {
 			return n;
 		} else {
-			char const* nn = getSymbol1Name(n);
+			char const* nn = symbolName(n);
 			assert(nn);
 			return strC(nn); // TODO maybe we should special-case those just as we did numbers (instead of creating the strings here)?
 		}
@@ -720,15 +719,15 @@ static NodeT Lang_readToken(struct Lang* self, FILE* file, int* linenumber) {
 	}
 }
 static NodeT reflectHashExports(NodeT entries) {
-	return (mnilP(entries)) ? entries : mcons(mquote(mgetConsHead(entries)), reflectHashExports(mgetConsTail(entries)));
+	return (mnilP(entries)) ? entries : mcons(mquote(mconsHead(entries)), reflectHashExports(mconsTail(entries)));
 }
 /* [a b c] => [('a, a) ('b, b) ('c, c)] */
 static NodeT blowHashExportsUp(NodeT tl, NodeT entries) {
 	if(mnilP(entries)) {
 		return tl;
 	} else {
-		NodeT sym = mgetConsHead(entries);
-		return mcons(mpair(mquote(sym), sym), blowHashExportsUp(tl, mgetConsTail(entries)));
+		NodeT sym = mconsHead(entries);
+		return mcons(mpair(mquote(sym), sym), blowHashExportsUp(tl, mconsTail(entries)));
 	}
 }
 static NodeT mcall(NodeT a, NodeT b) {
@@ -750,9 +749,9 @@ static NodeT mcall(NodeT a, NodeT b) {
 static NodeT replaceIMPORT(NodeT body, NodeT source, NodeT symlist) {
 	// these replace IMPORTS on a only-after-parsing level. At this point, the list is not constructed yet (otherwise the annotator wouldn't find it).
 	if(symlist) {
-		NodeT hd = mgetConsHead(symlist);
+		NodeT hd = mconsHead(symlist);
 		NodeT accessor = call(source, mquote(hd)); /* better? */
-		return closeOver(hd, accessor, replaceIMPORT(body, source, mgetConsTail(symlist)));
+		return closeOver(hd, accessor, replaceIMPORT(body, source, mconsTail(symlist)));
 	} else
 		return body;
 }
@@ -762,10 +761,10 @@ static NodeT replaceIN(NodeT equation, NodeT body) {
 	/* x = 5 <=> ((= x) 5) */
 	if(!binaryOperationP(equation)) {
 		NodeT fr, c2;
-		if(macroStandinP(equation) && macroStandinOperator(equation) == Simport && (fr = macroStandinOperand(equation)) && (c2 = getCallCallable(fr))) {
-			//consP(tl) && (tl2 = getConsTail(tl)) && consP(tl2)) {
-			NodeT source = getCallArgument(fr);
-			NodeT symlist = getCallArgument(c2);
+		if(macroStandinP(equation) && macroStandinOperator(equation) == Simport && (fr = macroStandinOperand(equation)) && (c2 = callCallable(fr))) {
+			//consP(tl) && (tl2 = consTail(tl)) && consP(tl2)) {
+			NodeT source = callArgument(fr);
+			NodeT symlist = callArgument(c2);
 			if(symlist) {
 				/* for strict eval without caching, we could reuse one of the syms in symlist in order to stand for source. */
 				return replaceIMPORT(body, source, symlist);
@@ -775,10 +774,10 @@ static NodeT replaceIN(NodeT equation, NodeT body) {
 		} else
 			return merror("<equation>", "<junk>");
 	}
-	if(getOperationOperator(equation) != Sequal && getOperationOperator(equation) != Scolonequal)
+	if(operationOperator(equation) != Sequal && operationOperator(equation) != Scolonequal)
 		return merror("<equation>", "<inequation>");
-	NodeT formalParameter = getOperationArgument1(equation);
-	NodeT value = getOperationArgument2(equation);
+	NodeT formalParameter = operationArgument1(equation);
+	NodeT value = operationArgument2(equation);
 	return call(fn(formalParameter, body), value);
 }
 /* TODO make this configurable, too */
@@ -807,31 +806,31 @@ static int Lang_callRpnOperator(struct Lang* self, NodeT operator_, MNODET* valu
 			*values = cons(merror("<1-arguments>", "<too-little>"), *values);
 			return 1;
 		} else {
-			NodeT a = getConsHead(*values);
+			NodeT a = consHead(*values);
 			print(stderr, a);
 			fprintf(stderr, "\n");
-			*values = getConsTail(*values);
+			*values = consTail(*values);
 			if(!nilP(*values) && Lang_macroStarterP(self, operator_)) {
-				operator_ = getConsHead(*values);
-				*values = getConsTail(*values);
+				operator_ = consHead(*values);
+				*values = consTail(*values);
 			}
 			*values = cons(mcall(operator_,a), *values);
 			return 0;
 		}
 	}
 	assert(argcount == 2);
-	if(nilP(*values) || nilP(getConsTail(*values))) {
-		fprintf(stderr, "NOT ENOUGH for (%s)\n", getSymbol1Name(operator_));
+	if(nilP(*values) || nilP(consTail(*values))) {
+		fprintf(stderr, "NOT ENOUGH for (%s)\n", symbolName(operator_));
 		*values = cons(merror("<2-arguments>", "<too-little>"), *values);
 		return 0;
 	} else {
 		fprintf(stderr, "TWO ARGS \"");
 		print(stderr, operator_);
 		fprintf(stderr, "\" ");
-		NodeT b = getConsHead(*values);
-		*values = getConsTail(*values);
-		NodeT a = getConsHead(*values);
-		*values = getConsTail(*values);
+		NodeT b = consHead(*values);
+		*values = consTail(*values);
+		NodeT a = consHead(*values);
+		*values = consTail(*values);
 		print(stderr, a);
 		fprintf(stderr, "!");
 		print(stderr, b);
@@ -845,12 +844,12 @@ static NodeT Lang_parse0(struct Lang* self, struct Scanner* scanner, NodeT endTo
 	NodeT prog;
 	prog = Parser_parse(scanner, box(self), endToken);
 	if(prog && consP(prog)) {
-		result = getConsHead(prog);
-		if(!getConsTail(prog))
+		result = consHead(prog);
+		if(!consTail(prog))
 			return result;
 		else {
 			fprintf(stderr, "junk was: ");
-			print(stderr, getConsTail(prog));
+			print(stderr, consTail(prog));
 			fprintf(stderr, "\n");
 			return merror("<nothing>", "<junk>");
 		}
@@ -870,7 +869,7 @@ NodeT Lang_parse1OPL(NodeT OPL, FILE* f, const char* name) {
 	Scanner_push(scanner, f, 1, name);
 	Scanner_consume(scanner);
 	if(OPL == nil) {
-		const char* name = getSymbol1Name(Scanner_getToken(scanner));
+		const char* name = symbolName(Scanner_getToken(scanner));
 		if(name && name[0] == '#') {
 			; /* FIXME use */
 		}

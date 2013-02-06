@@ -102,7 +102,7 @@ static int operatorArgcount(NodeT node) {
 	       2;
 }
 static NodeT operatorPrefixNeutral(NodeT node) {
-        return (node == Sdash) ? Szero : parseError(strC("<prefix-operator>"), strC(getSymbol1Name(node)));
+        return (node == Sdash) ? Szero : parseError(strC("<prefix-operator>"), strC(symbolName(node)));
 }
 DEFINE_STRICT_FN(wrap_operatorLevel, internNativeInt(operatorLevel(argument)))
 DEFINE_STRICT_FN(wrap_operatorArgcount, internNativeInt(operatorArgcount(argument)))
@@ -117,7 +117,7 @@ NodeT minimalOPL(NodeT sym) {
 	else if(sym == Sexports)
 		return cons(SoperatorLevel, cons(SoperatorArgcount, cons(SoperatorPrefixNeutral, nil)));
 	else
-		return evalError(strC("<OPL-member>"), strC(getSymbol1Name(sym)), sym);
+		return evalError(strC("<OPL-member>"), strC(symbolName(sym)), sym);
 }
 void initMinimalOPL(void) {
 	if(Sdash == NULL) {

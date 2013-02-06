@@ -40,7 +40,7 @@ END_STRUCT_6D(Scanner)
 			} else if(self->bBeginningOfLine) { /* actual text for the first time on the line */
 				UNGETC(c); /* make sure the user will see the actual text */
 				self->bBeginningOfLine = false;
-				int status = integerCompareU(getConsHead(self->indents), self->indent);
+				int status = integerCompareU(consHead(self->indents), self->indent);
 				if(status < 0) {
 					self->indents = cons(internNativeInt(self->indent), self->indents);
 					self->value = env_Sindent(self->env);
@@ -48,9 +48,9 @@ END_STRUCT_6D(Scanner)
 				} else if(status > 0) {
 					int diff;
 					self->value = env_Sdedent(self->env);
-					self->indents = getConsTail(self->indents); /* decrease indentation by ONE level */
+					self->indents = consTail(self->indents); /* decrease indentation by ONE level */
 					assert(!nilP(self->indents)); /* 0 will never be removed */
-					diff = integerCompareU(getConsHead(self->indents), self->indent);
+					diff = integerCompareU(consHead(self->indents), self->indent);
 					if(diff < 0) { /* self indentation does not exist - it would have been in-between */
 						self->value = env_error(self->env, "<known-indentation>", "<unknown-indentation>");
 						return true;
@@ -97,8 +97,8 @@ END_STRUCT_6D(Scanner)
 		NODET previousValue = self->value;
 		if(!Scanner_skipWhitespace(self)) {
 			if(self->bEOF) { /* TODO unlikely */
-				if(self->indents && getConsTail(self->indents)) {
-					self->indents = getConsTail(self->indents);
+				if(self->indents && consTail(self->indents)) {
+					self->indents = consTail(self->indents);
 					self->value = env_Sdedent(self->env);
 				} else
 					self->value = env_SEOF(self->env);
@@ -111,7 +111,7 @@ END_STRUCT_6D(Scanner)
 	}
 	/*NODET consume1(NODET expectedToken) {
 		if(self->value != expectedToken)
-			return env.error(getSymbol1Name(expectedToken), getSymbol1Name(self->value));
+			return env.error(symbolName(expectedToken), symbolName(self->value));
 		else
 			return consume(expectedToken);
 	}*/

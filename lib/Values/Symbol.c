@@ -12,7 +12,7 @@ static INLINE unsigned int hash(NodeT key) {
 static INLINE bool equalP(NodeT a, NodeT b) {
 	/* TODO type check */
 	return eqSymbol(a, b) 
-	    || strcmp(getSymbol1Name(a), getSymbol1Name(b)) == 0;
+	    || strcmp(symbolName(a), symbolName(b)) == 0;
 }
 
 #include "Values/Hashtable.inc"
@@ -41,7 +41,7 @@ NodeT symbolFromStr(const char* name) {
 		return result;
 	}
 }
-const char* getSymbol1Name(NodeT node) {
+const char* symbolName(NodeT node) {
 	if(symbolP(node)) {
 		const struct Symbol* s = (const struct Symbol*) getCXXInstance(node);
 		return s->text;

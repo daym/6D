@@ -11,6 +11,6 @@ END_STRUCT_6D(Symbol)
 BEGIN_STRUCT_6D(Symbolreference)
 	int index;
 END_STRUCT_6D(Symbolreference)
-const char* getSymbol1Name(NodeT node);
+const char* symbolName(NodeT node);
 END_NAMESPACE_6D(Values)
 #endif /* ndef __VALUES_SYMBOL_H */

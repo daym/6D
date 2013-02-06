@@ -10,8 +10,8 @@ USE_NAMESPACE_6D(Evaluators)
 static NodeT dummy;
 /* memoized: given an environment and argument, tries to find existing memo table entry. If not there, */
 static NodeT memoized(NodeT env, NodeT key) {
-	NodeT hashtable = getPairFst(env);
-	NodeT fn = getPairSnd(env);
+	NodeT hashtable = pairFst(env);
+	NodeT fn = pairSnd(env);
 	NodeT result = getHashtableValueByKey(hashtable, key, dummy);
 	if(result == dummy) {
 		result = dcall(fn, key); /* XXX is this closed over all variables? */

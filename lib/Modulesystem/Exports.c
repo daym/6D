@@ -52,9 +52,9 @@ NodeT exportsQ(const char* names, ...) {
 	return(result);
 }
 static NodeT reflector(NodeT entries) {
-	NodeT entry = getConsHead(entries);
-	NodeT name = getPairFst(entry);
-	return(cons(name, reflector(getConsTail(entries))));
+	NodeT entry = consHead(entries);
+	NodeT name = pairFst(entry);
+	return(cons(name, reflector(consTail(entries))));
 }
 NodeT exportsFQ(const char* fmt, const char* names, ...) {
 	NodeT result;
@@ -72,11 +72,11 @@ NodeT dispatch42(NodeT key, NodeT list) {
 		/* TODO error */
 		return nil;
 	} else {
-		NodeT hd = getConsHead(list);
-		NodeT xkey = getPairFst(hd);
+		NodeT hd = consHead(list);
+		NodeT xkey = pairFst(hd);
 		if(key == xkey)
-			return getPairSnd(hd);
-		NodeT tl = getConsTail(list);
+			return pairSnd(hd);
+		NodeT tl = consTail(list);
 		return dispatch42(key, tl);
 	}
 }

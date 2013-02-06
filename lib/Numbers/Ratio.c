@@ -14,18 +14,18 @@ NODET ratio(NodeT aa, NodeT bb) {
 bool ratioP(NodeT n) {
 	return(tagOfNode(n) == TAG_Ratio);
 }
-NodeT getRatioA(NodeT n) {
+NodeT ratioA(NodeT n) {
 	const struct Ratio* r = (const struct Ratio*) getCXXInstance(n);
 	return r->a;
 }
-NodeT getRatioB(NodeT n) {
+NodeT ratioB(NodeT n) {
 	const struct Ratio* r = (const struct Ratio*) getCXXInstance(n);
 	return r->b;
 }
 
 DEFINE_STRICT_FN(RatioP, internNativeBool(ratioP(argument)))
-DEFINE_STRICT_FN(RatioNumeratorGetter, getRatioA(argument))
-DEFINE_STRICT_FN(RatioDenominatorGetter, getRatioB(argument))
+DEFINE_STRICT_FN(RatioNumeratorGetter, ratioA(argument))
+DEFINE_STRICT_FN(RatioDenominatorGetter, ratioB(argument))
 
 /*
 a/b + c/d = (a*d + c*b)/(b*d)

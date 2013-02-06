@@ -58,7 +58,7 @@ struct Formatter {
 };
 static int Formatter_levelOfOperator(struct Formatter* self, NodeT operator_) {
 	int result;
-	if(!self->levelOfOperator || !getSymbol1Name(operator_))
+	if(!self->levelOfOperator || !symbolName(operator_))
 		return (NO_OPERATOR);
 	NodeT node = dcall(self->levelOfOperator, operator_);
 	if(!intFromNode(node, &result))
@@ -67,7 +67,7 @@ static int Formatter_levelOfOperator(struct Formatter* self, NodeT operator_) {
 }
 static int Formatter_argcountOfOperator(struct Formatter* self, NodeT operator_) {
 	int result;
-	if(!self->levelOfOperator || !getSymbol1Name(operator_))
+	if(!self->levelOfOperator || !symbolName(operator_))
 		return (NO_OPERATOR);
 	NodeT node = dcall(self->argcountOfOperator, operator_);
 	if(!intFromNode(node, &result))
@@ -136,14 +136,14 @@ static NodeT getSymbolByIndex(int index, NodeT names) {
 	if(names == nil)
 		return nil;
 	else if(index == 0)
-		return getConsHead(names);
+		return consHead(names);
 	else
-		return getSymbolByIndex(index - 1, getConsTail(names));
+		return getSymbolByIndex(index - 1, consTail(names));
 }
 static NodeT Formatter_printSymbol(struct Formatter* self, NodeT node) {
 	const char* s;
 	/* TODO support escaping? */
-	s = getSymbol1Name(node);
+	s = symbolName(node);
 	if(!s)
 		return evalError(strC("<symbol>"), strC("<junk>"), node);
 	return Formatter_printStr2(self, strlen(s), s);
@@ -154,9 +154,9 @@ static NodeT Formatter_printSymbolreference(struct Formatter* self, int index) {
 }
 static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
-	NodeT o = getOperationOperator(node);
-	NodeT a = getOperationArgument1(node);
-	NodeT b = getOperationArgument2(node);
+	NodeT o = operationOperator(node);
+	NodeT a = operationArgument1(node);
+	NodeT b = operationArgument2(node);
 	int oldLimit = self->operatorPrecedenceLimit;
 	int precedence = Formatter_levelOfOperator(self, o);
 	bool bParen = (precedence < oldLimit) || (precedence == oldLimit && self->bParenEqualLevels);
@@ -180,11 +180,11 @@ static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) 
 }
 static NodeT Formatter_printPrefixOperation(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
-	NodeT o = getCallCallable(node);
-	NodeT b = getCallArgument(node);
+	NodeT o = callCallable(node);
+	NodeT b = callArgument(node);
 	NodeT o2 = o;
 	if(callP(o2)) { /* (\x) x */
-		o2 = getCallCallable(o2);
+		o2 = callCallable(o2);
 	}
 	int oldLimit = self->operatorPrecedenceLimit;
 	int precedence = Formatter_levelOfOperator(self, o2);
@@ -194,7 +194,7 @@ static NodeT Formatter_printPrefixOperation(struct Formatter* self, NodeT node) 
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, '(');
 	status = status ? status : Formatter_print/*Symbol*/(self, o);
-	if((precedence <= self->plusLevel || isalpha(getSymbol1Name(o)[0])) && o != Sbackslash)
+	if((precedence <= self->plusLevel || isalpha(symbolName(o)[0])) && o != Sbackslash)
 		status = status ? status : Formatter_printChar(self, ' ');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o2) < 0;
 	status = status ? status : Formatter_print(self, b);
@@ -208,18 +208,18 @@ static INLINE int xabs(int value) {
 	return (value >= 0) ? value : (-value);
 }
 static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
-	NodeT callable = getCallCallable(node);
-	NodeT argument = getCallArgument(node);
+	NodeT callable = callCallable(node);
+	NodeT argument = callArgument(node);
 	if(callP(callable)) { /* binary operation */
-		NodeT operator_ = getOperationOperator(node);
+		NodeT operator_ = operationOperator(node);
 		int argcount = Formatter_levelOfOperator(self, operator_) != NO_OPERATOR ? Formatter_argcountOfOperator(self, operator_) : 0;
 		if(xabs(argcount) == 2)
 			return Formatter_printBinaryOperation(self, node);
 	} else if(fnP(callable)) {
 		/* TODO many of these lets could be collected into one import, too. 
 		   One would have to group the lets by argument and then emit imports for each of the arguments */
-		NodeT parameter = getFnParameter(callable);
-		NodeT body = getFnBody(callable);
+		NodeT parameter = fnParameter(callable);
+		NodeT body = fnBody(callable);
 		return Formatter_printCall(self, call(Slet, operation(Sin, operation(Sequal, parameter, argument), body)));
 		//return Formatter_printCall(self, operation(Sin, operation(Scolonequal, parameter, argument), body));
 		/* TODO synth let forms. Latter is replacement. callable is a Fn. */
@@ -235,8 +235,8 @@ static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 	}
 }
 static NodeT Formatter_printFn(struct Formatter* self, NodeT node) {
-	NodeT parameter = getFnParameter(node);
-	NodeT body = getFnBody(node);
+	NodeT parameter = fnParameter(node);
+	NodeT body = fnBody(node);
 	NodeT names = self->names;
 	self->names = cons(parameter, self->names);
 	NodeT status = Formatter_printPrefixOperation(self, operation(Sbackslash, parameter, body));
@@ -247,7 +247,7 @@ static NodeT Formatter_printKeyword(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
 	const char* s;
 	/* TODO support escaping? */
-	s = getKeyword1Name(node);
+	s = keywordName(node);
 	if(!s)
 		return evalError(strC("<symbol>"), strC("<junk>"), node);
 	status = status ? status : Formatter_printChar(self, '@');
@@ -260,7 +260,7 @@ static NodeT Formatter_printStr(struct Formatter* self, NodeT node) {
 	if(!stringFromNode(node, &s))
 		status = evalError(strC("<str>"), strC("<junk>"), node);
 	status = status ? status : Formatter_printChar(self, '"');
-	status = status ? status : Formatter_printStr2(self, getStrSize(node), s);
+	status = status ? status : Formatter_printStr2(self, strSize(node), s);
 	status = status ? status : Formatter_printChar(self, '"');
 	return status;
 }
@@ -278,19 +278,19 @@ static NodeT Formatter_printCons(struct Formatter* self, NodeT node) {
 	NodeT tl;
 	status = status ? status : Formatter_printChar(self, '[');
 	assert(consP(node));
-	tl = getConsTail(node);
+	tl = consTail(node);
 	if(pairP(tl)) {
-		return Formatter_print(self, operation(Scomma, getPairFst(node), getPairSnd(node)));
+		return Formatter_print(self, operation(Scomma, pairFst(node), pairSnd(node)));
 	}
 	/* FIXME (!!!) proper parentheses (i.e. everywhere except for single-symbol) */
-	status = status ? status : Formatter_print(self, getConsHead(node));
+	status = status ? status : Formatter_print(self, consHead(node));
 	if(!status) {
-		for(node = getConsTail(node); consP(node); node = getConsTail(node)) {
+		for(node = consTail(node); consP(node); node = consTail(node)) {
 			/* FIXME newline */
 			status = status ? status : Formatter_printChar(self, ' ');
 			if(status)
 				return status;
-			status = status ? status : Formatter_print(self, getConsHead(node));
+			status = status ? status : Formatter_print(self, consHead(node));
 		}
 		if(!nilP(node)) {
 			status = status ? status : Formatter_printChar(self, ',');
@@ -307,8 +307,8 @@ static NodeT Formatter_printNil(struct Formatter* self, NodeT node) {
 	return status;
 }
 static NodeT Formatter_printRatio(struct Formatter* self, NodeT node) {
-	NodeT a = getRatioA(node);
-	NodeT b = getRatioB(node);
+	NodeT a = ratioA(node);
+	NodeT b = ratioB(node);
 	return Formatter_printBinaryOperation(self, operation(Sslash, a, b));
 }
 static NodeT Formatter_printQuote2(struct Formatter* self, NodeT node) {
@@ -335,8 +335,8 @@ static NodeT Formatter_printInteger2(struct Formatter* self, NodeT value) {
 	NativeInt rem;
 	NodeT qr;
 	qr = integerDivremU(value, 10);
-	value = getPairFst(qr);
-	remN = getPairSnd(qr);
+	value = pairFst(qr);
+	remN = pairSnd(qr);
 	if(!toNativeInt(remN, &rem))
 		return evalError(strC("<integer-remainder>"), strC("<junk>"), remN);
 	if(rem < 0)
@@ -387,10 +387,10 @@ static NodeT Formatter_printInteger(struct Formatter* self, NodeT node) {
 	return status;
 }
 static NodeT Formatter_printError(struct Formatter* self, NodeT node) {
-	NodeT kind = getErrorKind(node);
-	NodeT expectedInput = getErrorExpectedInput(node);
-	NodeT gotInput = getErrorGotInput(node);
-	NodeT context = getErrorContext(node);
+	NodeT kind = errorKind(node);
+	NodeT expectedInput = errorExpectedInput(node);
+	NodeT gotInput = errorGotInput(node);
+	NodeT context = errorContext(node);
 	return Formatter_print(self, call5(SevalError, kind, expectedInput, gotInput, context));
 }
 static NodeT Formatter_printFFIFn(struct Formatter* self, NodeT node) {
@@ -402,7 +402,7 @@ static NodeT Formatter_printFFIFn(struct Formatter* self, NodeT node) {
 }
 NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	int i;
-	NodeT result = (i = getSymbolreferenceIndex(node)) != -1 ? Formatter_printSymbolreference(self, i) : 
+	NodeT result = (i = symbolreferenceIndex(node)) != -1 ? Formatter_printSymbolreference(self, i) : 
 	       symbolP(node) ? Formatter_printSymbol(self, node) : 
 	       keywordP(node) ? Formatter_printKeyword(self, node) : 
 	       callP(node) ? Formatter_printCall(self, node) : 

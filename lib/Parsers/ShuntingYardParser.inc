@@ -56,18 +56,18 @@ NODET Parser_applyAndPush(struct Parser* self, int argcount, bool bUnary, NODET 
 	NodeT env = self->env;
 	bool bClosingParen = env_closingParenP(env, input);
 	NodeT pendingOperator;
-	while (!nilP(self->operators) && (pendingOperator = getConsHead(self->operators), (!env_openingParenP(env, pendingOperator) && (!bUnary || Parser_unaryP(self, pendingOperator))))) { // keep in sync with below.
+	while (!nilP(self->operators) && (pendingOperator = consHead(self->operators), (!env_openingParenP(env, pendingOperator) && (!bUnary || Parser_unaryP(self, pendingOperator))))) { // keep in sync with below.
 		if (env_operatorLE(env, input, pendingOperator)) {
 			self->executionResultCount += env_callRpnOperator(env, pendingOperator, &self->result);
-			self->operators = getConsTail(self->operators);
+			self->operators = consTail(self->operators);
 		} else
 			break;
 	}
 	if (bClosingParen) {
-		if ((!nilP(self->operators) && getConsHead(self->operators) == env_openingParenOf(env, input)))
-			self->operators = getConsTail(self->operators);
+		if ((!nilP(self->operators) && consHead(self->operators) == env_openingParenOf(env, input)))
+			self->operators = consTail(self->operators);
 		else {
-			input = /*yield */ env_error(env, getSymbol1Name(env_openingParenOf(env, input)), (!nilP(self->operators)) ? (getSymbol1Name(getConsHead(self->operators))) : ("<value>"));
+			input = /*yield */ env_error(env, symbolName(env_openingParenOf(env, input)), (!nilP(self->operators)) ? (symbolName(consHead(self->operators))) : ("<value>"));
 			return input;
 		}
 	} else if(argcount == -1) { /* suffix */
@@ -161,8 +161,8 @@ NodeT Parser_parse0(struct Parser* self, NODET endToken) {
 			break;
 	}
 	while (!nilP(self->operators)) {
-		self->executionResultCount += env_callRpnOperator(env, getConsHead(self->operators), &self->result);
-		self->operators = getConsTail(self->operators);
+		self->executionResultCount += env_callRpnOperator(env, consHead(self->operators), &self->result);
+		self->operators = consTail(self->operators);
 	}
 	return self->result;
 }

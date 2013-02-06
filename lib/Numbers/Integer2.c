@@ -355,6 +355,6 @@ NodeT integerDiv(NODET aP, NODET bP) {
 	NodeT result = integerDivrem(aP, bP);
 	if(errorP(result))
 		return result;
-	return getPairFst(result);
+	return pairFst(result);
 }
 END_NAMESPACE_6D(FFIs)

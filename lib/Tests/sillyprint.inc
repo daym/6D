@@ -6,14 +6,14 @@ static void S_printSymbolreference(int i) {
 	printf("%d", i);
 }
 static void S_printSymbol(NodeT n) {
-	printf("%s", getSymbol1Name(n));
+	printf("%s", symbolName(n));
 }
 static void S_printKeyword(NodeT n) {
-	printf("@%s", getKeyword1Name(n));
+	printf("@%s", keywordName(n));
 }
 static void S_printCall1(NodeT n) {
-	NodeT fn = getCallCallable(n);
-	NodeT arg = getCallArgument(n);
+	NodeT fn = callCallable(n);
+	NodeT arg = callArgument(n);
 	if(callP(fn))
 		S_printCall1(fn);
 	else
@@ -27,8 +27,8 @@ static void S_printCall(NodeT n) {
 	printf(")");
 }
 static void S_printFn1(NodeT n) {
-	NodeT param = getFnParameter(n);
-	NodeT body = getFnBody(n);
+	NodeT param = fnParameter(n);
+	NodeT body = fnBody(n);
 	printf("\\");
 	S_print(param);
 	printf(" ");
@@ -43,8 +43,8 @@ static void S_printFn(NodeT n) {
 	printf(")");
 }
 static void S_printCons(NodeT n) {
-	NodeT hd = getConsHead(n);
-	NodeT tl = getConsTail(n);
+	NodeT hd = consHead(n);
+	NodeT tl = consTail(n);
 	printf("(");
 	S_print(hd);
 	printf(" ");
@@ -55,8 +55,8 @@ static void S_printNil(NodeT n) {
 	printf("[]");
 }
 static void S_printRatio(NodeT n) {
-	NodeT a = getRatioA(n);
-	NodeT b = getRatioB(n);
+	NodeT a = ratioA(n);
+	NodeT b = ratioB(n);
 	printf("(ratio ");
 	S_print(a);
 	printf(" ");
@@ -88,10 +88,10 @@ static void S_printStr(NodeT n) {
 	printf("\"%s\"", value); /* FIXME escape */
 }
 static void S_printError(NodeT n) {
-	NodeT kind = getErrorKind(n);
-	NodeT expectedInput = getErrorExpectedInput(n);
-	NodeT gotInput = getErrorGotInput(n);
-	NodeT context = getErrorContext(n);
+	NodeT kind = errorKind(n);
+	NodeT expectedInput = errorExpectedInput(n);
+	NodeT gotInput = errorGotInput(n);
+	NodeT context = errorContext(n);
 	printf("(error ");
 	S_print(kind);
 	printf(" ");
@@ -110,7 +110,7 @@ static void S_printFFIFn(NodeT n) {
 }
 static void S_print(NodeT node) {
 	int i;
-	(i = getSymbolreferenceIndex(node)) != -1 ? S_printSymbolreference(i) : 
+	(i = symbolreferenceIndex(node)) != -1 ? S_printSymbolreference(i) : 
 	       symbolP(node) ? S_printSymbol(node) : 
 	       keywordP(node) ? S_printKeyword(node) : 
 	       callP(node) ? S_printCall(node) : 

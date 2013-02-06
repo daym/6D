@@ -25,7 +25,7 @@ bool typ##FromNode(NodeT root, typ* result) { \
 bool typ##FromNode(NodeT root, typ* result) { \
 	NativeFloat result2 = 0.0; \
 	if(ratioP(root)) \
-		/* FIXME root = Evaluators::divideA(getRatioA(root), getRatioB(root), NULL)*/; \
+		/* FIXME root = Evaluators::divideA(ratioA(root), ratioB(root), NULL)*/; \
 	if(!toNativeFloat(root, &result2) || (*result = result2) != result2) \
 		return false; \
 	return(true); \
@@ -57,17 +57,17 @@ bool sizedIntFromNode(int bitCount, NodeT root, long long* result) {
 }
 bool pointerFromNode(NodeT root, void** result) {
 	if(boxP(root)) {
-		*result = getBoxValue(root);
+		*result = boxValue(root);
 		return true;
 	} else 
 		return false;
 }
 bool stringFromNode(NodeT root, char** result) {
 	if(strP(root)) {
-		*result = getStrValue(root);
+		*result = strValue(root);
 		return true;
 	} else if(boxP(root)) {
-		*result = (char*) getBoxValue(root);
+		*result = (char*) boxValue(root);
 		return true;
 	} else
 		return false;
@@ -81,7 +81,7 @@ bool stringOrNilFromNode(NodeT root, char** result) {
 }
 bool stringSizeFromNode(NodeT root, size_t* result) {
 	if(strP(root)) {
-		*result = getStrSize(root);
+		*result = strSize(root);
 		return true;
 	} else
 		return false;

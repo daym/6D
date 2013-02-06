@@ -44,7 +44,7 @@ static INLINE uint32_t jenkinsOneAtATimeHashC(const char* key) {
 	return hash;
 }
 static INLINE uint32_t hashSymbol(NodeT sym) {
-	const char* str = getSymbol1Name(sym);
+	const char* str = symbolName(sym);
 	return jenkinsOneAtATimeHashC(str);
 }
 static INLINE bool eqSymbol(NodeT a, NodeT b) {

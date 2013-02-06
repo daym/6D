@@ -7,7 +7,7 @@ BEGIN_NAMESPACE_6D(Values)
 BEGIN_STRUCT_6D(Keyword)
 	const char* text;
 END_STRUCT_6D(Keyword)
-const char* getKeyword1Name(NodeT node);
+const char* keywordName(NodeT node);
 END_NAMESPACE_6D(Values)
 
 #endif /* ndef __VALUES_KEYWORD_H */

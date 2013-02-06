@@ -19,19 +19,19 @@ void str(NodeT node, FILE* destination) {
 NodeT operation(NodeT callable, NodeT argument1, NodeT argument2) {
 	return call(call(callable, argument1), argument2);
 }
-NodeT getOperationArgument1(NodeT o) {
-	NodeT o2 = getCallCallable(o);
-	return getCallArgument(o2);
+NodeT operationArgument1(NodeT o) {
+	NodeT o2 = callCallable(o);
+	return callArgument(o2);
 }
-NodeT getOperationArgument2(NodeT o) {
-	return getCallArgument(o);
+NodeT operationArgument2(NodeT o) {
+	return callArgument(o);
 }
-NodeT getOperationOperator(NodeT o) {
-	NodeT o2 = getCallCallable(o);
-	return getCallCallable(o2);
+NodeT operationOperator(NodeT o) {
+	NodeT o2 = callCallable(o);
+	return callCallable(o2);
 }
 bool binaryOperationP(NodeT o) {
-	return callP(o) && callP(getCallCallable(o));
+	return callP(o) && callP(callCallable(o));
 }
 BEGIN_STRUCT_6D(Fn)
 	NodeT parameter;
@@ -51,13 +51,13 @@ NodeT cons(NodeT head, NodeT tail) {
 	return refCXXInstance(result);
 }
 /* given a Call, returns its callable. */
-NodeT getCallCallable(NodeT node) {
+NodeT callCallable(NodeT node) {
 	const struct Call* call = (const struct Call*) getCXXInstance(node);
 	return call->callable;
 }
 
 /* given a Call, returns its argument. */
-NodeT getCallArgument(NodeT node) {
+NodeT callArgument(NodeT node) {
 	const struct Call* call = (const struct Call*) getCXXInstance(node);
 	return call->argument;
 }
@@ -80,13 +80,13 @@ NodeT call(NodeT callable, NodeT argument) {
 }
 
 /* given a Fn, returns its formal parameter. */
-NodeT getFnParameter(NodeT node) {
+NodeT fnParameter(NodeT node) {
 	const struct Fn* fn = (const struct Fn*) getCXXInstance(node);
 	return fn->parameter;
 }
 
 /* given a Fn, returns its body. */
-NodeT getFnBody(NodeT node) {
+NodeT fnBody(NodeT node) {
 	const struct Fn* fn = (const struct Fn*) getCXXInstance(node);
 	return fn->body;
 }
@@ -112,12 +112,12 @@ BEGIN_STRUCT_6D(CFFIFn)
 	NodeT env;
 END_STRUCT_6D(CFFIFn)
 
-void* getBoxValue(NodeT node) {
+void* boxValue(NodeT node) {
 	const struct Box* box = (const struct Box*) getCXXInstance(node);
 	return box->nativePointer;
 }
-char* getStrValue(NodeT node) {
-	return (char*) getBoxValue(node);
+char* strValue(NodeT node) {
+	return (char*) boxValue(node);
 }
 NodeT strC(const char* value) {
 	/* TODO not necessarily new. Pool strings? (see Symbols for where it's already done) */
@@ -126,28 +126,28 @@ NodeT strC(const char* value) {
 	result->nativePointer = (void*) value;
 	return refCXXInstance(result);
 }
-size_t getStrSize(NodeT n) {
+size_t strSize(NodeT n) {
 	const struct Str* s = (const struct Str*) getCXXInstance(n);
 	return s->size;
 }
 /* given a Cons, returns its head */
-NodeT getConsHead(NodeT node) {
+NodeT consHead(NodeT node) {
 	const struct Cons* cons = (const struct Cons*) getCXXInstance(node);
 	return cons->head;
 }
 /* given a Cons, returns its tail. Tail is USUALLY nil or a(nother) Cons */
-NodeT getConsTail(NodeT node) {
+NodeT consTail(NodeT node) {
 	const struct Cons* cons = (const struct Cons*) getCXXInstance(node);
 	return cons->tail;
 }
 NodeT pair(NodeT a, NodeT b) {
 	return cons(a, b);
 }
-NodeT getPairFst(NodeT p) {
-	return getConsHead(p);
+NodeT pairFst(NodeT p) {
+	return consHead(p);
 }
-NodeT getPairSnd(NodeT p) {
-	return getConsTail(p);
+NodeT pairSnd(NodeT p) {
+	return consTail(p);
 }
 NodeT FFIFn(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	/* TODO put name => this into some reflection hideout */
@@ -212,7 +212,7 @@ bool symbolreferenceP(NodeT n) {
 	return tagOfNode(n) == TAG_Symbolreference;
 }
 /* returns the jump index of n if it is a Symbolreference, otherwise (-1) */
-int getSymbolreferenceIndex(NodeT n) {
+int symbolreferenceIndex(NodeT n) {
 	if(symbolreferenceP(n)) {
 		const struct Symbolreference* sr = (const struct Symbolreference*) getCXXInstance(n);
 		return sr->index;
@@ -257,7 +257,7 @@ bool consP(NodeT node) {
 bool pairP(NodeT node) {
 	if(!consP(node))
 		return false;
-	NodeT tl = getConsTail(node);
+	NodeT tl = consTail(node);
 	return(!nilP(tl) && !consP(tl)); /* tradition :-( */
 }
 NodeT call5(NodeT a, NodeT b, NodeT c, NodeT d, NodeT e) {

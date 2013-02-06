@@ -20,19 +20,19 @@ NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) {
 	result->context = aContext;
 	return refCXXInstance(result);
 }
-NodeT getErrorKind(NodeT node) {
+NodeT errorKind(NodeT node) {
 	const struct Error* error = (const struct Error*) getCXXInstance(node);
 	return error->kind;
 }
-NodeT getErrorExpectedInput(NodeT node) {
+NodeT errorExpectedInput(NodeT node) {
 	const struct Error* error = (const struct Error*) getCXXInstance(node);
 	return error->expectedInput;
 }
-NodeT getErrorGotInput(NodeT node) {
+NodeT errorGotInput(NodeT node) {
 	const struct Error* error = (const struct Error*) getCXXInstance(node);
 	return error->gotInput;
 }
-NodeT getErrorContext(NodeT node) {
+NodeT errorContext(NodeT node) {
 	const struct Error* error = (const struct Error*) getCXXInstance(node);
 	return error->context;
 }

@@ -5,10 +5,10 @@
 BEGIN_NAMESPACE_6D(SpecialForms)
 USE_NAMESPACE_6D(Values)
 static NodeT unapplyN(NodeT accum, NodeT argument) {
-	NodeT count = getConsHead(accum);
-	NodeT t1 = getConsTail(accum);
-	NodeT fn = getConsHead(t1);
-	NodeT t2 = getConsTail(t1);
+	NodeT count = consHead(accum);
+	NodeT t1 = consTail(accum);
+	NodeT fn = consHead(t1);
+	NodeT t2 = consTail(t1);
 	if(integerCompareU(count, 0) <= 0)
 		return dcall(fn, t2); /* order is reversed */
 	else {

@@ -51,12 +51,12 @@ END_STRUCT_6D(Call)
 static INLINE int indexOfSymbol(NodeT needle, int startingIndex, NodeT boundNames) {
 	if(boundNames == nil)
 		return(-1);
-	else if(getConsHead(boundNames) == needle)
+	else if(consHead(boundNames) == needle)
 		return(startingIndex);
 	else {
 		if(UNLIKELY_6D(startingIndex == INT_MAX))
 			abort();
-		return(indexOfSymbol(needle, startingIndex + 1, getConsTail(boundNames)));
+		return(indexOfSymbol(needle, startingIndex + 1, consTail(boundNames)));
 	}
 }
 void setCallResult(NodeT call, NodeT result);

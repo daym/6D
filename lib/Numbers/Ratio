@@ -10,8 +10,8 @@ BEGIN_NAMESPACE_6D(Values)
 	END_STRUCT_6D(Ratio)
 	NODET ratio(NODET aa, NODET bb);
 	bool ratioP(NODET n);
-	NODET getRatioA(NODET n) G_5D_PURE;
-	NODET getRatioB(NODET n) G_5D_PURE;
+	NODET ratioA(NODET n) G_5D_PURE;
+	NODET ratioB(NODET n) G_5D_PURE;
 DECLARE_FN(RatioMaker)
 DECLARE_FN(RatioP)
 DECLARE_FN(RatioNumeratorGetter)

@@ -72,7 +72,7 @@ for name in names:
 		params = "argument"
 	elif argcount == 3:
 		mname = "DEFINE_STRICT_TERNARY_FN"
-		params = "getPairFst(env), getPairSnd(env), argument"
+		params = "pairFst(env), pairSnd(env), argument"
 	else:
 		print >>sys.stderr, "note: unsupported argcount %d for %r" % (argcount, name)
 	print "%s(W_%s, %s(%s(%s)))" % (mname, name, converter, name, params)

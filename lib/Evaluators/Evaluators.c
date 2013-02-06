@@ -33,8 +33,8 @@ static bool quoteP(NodeT n) {
 static void getFreeVariablesImpl(NodeT boundNames, int boundNamesCount/*includes shadowed*/, NodeT freeNames, int* freeNamesCount/*includes name unknown*/, NodeT root) {
 	int i;
 	if(fnP(root)) {
-		NodeT parameterNode = getFnParameter(root);
-		NodeT body = getFnBody(root);
+		NodeT parameterNode = fnParameter(root);
+		NodeT body = fnBody(root);
 		if(getHashtableValueByKey(boundNames, parameterNode, root) == root) { // not bound yet
 			setHashtableEntry(boundNames, parameterNode, nil);
 			getFreeVariablesImpl(boundNames, boundNamesCount + 1, freeNames, freeNamesCount, body);
@@ -42,14 +42,14 @@ static void getFreeVariablesImpl(NodeT boundNames, int boundNamesCount/*includes
 		} else // already bound to something else: make sure not to get rid of it.
 			getFreeVariablesImpl(boundNames, boundNamesCount + 1, freeNames, freeNamesCount, body);
 	} else if(callP(root)) {
-		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, freeNamesCount, getCallCallable(root));
-		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, freeNamesCount, getCallArgument(root));
+		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, freeNamesCount, callCallable(root));
+		getFreeVariablesImpl(boundNames, boundNamesCount, freeNames, freeNamesCount, callArgument(root));
 	} else if(symbolP(root)) {
 		if(getHashtableValueByKey(boundNames, root, nil) == nil) { // not bound
 			setHashtableEntry(freeNames, root, nil);
 			++(*freeNamesCount);
 		}
-	} else if((i = getSymbolreferenceIndex(root)) != -1) {
+	} else if((i = symbolreferenceIndex(root)) != -1) {
 		if(i >= boundNamesCount) {
 			// FIXME whoops? what if we know there are free variables but not what they are called?
 			++(*freeNamesCount);
@@ -70,8 +70,8 @@ static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, NodeT boundNamesSet, N
 	// TODO maybe traverse cons etc? maybe not.
 	NodeT result;
 	if(fnP(root)) {
-		NodeT parameterNode = getFnParameter(root);
-		NodeT body = getFnBody(root);
+		NodeT parameterNode = fnParameter(root);
+		NodeT body = fnBody(root);
 		NodeT parameterSymbolNode = parameterNode;
 		assert(parameterSymbolNode);
 		if(getHashtableValueByKey(boundNamesSet, parameterSymbolNode, nil) == nil) { // not bound yet
@@ -82,8 +82,8 @@ static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, NodeT boundNamesSet, N
 			result = annotateImpl(dynEnv, cons(parameterSymbolNode, boundNames), boundNamesSet, body);
 		return REUSE_6D((result == body) ? root : )errorP(result) ? result : fn(parameterNode, result);
 	} else if(callP(root)) {
-		NodeT operator_ = getCallCallable(root);
-		NodeT operand = getCallArgument(root);
+		NodeT operator_ = callCallable(root);
+		NodeT operand = callArgument(root);
 		/*if(operator_ == &Reducer || operator_ == Symbols::Sinline) { // ideally this would be auto-detected, but it isn't right now.
 			return(annotateImpl(boundNames, boundNamesSet, reduce1(operand)));
 		}*/
@@ -108,10 +108,10 @@ NodeT annotate(NodeT dynEnv, NodeT root) {
 	return(annotateImpl(dynEnv, nil, boundNamesSet, root));
 }
 static INLINE NodeT ensureCall(NodeT term, NodeT fn, NodeT argument) {
-	return REUSE_6D((getCallCallable(term) == fn && getCallArgument(term) == argument) ? term : )call(fn, argument);
+	return REUSE_6D((callCallable(term) == fn && callArgument(term) == argument) ? term : )call(fn, argument);
 }
 static NodeT shift(NodeT argument, int index, NodeT term) {
-	int x_index = getSymbolreferenceIndex(term);
+	int x_index = symbolreferenceIndex(term);
 	if(x_index != -1) {
 		if(x_index == index)
 			return(argument);
@@ -120,14 +120,14 @@ static NodeT shift(NodeT argument, int index, NodeT term) {
 		else
 			return(term);
 	} else if(callP(term)) {
-		NodeT x_fn = getCallCallable(term);
-		NodeT x_argument = getCallArgument(term);
+		NodeT x_fn = callCallable(term);
+		NodeT x_argument = callArgument(term);
 		NodeT new_fn = shift(argument, index, x_fn);
 		NodeT new_argument = shift(argument, index, x_argument);
 		return REUSE_6D((new_fn == x_fn && new_argument == x_argument) ? term :) call(new_fn, new_argument);
 	} else if(fnP(term)) {
-		NodeT body = getFnBody(term);
-		NodeT parameter = getFnParameter(term);
+		NodeT body = fnBody(term);
+		NodeT parameter = fnParameter(term);
 		NodeT new_body = shift(argument, index + 1, body);
 		return REUSE_6D((body == new_body) ? term :) fn(parameter, new_body);
 	} else 
@@ -144,8 +144,8 @@ NodeT eval1(NodeT term) {
 	const struct Call* call = (const struct Call*)getCXXInstance(term);
 	if(call->resultGeneration == getGeneration())
 		return call->result;
-	NodeT fn = getCallCallable(term);
-	NodeT argument = getCallArgument(term);
+	NodeT fn = callCallable(term);
+	NodeT argument = callArgument(term);
 	++recursionLevel;
 	NodeT x_fn = eval1(fn);
 	NodeT x_argument = fnWantsItsArgumentReducedP(x_fn) ? eval1(argument) : argument;
@@ -153,7 +153,7 @@ NodeT eval1(NodeT term) {
 	if(errorP(x_argument))
 		return x_argument;
 	if(fnP(x_fn)) {
-		NodeT body = getFnBody(x_fn);
+		NodeT body = fnBody(x_fn);
 		body = shift(x_argument, 0, body);
 		if(errorP(body))
 			return body;
@@ -189,7 +189,7 @@ NodeT eval(NodeT node) {
 NodeT execute(NodeT term) {
 	NodeT r = dcall(term, WORLD);
 	// TODO error check
-	return(getConsHead(r));
+	return(consHead(r));
 }
 
 END_NAMESPACE_6D(Evaluators)

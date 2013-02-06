@@ -48,7 +48,7 @@ let GtkWidget := (
 	('childNotify!, widgetChildNotify!)
 	('destroyed!, widgetDestroyed!)
 	('grabFocus!, widgetGrabFocus!)
-	('errorBell!, widgetErrorBell!)
+	('errorBell!, widerrorBell!)
 	('setDoubleBuffered!, widgetSetDoubleBuffered!)
 	('getSupportMultidevice!, widgetGetSupportMultidevice!)
 	('isComposited!, widgetIsComposited!)

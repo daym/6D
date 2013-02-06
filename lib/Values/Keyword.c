@@ -27,7 +27,7 @@ NodeT keywordFromStr(const char* name) {
 	}
 	
 }
-const char* getKeyword1Name(NodeT node) {
+const char* keywordName(NodeT node) {
 	if(keywordP(node)) {
 		const struct Keyword* s = (const struct Keyword*) getCXXInstance(node);
 		return s->text;

@@ -12,9 +12,9 @@ BEGIN_NAMESPACE_6D(Values)
 	NodeT parseError(NodeT aExpectedInput, NodeT aGotInput) G_5D_PURE;
 	bool errorP(NodeT n) G_5D_PURE;
 	NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) G_5D_PURE;
-	NodeT getErrorKind(NodeT node) G_5D_PURE;
-	NodeT getErrorExpectedInput(NodeT node) G_5D_PURE;
-	NodeT getErrorGotInput(NodeT node) G_5D_PURE;
-	NodeT getErrorContext(NodeT node) G_5D_PURE;
+	NodeT errorKind(NodeT node) G_5D_PURE;
+	NodeT errorExpectedInput(NodeT node) G_5D_PURE;
+	NodeT errorGotInput(NodeT node) G_5D_PURE;
+	NodeT errorContext(NodeT node) G_5D_PURE;
 END_NAMESPACE_6D(Values)
 #endif /* ndef __6D_VALUES_ERROR_H */
