@@ -11,7 +11,7 @@ static NodeT Splus;
 static NodeT Sdash;
 static NodeT Sstar;
 static NodeT Sslash;
-static NodeT Sdivmod;
+static NodeT Sdivrem;
 static NodeT Sshl;
 static NodeT Sshr;
 static NodeT Slessequal;
@@ -29,8 +29,8 @@ NodeT multiply(NodeT a, NodeT b) {
 NodeT divide(NodeT a, NodeT b) {
 	return integerDiv(a, b);
 }
-NodeT divmod(NodeT a, NodeT b) {
-	return integerDivmod(a, b);
+NodeT divrem(NodeT a, NodeT b) {
+	return integerDivrem(a, b);
 }
 /* swapped arguments, sorry */
 NodeT shl(NodeT amount, NodeT b) {
@@ -59,7 +59,7 @@ void initArithmetic(void) {
 	Sdash = symbolFromStr("-");
 	Sstar = symbolFromStr("*");
 	Sslash = symbolFromStr("/");
-	Sdivmod = symbolFromStr("divmod");
+	Sdivrem = symbolFromStr("divrem");
 	Sshl = symbolFromStr("shl");
 	Sshr = symbolFromStr("shr");
 	Slessequal = symbolFromStr("<=");
@@ -75,7 +75,7 @@ NODET withArithmetic(NODET body) {
 	       closeOver(Sdash, builtin(symbolFromStr("subtract")), 
 	       closeOver(Sstar, builtin(symbolFromStr("multiply")), 
 	       closeOver(Sslash, builtin(symbolFromStr("divide")), 
-	       closeOver(Sdivmod, builtin(symbolFromStr("divmod")),
+	       closeOver(Sdivrem, builtin(symbolFromStr("divrem")),
 	       closeOver(Sshl, builtin(symbolFromStr("shl")),
 	       closeOver(Sshr, builtin(symbolFromStr("shr")), 
 	       closeOver(Slessequal, builtin(symbolFromStr("le?")),

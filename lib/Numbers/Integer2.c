@@ -274,17 +274,24 @@ NativeInt integerCompareU(NODET aP, NativeInt b) {
 	} else
 		abort();
 }
-NodeT integerDivmodU(NODET aP, NativeInt b) {
+NodeT integerDivremU(NODET aP, NativeInt b) {
 	if(intP(aP)) {
-		const struct Int* a = (const struct Int*) getCXXInstance(aP);
+		const struct Int* aI = (const struct Int*) getCXXInstance(aP);
+		NativeInt a = aI->value;
 		if(b == 0)
 			return evalError(strC("<nonzero-divisor>"), strC("0"), aP);
-		printf("A %ld B %ld\n", a->value, b);
-		NativeInt quot = (NativeInt) (a->value/b);
-		NativeInt rem = a->value % b;
-		/* C standard says that the remainder has the sign of the dividend, mathematics says the remainder is always positive(!). */
+		printf("A %ld B %ld\n", a, b);
+		/* force divisor to be positive (will not have effect on result says the C standard): */
+		if(b < 0) {
+			b = -b;
+			a = -a;
+		}
+		NativeInt quot = (NativeInt) (a/b);
+		NativeInt rem = a  % b;
+		/* C standard says that the remainder has the sign of the dividend(!), mathematics says the remainder is always positive. */
 		if(rem < 0) {
 			rem += b;
+			--quot; /* FIXME out of range */
 		}
 		/*if(a->value < 0)
 			rem = -rem;*/
@@ -336,16 +343,16 @@ NodeT internNativeUInt(NativeUInt value) {
 	} else
 		return intA(value);
 }
-NodeT integerDivmod(NODET aP, NODET bP) { /* return pair */
+NodeT integerDivrem(NODET aP, NODET bP) { /* return pair */
 	if(intP(bP)) {
 		const struct Int* b = (const struct Int*) getCXXInstance(bP);
-		return integerDivmodU(aP, b->value);
+		return integerDivremU(aP, b->value);
 	} else
 		abort();
 	return aP;
 }
 NodeT integerDiv(NODET aP, NODET bP) {
-	NodeT result = integerDivmod(aP, bP);
+	NodeT result = integerDivrem(aP, bP);
 	if(errorP(result))
 		return result;
 	return getPairFst(result);

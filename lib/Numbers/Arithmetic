@@ -7,7 +7,7 @@ NodeT add(NodeT a, NodeT b);
 NodeT subtract(NodeT a, NodeT b);
 NodeT multiply(NodeT a, NodeT b);
 NodeT divide(NodeT a, NodeT b);
-NodeT divmod(NodeT a, NodeT b);
+NodeT divrem(NodeT a, NodeT b);
 /* swapped arguments, sorry */
 NodeT shl(NodeT amount, NodeT b);
 /* swapped arguments, sorry */

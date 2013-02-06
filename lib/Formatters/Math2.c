@@ -265,11 +265,13 @@ static NodeT Formatter_printInteger2(struct Formatter* self, NodeT value) {
 	NodeT remN;
 	NativeInt rem;
 	NodeT qr;
-	qr = integerDivmodU(value, 10);
+	qr = integerDivremU(value, 10);
 	value = getPairFst(qr);
 	remN = getPairSnd(qr);
-	if(!toNativeInt(remN, &rem) || rem < 0)
+	if(!toNativeInt(remN, &rem))
 		return evalError(strC("<integer-remainder>"), strC("<junk>"), remN);
+	if(rem < 0)
+		rem += 10;
 	if(value != 0)
 		status = status ? status : Formatter_printInteger2(self, value);
 	status = status ? status : Formatter_printChar(self, hexdigits[rem]);
