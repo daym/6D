@@ -20,8 +20,9 @@ static NodeT Sslash;
 static NodeT Scomma;
 static NodeT SevalError;
 static NodeT evalErrorF;
-static NodeT SminimalOPLLevel;
-static NodeT SminimalOPLArgcount;
+static NodeT SminimalOPL;
+static NodeT SoperatorLevel;
+static NodeT SoperatorArgcount;
 /*
 things to synthesize:
 	operations
@@ -159,10 +160,16 @@ static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) 
 	self->operatorPrecedenceLimit = oldLimit;
 	return status;
 }
+static INLINE int xabs(int value) {
+	return (value >= 0) ? value : (-value);
+}
 static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
-	if(binaryOperationP(node) && Formatter_levelOfOperator(self, node) != NO_OPERATOR)
-		return Formatter_printBinaryOperation(self, node);
-	else {
+	if(binaryOperationP(node)) {
+		NodeT operator_ = getOperationOperator(node);
+		if(Formatter_levelOfOperator(self, operator_) != NO_OPERATOR && xabs(Formatter_argcountOfOperator(self, operator_)) == 2)
+			return Formatter_printBinaryOperation(self, node);
+	}
+	{
 		NodeT callable = getCallCallable(node);
 		NodeT argument = getCallArgument(node);
 		return Formatter_printBinaryOperation(self, operation(Sspace, callable, argument));
@@ -359,11 +366,13 @@ void initMathFormatters(void) {
 		Sslash = symbolFromStr("/");
 		Scomma = symbolFromStr(",");
 		SevalError = symbolFromStr("evalError");
-		SminimalOPLLevel = symbolFromStr("minimalOPLLevel");
-		SminimalOPLArgcount = symbolFromStr("minimalOPLArgcount");
+		SminimalOPL = symbolFromStr("minimalOPL");
+		SoperatorLevel = symbolFromStr("operatorLevel");
+		SoperatorArgcount = symbolFromStr("operatorArgcount");
 		evalErrorF = dcall(builtins, quote2(SevalError));
-		minimalOperatorLevel = dcall(builtins, SminimalOPLLevel);
-		minimalOperatorArgcount = dcall(builtins, SminimalOPLArgcount);
+		NodeT minimalOPL = dcall(builtins, SminimalOPL);
+		minimalOperatorLevel = dcall(minimalOPL, SoperatorLevel);
+		minimalOperatorArgcount = dcall(minimalOPL, SoperatorArgcount);
 	}
 }
 //nclude "Parsers/sillyprint.inc"
@@ -371,7 +380,7 @@ void initMathFormatters(void) {
 void print(FILE* f, NodeT node) {
 	struct Formatter fmt;
 	initMathFormatters();
-	Formatter_init(&fmt, f, 0, 0, nil, 0, nil/*minimalOperatorLevel*/, minimalOperatorArgcount, 0);
+	Formatter_init(&fmt, f, 0, 0, nil, 0, minimalOperatorLevel, minimalOperatorArgcount, 0);
 	Formatter_print(&fmt, node);
 }
 END_NAMESPACE_6D(Formatters)
