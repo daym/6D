@@ -1,3 +1,4 @@
+/* this entire file can be kept maintainable by ensuring everything that is composite goes through either printBinaryOperation or printPrefixOperation. */
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -24,7 +25,6 @@ static NodeT SminimalOPL;
 static NodeT SoperatorLevel;
 static NodeT SoperatorArgcount;
 static NodeT Splus;
-/* replace self->operatorPrecedenceLimit by self->operator_ */
 /*
 things to synthesize:
 	operations
@@ -160,12 +160,40 @@ static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) 
 		status = status ? status : Formatter_printChar(self, '(');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) < 0;
 	status = status ? status : Formatter_print(self, a);
-	if(precedence <= self->plusLevel)
-		status = status ? status : Formatter_printChar(self, ' ');
-	status = status ? status : Formatter_printSymbol(self, o);
-	if(precedence <= self->plusLevel)
-		status = status ? status : Formatter_printChar(self, ' ');
+	if(o != Sspace || a != Sbackslash) { /* lambda */	
+		if(precedence <= self->plusLevel)
+			status = status ? status : Formatter_printChar(self, ' ');
+		status = status ? status : Formatter_printSymbol(self, o);
+		if(precedence <= self->plusLevel)
+			status = status ? status : Formatter_printChar(self, ' ');
+	}
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) > 0;
+	status = status ? status : Formatter_print(self, b);
+	self->bParenEqualLevels = false;
+	if(bParen)
+		status = status ? status : Formatter_printChar(self, ')');
+	self->operatorPrecedenceLimit = oldLimit;
+	return status;
+}
+static NodeT Formatter_printPrefixOperation(struct Formatter* self, NodeT node) {
+	NodeT status = nil;
+	NodeT o = getCallCallable(node);
+	NodeT b = getCallArgument(node);
+	NodeT o2 = o;
+	if(callP(o2)) { /* \x */
+		o2 = getCallCallable(o2);
+	}
+	int oldLimit = self->operatorPrecedenceLimit;
+	int precedence = Formatter_levelOfOperator(self, o2);
+	bool bParen = (precedence < oldLimit) || (precedence == oldLimit && self->bParenEqualLevels);
+	self->operatorPrecedenceLimit = precedence;
+	self->bParenEqualLevels = false;
+	if(bParen)
+		status = status ? status : Formatter_printChar(self, '(');
+	status = status ? status : Formatter_print/*Symbol*/(self, o);
+	if(precedence <= self->plusLevel)
+		status = status ? status : Formatter_printChar(self, ' ');
+	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o2) < 0;
 	status = status ? status : Formatter_print(self, b);
 	self->bParenEqualLevels = false;
 	if(bParen)
@@ -177,22 +205,32 @@ static INLINE int xabs(int value) {
 	return (value >= 0) ? value : (-value);
 }
 static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
-	if(binaryOperationP(node)) {
+	NodeT callable = getCallCallable(node);
+	NodeT argument = getCallArgument(node);
+	if(callP(callable)) { /* binary operation */
 		NodeT operator_ = getOperationOperator(node);
-		if(Formatter_levelOfOperator(self, operator_) != NO_OPERATOR && xabs(Formatter_argcountOfOperator(self, operator_)) == 2)
+		int argcount = Formatter_levelOfOperator(self, operator_) != NO_OPERATOR ? Formatter_argcountOfOperator(self, operator_) : 0;
+		if(xabs(argcount) == 2)
 			return Formatter_printBinaryOperation(self, node);
+	} else {
+		NodeT operator_ = callable;
+		int argcount = Formatter_levelOfOperator(self, operator_) != NO_OPERATOR ? Formatter_argcountOfOperator(self, operator_) : 0;
+		if(argcount == 1)
+			return Formatter_printPrefixOperation(self, node);
 	}
 	{
-		NodeT callable = getCallCallable(node);
-		NodeT argument = getCallArgument(node);
+		/* TODO synth let forms. Latter is replacement. callable is a Fn. */
 		return Formatter_printBinaryOperation(self, operation(Sspace, callable, argument));
 	}
 }
 static NodeT Formatter_printFn(struct Formatter* self, NodeT node) {
 	NodeT parameter = getFnParameter(node);
 	NodeT body = getFnBody(node);
-	/* TODO special-case */
-	return Formatter_printBinaryOperation(self, operation(Sbackslash, parameter, body));
+	NodeT names = self->names;
+	self->names = cons(parameter, self->names);
+	NodeT status = Formatter_printPrefixOperation(self, operation(Sbackslash, parameter, body));
+	self->names = names;
+	return status;
 }
 static NodeT Formatter_printKeyword(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
@@ -353,7 +391,7 @@ static NodeT Formatter_printFFIFn(struct Formatter* self, NodeT node) {
 }
 NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	int i;
-	return (i = getSymbolreferenceIndex(node)) != -1 ? Formatter_printSymbolreference(self, i) : 
+	NodeT result = (i = getSymbolreferenceIndex(node)) != -1 ? Formatter_printSymbolreference(self, i) : 
 	       symbolP(node) ? Formatter_printSymbol(self, node) : 
 	       keywordP(node) ? Formatter_printKeyword(self, node) : 
 	       callP(node) ? Formatter_printCall(self, node) : 
@@ -370,6 +408,8 @@ NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	       boxP(node) ? Formatter_printBox(self, node) : 
 	       FFIFnP(node) ? Formatter_printFFIFn(self, node) : 
 	       evalError(strC("<printable>"), strC("<unprintable>"), node);
+	self->bParenEqualLevels = false;
+	return result;
 }
 static NodeT minimalOperatorLevel;
 static NodeT minimalOperatorArgcount;
@@ -407,7 +447,7 @@ void initMathFormatters(void) {
 		}
 	}
 }
-//nclude "Parsers/sillyprint.inc"
+#include "Parsers/sillyprint.inc"
 /* just for backwards compat, not exactly fast or correct or reliable: */
 void print(FILE* f, NodeT node) {
 	struct Formatter fmt;
