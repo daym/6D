@@ -80,7 +80,7 @@ static INLINE const char* nvl(const char* a, const char* b) {
 	return a ? a : b;
 }
 static int digitInBase(int base, int c) {
-	int result = (c >= '0' && c <= '9') ? 10 + (c - '0') :
+	int result = (c >= '0' && c <= '9') ? 0 +  (c - '0') :
 	             (c >= 'a' && c <= 'z') ? 10 + (c - 'a') : 
 	             (c >= 'A' && c <= 'Z') ? 10 + (c - 'A') : 
 	             (-1);
@@ -106,7 +106,8 @@ static INLINE NodeT getNumber(int baseI, const char* name) {
 				result = integerMul(result, base);
 				result = integerAddU(result, off);
 			}
-			return result;
+			if(*name == 0)
+				return result;
 		}
 	}
 	return nil;
