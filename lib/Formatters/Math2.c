@@ -302,7 +302,7 @@ static NodeT Formatter_printInt(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
 	if(!toNativeInt(node, &value))
 		return evalError(strC("<int>"), strC("<junk>"), node);
-	/* FIXME extra parens if needed */
+	/* FIXME extra parens if needed (i.e. negative) */
 	if(value < 0)
 		status = status ? status : Formatter_printChar(self, '-');
 	else { /* two's complement has one more on the negative side. So sorry, that's the only safe direction. */
@@ -312,8 +312,16 @@ static NodeT Formatter_printInt(struct Formatter* self, NodeT node) {
 	return status;
 }
 static NodeT Formatter_printFloat(struct Formatter* self, NodeT node) {
+	NativeFloat value;
 	NodeT status = nil;
-	abort();
+	/* TODO remove usage of ftell? */
+	off_t p = ftell(self->outputStream);
+	if(!toNativeFloat(node, &value) || fprintf(self->outputStream, NATIVEFLOAT_FORMAT, value) != 1)
+		return evalError(strC("<float>"), strC("<junk>"), node);
+	p = ftell(self->outputStream) - p;
+	self->hposition += p;
+	if(self->hposition > self->maxWidthAccu)
+		self->maxWidthAccu = self->hposition;
 	return status;
 }
 static NodeT Formatter_printInteger(struct Formatter* self, NodeT node) {

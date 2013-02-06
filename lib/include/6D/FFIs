@@ -17,9 +17,11 @@ NODET internNativeSize_t(size_t value);
 #if defined(__VFP_FP__) || defined(__ARM_EABI__)
 /* ARM doesn't have extended-precision floating point */
 typedef double NativeFloat;
+#define NATIVEFLOAT_FORMAT "%g"
 //#define NATIVEFLOAT_PRECISION 15
 #else
 typedef long double NativeFloat;
+#define NATIVEFLOAT_FORMAT "%Lg"
 //#define NATIVEFLOAT_PRECISION 19
 #endif
 #ifdef WIN32
@@ -29,9 +31,11 @@ typedef unsigned int uint32_t; /* why me... */
 #if __SIZEOF_LONG_LONG__ != __SIZEOF_LONG__
 typedef unsigned long long int NativeUInt; /* register type */
 typedef long long int NativeInt; /* register type */
+#define NATIVEINT_FORMAT "%lld"
 #else
 typedef unsigned long int NativeUInt; /* register type */
 typedef long int NativeInt; /* register type */
+#define NATIVEINT_FORMAT "%ld"
 #endif
 
 NODET internNativeInt(NativeInt value);
