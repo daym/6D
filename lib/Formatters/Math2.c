@@ -177,7 +177,7 @@ static INLINE int xabs(int value) {
 static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 	if(binaryOperationP(node)) {
 		NodeT operator_ = getOperationOperator(node);
-		if(Formatter_levelOfOperator(self, operator_) != NO_OPERATOR && xabs(Formatter_argcountOfOperator(self, operator_)) == 2)
+		if(getSymbol1Name(operator_) && Formatter_levelOfOperator(self, operator_) != NO_OPERATOR && xabs(Formatter_argcountOfOperator(self, operator_)) == 2)
 			return Formatter_printBinaryOperation(self, node);
 	}
 	{
