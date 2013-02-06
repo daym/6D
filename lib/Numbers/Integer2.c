@@ -47,7 +47,8 @@ NodeT integerpart(NativeUInt value, NodeT tail) {
 	return refCXXInstance(result);
 }
 /* FIXME determine size */
-#define HIGHBIT 63
+#define BITCOUNT 63
+#define HIGHBIT (1ULL<<BITCOUNT)
 #define ALL1 (~0U)
 #define SIGNEXTENSION(value) ((value&HIGHBIT)*ALL1)
 /* only suitable for adding "positive" amounts - the negative amounts would have to be sign-extended too much. */
@@ -195,7 +196,7 @@ NodeT integerMul(NodeT aP, NodeT bP) {
 				result = integerAdd(result, aP);
 		}
 	}
-	return integerAdd(result, integerShl(integerMul(aP, btail), HIGHBIT + 1));
+	return integerAdd(result, integerShl(integerMul(aP, btail), BITCOUNT + 1));
 }
 NodeT integerShl(NodeT aP, unsigned amount) {
 	abort();
@@ -321,7 +322,7 @@ bool toNearestNativeInt(NodeT node, NativeInt* result) {
 	}
 	if(intP(node)) {
 		const struct Int* a = (const struct Int*) getCXXInstance(node);
-		NativeUInt result2 = 1ULL << HIGHBIT;
+		NativeUInt result2 = HIGHBIT;
 		if(a->value&HIGHBIT) { /* negative */
 			*result = (NativeInt) result2;
 		} else {
