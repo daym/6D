@@ -58,7 +58,7 @@ void initArithmetic(void) {
 	builtins = initBuiltins();
 	Splus = symbolFromStr("+");
 	Sdash = symbolFromStr("-");
-	Sstar = symbolFromStr("/");
+	Sstar = symbolFromStr("*");
 	Sslash = symbolFromStr("/");
 	Sdivmod = symbolFromStr("divmod");
 	Sshl = symbolFromStr("shl");
