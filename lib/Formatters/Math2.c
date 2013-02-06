@@ -310,6 +310,13 @@ static NodeT Formatter_printError(struct Formatter* self, NodeT node) {
 	NodeT context = getErrorContext(node);
 	return Formatter_print(self, call5(SevalError, kind, expectedInput, gotInput, context));
 }
+static NodeT Formatter_printFFIFn(struct Formatter* self, NodeT node) {
+	NodeT status = nil;
+	status = status ? status : Formatter_printChar(self, '?');
+	status = status ? status : Formatter_printChar(self, '?');
+	status = status ? status : Formatter_printChar(self, '?');
+	return status;
+}
 NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	int i;
 	return (i = getSymbolreferenceIndex(node)) != -1 ? Formatter_printSymbolreference(self, i) : 
@@ -327,6 +334,7 @@ NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	       strP(node) ? Formatter_printStr(self, node) : 
 	       errorP(node) ? Formatter_printError(self, node) : 
 	       boxP(node) ? Formatter_printBox(self, node) : 
+	       FFIFnP(node) ? Formatter_printFFIFn(self, node) : 
 	       evalError(strC("<printable>"), strC("<unprintable>"), node);
 }
 static NodeT minimalOperatorLevel;
