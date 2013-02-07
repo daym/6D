@@ -6,7 +6,7 @@
 #include "6D/Values"
 #ifndef GC_THREADS
 BEGIN_NAMESPACE_6D(Allocators)
-static std::set<gc*>* arena;
+static std::set<void*>* arena;
 extern "C"
 void* GC_malloc(size_t size) {
 	void* result = malloc(size);
