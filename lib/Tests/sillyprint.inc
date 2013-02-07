@@ -108,6 +108,9 @@ static void S_printBox(NodeT n) {
 static void S_printFFIFn(NodeT n) {
 	printf("<FFIFn>");
 }
+static void S_printUnknown(NodeT n) {
+	printf("<unknown>");
+}
 static void S_print(NodeT node) {
 	int i;
 	(i = symbolreferenceIndex(node)) != -1 ? S_printSymbolreference(i) : 
@@ -126,5 +129,5 @@ static void S_print(NodeT node) {
 	       errorP(node) ? S_printError(node) : 
 	       boxP(node) ? S_printBox(node) : 
 	       FFIFnP(node) ? S_printFFIFn(node) : 
-	       evalError(strC("<printable>"), strC("<unprintable>"), node);
+	       S_printUnknown(node);
 }
