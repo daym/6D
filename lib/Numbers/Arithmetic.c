@@ -51,7 +51,8 @@ NodeT shr(NodeT amount, NodeT b) {
 	return integerShr(b, value);
 }
 NodeT leP(NodeT a, NodeT b) {
-	return subtract(a, b); /* TODO <= 0 */
+	/*return subtract(a, b);*/ /* TODO <= 0 */
+	return internNativeBool(integerCompare(a, b) <= 0);
 }
 NodeT equalP(NodeT a, NodeT b) {
 	/* TODO make this less brittle */
