@@ -71,10 +71,10 @@ double infxx(void) {
 }
 #else
 double nanxx(void) {
-	return __builtin_nanf(""); /* 0.0/0.0 */
+	return __builtin_nan(""); /* 0.0/0.0 */
 }
 double infxx(void) {
-	return __builtin_inff(); /* 1.0/0.0 */
+	return __builtin_inf(); /* 1.0/0.0 */
 }
 #endif
 void initFloats(void) {
