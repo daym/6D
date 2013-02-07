@@ -284,7 +284,7 @@ Strings/Strings.o: Strings/Strings.c Strings/Strings include/6D/Values include/6
 Builtins/wrapper.c: Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o Makefile generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto
 	$(OBJDUMP) -t Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o |grep 'g.....F' | awk '{ print $$6 }' | ./generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto OPLs/MinimalOPL.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
 Builtins/wrapper.o: Builtins/wrapper.c include/6D/Values include/6D/Allocators Numbers/Integer2 Numbers/Arithmetic 
-OPLs/MinimalOPL.o: OPLs/MinimalOPL.c include/6D/Values include/6D/Allocators Numbers/Integer2 include/6D/Operations include/6D/Evaluators include/6D/FFIs
+OPLs/MinimalOPL.c.proto OPLs/MinimalOPL.o: OPLs/MinimalOPL.c include/6D/Values include/6D/Allocators Numbers/Integer2 include/6D/Operations include/6D/Evaluators include/6D/FFIs
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 Numbers/Arithmetic.c.proto Numbers/Arithmetic.o: Numbers/Arithmetic.c Numbers/Arithmetic include/6D/Allocators Numbers/Integer2 include/6D/Values
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
