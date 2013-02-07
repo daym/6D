@@ -295,7 +295,7 @@ static NodeT Lang_error(struct Lang* self, const char* expectedPart, const char*
 }
 static int Lang_operatorLevel(struct Lang* self, NodeT node) {
 	int result;
-	if(!symbolName(node))
+	if(!symbolP(node))
 		return NO_OPERATOR;
 	NodeT n = dcall(self->operatorLevel, node);
 	if(!intFromNode(n, &result)) {
@@ -311,7 +311,7 @@ static int Lang_operatorLevel(struct Lang* self, NodeT node) {
 }
 static int Lang_operatorArgcount(struct Lang* self, NodeT node) {
 	int result;
-	if(!symbolName(node))
+	if(!symbolP(node))
 		return NO_OPERATOR;
 	NodeT n = dcall(self->operatorArgcount, node);
 	if(!intFromNode(n, &result)) {
@@ -430,8 +430,8 @@ static NodeT Lang_startMacro(struct Lang* self, NodeT node, struct Scanner* toke
 		return macroStandin(node, Lang_parseValue(self, tokenizer));
 	} else if(node == Sleftbracket) {
 		return Lang_parseListLiteral(self, Srightbracket, tokenizer);
-	}
-	return node;
+	} else
+		return node;
 }
 static bool Lang_operatorLE(struct Lang* self, NodeT a, NodeT b) {
 	if(a == b) { /* speed optimization */
@@ -479,14 +479,16 @@ static NodeT collect1Buf(FILE* file, int* linenumber, bool (*continueP)(int inpu
 		return collectBuf(file, linenumber, prefix, continueP, outBuf);
 }
 static NodeT collectC(FILE* file, int* linenumber, int prefix, bool (*continueP)(int input)) {
+	int streamStatus;
 	int c;
 	FILE* sst;
+	NodeT result = merror("<value>", "<broken-stream>");
 	char s[2049];
 	sst = fmemopen(s, 2048, "w");
 	if(!sst)
 		abort();
-	fputc(prefix, sst);
-	while((c = GETC) != EOF && (*continueP)(c)) {
+	streamStatus = fputc(prefix, sst);
+	while(streamStatus != EOF && (c = GETC) != EOF && (*continueP)(c)) {
 		if(c == '\\') {
 			int c2 = GETC;
 			switch(c2) {
@@ -494,34 +496,38 @@ static NodeT collectC(FILE* file, int* linenumber, int prefix, bool (*continueP)
 			case '"':
 			case '\'':
 			//case '?':
-				fputc(c2, sst);
+				streamStatus = fputc(c2, sst);
 				break;
 			case 'n':
-				fputc('\n', sst);
+				streamStatus = fputc('\n', sst);
 				break;
 			case 'r':
-				fputc('\r', sst);
+				streamStatus = fputc('\r', sst);
 				break;
 			case 'b':
-				fputc('\b', sst);
+				streamStatus = fputc('\b', sst);
 				break;
 			case 't':
-				fputc('\t', sst);
+				streamStatus = fputc('\t', sst);
 				break;
 			case 'f':
-				fputc('\f', sst);
+				streamStatus = fputc('\f', sst);
 				break;
 			case 'a':
-				fputc('\a', sst);
+				streamStatus = fputc('\a', sst);
 				break;
 			case 'v':
-				fputc('\v', sst);
+				streamStatus = fputc('\v', sst);
 				break;
 			case 'x':
 				{
-					GETC;
-					GETC;
-					abort();
+					int d1 = digitInBase(16, GETC);
+					int d2 = (d1 != -1) ? digitInBase(16, GETC) : -1;
+					if(d1 == -1 || d2 == -1) {
+						result = merror("<hex-escape>", "<junk>");
+						streamStatus = EOF;
+					} else
+						streamStatus = fputc((d1*16 + d2), sst);
 				}
 				break;
 			case '0':
@@ -532,20 +538,30 @@ static NodeT collectC(FILE* file, int* linenumber, int prefix, bool (*continueP)
 			case '5':
 			case '6':
 			case '7':
-				{
-					abort();
+				{ /* TODO: heading zeroes? */
+					int d1 = digitInBase(8, c2);
+					int d2 = digitInBase(8, GETC);
+					if(d1 == -1 || d2 == -1) {
+						result = merror("<octal-escape>", "<junk>");
+						streamStatus = EOF;
+					} else
+						streamStatus = fputc(d1*8 + d2, sst);
 				}
 			default:
-				return merror("<escapedValue>", "<junk>");
+				result = merror("<escapedValue>", "<junk>");
+				streamStatus = EOF;
 			}
 			continue;
 		} else if(c == '\n')
 			++(*linenumber);
-		fputc(c, sst);
+		streamStatus = fputc(c, sst);
 	}
-	fflush(sst);
-	UNGETC(c);
-	NodeT result = (s[0]) ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
+	if(streamStatus != EOF)
+		streamStatus = fflush(sst);
+	if(streamStatus != EOF) {
+		UNGETC(c);
+		result = (s[0]) ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
+	}
 	fclose(sst);
 	return result;
 }

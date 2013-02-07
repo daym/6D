@@ -48,6 +48,8 @@ print """#include "6D/Values"
 #include "SpecialForms/SpecialForms"
 #include "Strings/Strings"
 #include "Numbers/Arithmetic"
+#include "Numbers/Integer2"
+#include "6D/Evaluators"
 #include "Values/Values"
 #include "OPLs/MinimalOPL"
 BEGIN_NAMESPACE_6D(Builtins)
