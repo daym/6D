@@ -367,14 +367,30 @@ static NodeT Formatter_printInt(struct Formatter* self, NodeT node) {
 static NodeT Formatter_printFloat(struct Formatter* self, NodeT node) {
 	NativeFloat value;
 	NodeT status = nil;
-	/* TODO remove usage of ftell? */
-	off_t p = ftell(self->outputStream);
-	if(!toNativeFloat(node, &value) || fprintf(self->outputStream, NATIVEFLOAT_FORMAT, value) != 1)
+	char buffer[201];
+	char c;
+	bool bSawDot = false;
+	int i;
+	/* TODO hexadecimal floating point (a) */
+	if(!toNativeFloat(node, &value) || snprintf(buffer, 200, NATIVEFLOAT_FORMAT, value) < 0)
 		return evalError(strC("<float>"), strC("<junk>"), node);
-	p = ftell(self->outputStream) - p;
-	self->hposition += p;
-	if(self->hposition > self->maxWidthAccu)
-		self->maxWidthAccu = self->hposition;
+	for(i = 0; nilP(status) && (c = buffer[i]) != 0; ++i) {
+		if(c == '.')
+			bSawDot = true;
+		else if(c == 'e' || c == 'E') {
+			if(!bSawDot) {
+				status = Formatter_printChar(self, '.');
+				status = status ? status : Formatter_printChar(self, '0');
+				bSawDot = true;
+			}
+		}
+		status = status ? status : Formatter_printChar(self, c);
+	}
+	if(!bSawDot) {
+		status = status ? status : Formatter_printChar(self, '.');
+		status = status ? status : Formatter_printChar(self, '0');
+		bSawDot = true;
+	}
 	return status;
 }
 static NodeT Formatter_printInteger(struct Formatter* self, NodeT node) {
