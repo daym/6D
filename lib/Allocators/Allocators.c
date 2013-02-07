@@ -32,6 +32,8 @@ void* ealloc(size_t size, void* source) {
 	/* munmap needs the size, so make sure to remember it (sigh...) */
 	*result = size;
 	++result;
+#else
+	result = malloc(size);
 #endif
 	memcpy(result, source, size);
 #if defined(__linux__) || defined(__APPLE__)
@@ -44,6 +46,8 @@ void efree(void* address) {
 	VirtualFree(address, 0, MEM_RELEASE);
 #elif defined(__linux__) || defined(__APPLE__)
 	munmap((size_t*)address - 1, *((size_t*)address - 1));
+#else
+	free(address);
 #endif
 }
 END_NAMESPACE_6D(Allocators)
