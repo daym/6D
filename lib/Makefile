@@ -103,6 +103,7 @@ $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/01.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/07.expectedResult \
 $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/run \
 $(PACKAGE)-$(VERSION)/Tests/02_Evaluator/06.5D \
+$(PACKAGE)-$(VERSION)/Tests/sillyprint.inc \
 $(PACKAGE)-$(VERSION)/include/6D/Operations \
 $(PACKAGE)-$(VERSION)/include/6D/FFIs \
 $(PACKAGE)-$(VERSION)/include/6D/Allocators \
@@ -188,7 +189,7 @@ $(PACKAGE)-$(VERSION)/Modulesystem/Memoizer \
 $(PACKAGE)-$(VERSION)/Modulesystem/Modulesystem \
 $(PACKAGE)-$(VERSION)/Modulesystem/Exports.c \
 $(PACKAGE)-$(VERSION)/Allocators/SillyGC \
-$(PACKAGE)-$(VERSION)/Allocators/SillyGC.c \
+$(PACKAGE)-$(VERSION)/Allocators/SillyGC.cc \
 $(PACKAGE)-$(VERSION)/FFIs/Converters \
 $(PACKAGE)-$(VERSION)/FFIs/Converters.c \
 $(PACKAGE)-$(VERSION)/generateWrapper \
