@@ -281,7 +281,6 @@ NodeT integerDivremU(NODET aP, NativeInt b) {
 		NativeInt a = aI->value;
 		if(b == 0)
 			return evalError(strC("<nonzero-divisor>"), strC("0"), aP);
-		printf("A %ld B %ld\n", a, b);
 		/* force divisor to be positive (will not have effect on result says the C standard): */
 		if(b < 0) {
 			b = -b;
