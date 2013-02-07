@@ -194,7 +194,10 @@ static NodeT Formatter_printPrefixOperation(struct Formatter* self, NodeT node) 
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, '(');
 	status = status ? status : Formatter_print/*Symbol*/(self, o);
-	if((precedence <= self->plusLevel || isalpha(symbolName(o)[0])) && o != Sbackslash)
+	const char* symname = symbolName(o2);
+	if(!symname)
+		symname = '?';
+	if((precedence <= self->plusLevel || isalpha(symname[0])) && o != Sbackslash)
 		status = status ? status : Formatter_printChar(self, ' ');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o2) < 0;
 	status = status ? status : Formatter_print(self, b);
