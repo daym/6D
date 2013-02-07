@@ -87,14 +87,16 @@ static int digitInBase(int base, int c) {
 		result = -1;
 	return result;
 }
-static INLINE NodeT getNumber(int baseI, const char* name) {
+static /*INLINE*/ NodeT getNumber(int baseI, const char* name) {
 	errno = 0;
 	if(strchr(name, '.')) { /* TODO other bases for float */
 		NativeFloat value = strtod(name, NULL);
 		if(errno == 0)
-			return internNativeInt(value);
+			return internNativeFloat(value);
 	} else {
-		NativeInt value = strtol(name, NULL, baseI);
+		/* FIXME E handling */
+		char* p;
+		NativeInt value = strtol(name, &p, baseI);
 		if(errno == 0)
 			return internNativeInt(value);
 		else {
@@ -900,7 +902,7 @@ static int Lang_callRpnOperator(struct Lang* self, NodeT operator_, MNODET* valu
 static NodeT Lang_parse0(struct Lang* self, struct Scanner* scanner, NodeT endToken) {
 	NodeT result;
 	NodeT prog;
-	prog = Parser_parse(scanner, box(self), endToken);
+	prog = Parser_parse(scanner, box(self), endToken, nil/*names*/);
 	if(prog && consP(prog)) {
 		result = consHead(prog);
 		if(!consTail(prog))

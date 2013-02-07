@@ -41,6 +41,7 @@ struct Parser GC_BASECLASS {
 	NodeT env;
 	int executionResultCount;
 	NodeT prevInput;
+	NodeT names;
 };
 bool Parser_unaryP(struct Parser* self, NODET input) {
 	NodeT env = self->env;
@@ -87,13 +88,14 @@ static INLINE void Parser_pushOperand(struct Parser* self, NODET input) {
 	self->result = cons(input, self->result);
 	++self->executionResultCount;
 }
-void Parser_init(struct Parser* self, struct Scanner* aTokenizer, NodeT aEnv) {
+void Parser_init(struct Parser* self, struct Scanner* aTokenizer, NodeT aEnv, NodeT aNames) {
 	self->tokenizer = aTokenizer;
 	self->env = aEnv;
 	self->operators = nil;
 	self->result = nil;
 	self->executionResultCount = 0;
 	self->prevInput = nil;
+	self->names = aNames;
 }
 #define CHECK(x) { \
 	x; \
@@ -108,6 +110,7 @@ NodeT Parser_parse0(struct Parser* self, NODET endToken) {
 	env = self->env;
 	self->prevInput = env_SopeningParen(env); // intern("(");
 	NodeT SEOF = env_SEOF(env);
+	/* TODO on lambda (and import, let), prepend to names, until done, then pop again. */
 	// TODO maybe don't auto-apply on any kind of closing paren.
 	while((input = Scanner_getToken(self->tokenizer)), !env_errorP(env, input) && input != SEOF) {
 		bool bOstensibleEnd = input == endToken;
@@ -166,9 +169,9 @@ NodeT Parser_parse0(struct Parser* self, NODET endToken) {
 	}
 	return self->result;
 }
-NodeT Parser_parse(struct Scanner* tokenizer, NodeT env, NODET endToken) {
+NodeT Parser_parse(struct Scanner* tokenizer, NodeT env, NODET endToken, NODET names) {
 	struct Parser parser;
-	Parser_init(&parser, tokenizer, env);
+	Parser_init(&parser, tokenizer, env, names);
 	return Parser_parse0(&parser, endToken);
 }
 END_NAMESPACE_6D(Parsers)

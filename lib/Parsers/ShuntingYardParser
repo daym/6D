@@ -8,7 +8,7 @@ struct Scanner;
 END_NAMESPACE_6D(Scanners)
 BEGIN_NAMESPACE_6D(Parsers)
 USE_NAMESPACE_6D(Values)
-NODET Parser_parse(struct Scanner* tokenizer, NodeT env, NODET endToken);
+NODET Parser_parse(struct Scanner* tokenizer, NodeT env, NODET endToken, NODET names);
 END_NAMESPACE_6D(Parsers)
 
 #endif /* ndef __SCANNERS_SHUNTING_YARD_PARSER_H */
