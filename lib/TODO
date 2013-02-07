@@ -3,3 +3,7 @@ NOGC operations (i.e. modules) will refer to their environment which will be eve
 However, the memoizer uses eval in order to evaluate unknown results for the hashtable. These are GCable and will eventually be reclaimed.
 Therefore, there needs to be an ability to clone result trees (as much as I dislike that) so the memoizer can safely store away results (that, or the ability to deregister nodes from GC - both have the same complexity).
 TODO: strict-eval the 'from' part of an import.
+
+= Pie-in-the-Sky =
+
+make symbol name a Str which is not necessarily zero-terminated, ALSO for the internal parts.
