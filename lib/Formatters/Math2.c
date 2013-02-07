@@ -223,7 +223,6 @@ static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 		return Formatter_printCall(self, call(Slet, operation(Sin, operation(Sequal, parameter, argument), body)));
 		//return Formatter_printCall(self, operation(Sin, operation(Scolonequal, parameter, argument), body));
 		/* TODO synth let forms. Latter is replacement. callable is a Fn. */
-		printf("SYNTH LET\n");
 	} else {
 		NodeT operator_ = callable;
 		int argcount = Formatter_levelOfOperator(self, operator_) != NO_OPERATOR ? Formatter_argcountOfOperator(self, operator_) : 0;
