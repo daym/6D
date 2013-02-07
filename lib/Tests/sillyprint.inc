@@ -70,13 +70,13 @@ static void S_printInt(NodeT n) {
 	NativeInt value;
 	if(!toNativeInt(n, &value))
 		abort();
-	printf("%ld", value);
+	printf(NATIVEINT_FORMAT, value);
 }
 static void S_printFloat(NodeT n) {
 	NativeFloat value;
 	if(!toNativeFloat(n, &value))
 		abort();
-	printf("%Lf", value);
+	printf(NATIVEFLOAT_FORMAT, value);
 }
 static void S_printInteger(NodeT n) {
 	abort();
