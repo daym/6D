@@ -150,6 +150,9 @@ static bool digitCharP(int input) {
 	return (input >= '0' && input <= '9');
 }
 static bool digitRestCharP(int input) {
+	return (input >= '0' && input <= '9');
+}
+static bool digitDotRestCharP(int input) {
 	return (input >= '0' && input <= '9') || (input == '.');
 }
 static bool specialCodingCharP(int input) {
@@ -437,31 +440,43 @@ static bool Lang_operatorLE(struct Lang* self, NodeT a, NodeT b) {
 		return Lang_operatorLevel(self, a) < Lang_operatorLevel(self, b) || (Lang_operatorLevel(self, a) == Lang_operatorLevel(self, b) && Lang_operatorArgcount(self, b) > 1); // latter: leave right-associative operators on stack if in doubt.
 	}
 }
-static NodeT collect(FILE* file, int* linenumber, int prefix, bool (*continueP)(int input)) {
+static NodeT collectBuf(FILE* file, int* linenumber, int prefix, bool (*continueP)(int input), FILE* outBuf) {
 	int c;
+	if(fputc(prefix, outBuf) == EOF)
+		return merror("<memory>", "<no-memory>");
+	while((c = GETC) != EOF && (*continueP)(c))
+		if(fputc(c, outBuf) == EOF)
+			return merror("<memory>", "<no-memory>");
+	if(fflush(outBuf) == EOF)
+		return merror("<memory>", "<no-memory>");
+	UNGETC(c);
+	return nil;
+}
+static NodeT collect(FILE* file, int* linenumber, int prefix, bool (*continueP)(int input)) {
 	FILE* sst;
+	NodeT status;
 	char s[2049];
+	/* FIXME open_memstream */
 	sst = fmemopen(s, 2048, "w");
 	if(!sst)
 		abort();
-	/* FIXME open_memstream */
-	fputc(prefix, sst);
-	while((c = GETC) != EOF && (*continueP)(c))
-		fputc(c, sst);
-	fflush(sst);
-	UNGETC(c);
+	status = collectBuf(file, linenumber, prefix, continueP, sst);
+	if(!nilP(status)) {
+		fclose(sst);
+		return status;
+	}
 	NodeT result = (s[0]) ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
 	fclose(sst);
 	return result;
 }
-static NodeT collect1(FILE* file, int* linenumber, bool (*continueP)(int input)) {
+static NodeT collect1Buf(FILE* file, int* linenumber, bool (*continueP)(int input), FILE* outBuf) {
 	int prefix;
 	assert(!continueP('\n'));
 	prefix = GETC;
-	if(prefix == EOF)
+	if(prefix == EOF || !continueP(prefix))
 		return merror("<value>", "<EOF>");
 	else
-		return collect(file, linenumber, prefix, continueP);
+		return collectBuf(file, linenumber, prefix, continueP, outBuf);
 }
 static NodeT collectC(FILE* file, int* linenumber, int prefix, bool (*continueP)(int input)) {
 	int c;
@@ -581,7 +596,34 @@ static NodeT readOperator(FILE* file, int* linenumber, int c) {
 	return collect(file, linenumber, c, operatorCharP);
 }
 static NodeT readDigits(FILE* file, int* linenumber, int c) {
-	return collect(file, linenumber, c, digitRestCharP);
+	FILE* sst;
+	NodeT status;
+	char s[2049];
+	sst = fmemopen(s, 2048, "w");
+	if(!sst)
+		abort();
+	status = collectBuf(file, linenumber, c, digitDotRestCharP, sst);
+	if(!status) {
+		c = GETC;
+		if(c == 'E' || c == 'e') {
+			if(fputc('E', sst) == EOF)
+				status = merror("<scientific-notation>", "<junk>");
+			c = GETC;
+			if(c == '+' || c == '-') {
+				if(fputc(c, sst) == EOF)
+					status = merror("<scientific-notation>", "<junk>");
+			} else
+				UNGETC(c);
+			status = status ? status : collect1Buf(file, linenumber, digitRestCharP,  sst); 
+		} else
+			UNGETC(c);
+	}
+	if(!status) {
+		/*printf(">%s<\n", s);*/
+		status = symbolFromStr(GCx_strdup(s));
+	}
+	fclose(sst);
+	return status;
 }
 static int collectNumeric3(FILE* file, int* linenumber, int base, bool (*continueP)(int input)) {
 	abort();
