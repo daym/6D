@@ -154,7 +154,7 @@ NodeT FFIFn(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	// TODO not necessarily new
 	struct CFFIFn* result = NEW(CFFIFn);
 	result->env = aEnv;
-	result->nativePointer = callback;
+	result->nativePointer = (void*) callback;
 	return refCXXInstance(result);
 }
 NodeT FFIFnNoGC(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
@@ -162,7 +162,7 @@ NodeT FFIFnNoGC(FFIFnCallbackT callback, NodeT aEnv, const char* name) {
 	// TODO not necessarily new
 	struct CFFIFn* result = NEW_NOGC(CFFIFn);
 	result->env = aEnv;
-	result->nativePointer = callback;
+	result->nativePointer = (void*) callback;
 	return refCXXInstance(result);
 }
 NodeT execFFIFn(NodeT node, NodeT argument) {
@@ -221,7 +221,7 @@ int symbolreferenceIndex(NodeT n) {
 }
 bool FFIFnWithCallbackP(NodeT n, FFIFnCallbackT callback) { /* used "internally" only */
 	const struct CFFIFn* box = (const struct CFFIFn*) getCXXInstance(n);
-	return box->nativePointer == callback;
+	return box->nativePointer == (void*) callback;
 }
 static int fGeneration = 0;
 void setCallResult(NodeT call, NodeT result) {
