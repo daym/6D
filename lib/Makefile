@@ -252,7 +252,7 @@ Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS) $(SILLY_G
 Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 Formatters/Math2.o: Formatters/Math2.c Formatters/Math2 Values/Values include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms strict/SpecialForms/Quoter Builtins/Builtins
-Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc include/6D/Evaluators include/6D/Builtins
+Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc include/6D/Evaluators include/6D/Builtins Numbers/Arithmetic
 Scanners/Scanner.o: Scanners/Scanner.c Scanners/Scanner  include/6D/Values include/6D/FFIs
 Values/Values.c.proto Values/Values.o: Values/Values.c Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto

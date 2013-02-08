@@ -70,6 +70,7 @@ void initArithmetic(void) {
 	Slessequal = symbolFromStr("<=");
 	Sequal = symbolFromStr("=");
 	initIntegers();
+	initFloats();
 	int0 = internNativeUInt((NativeUInt) 0U);
 }
 static NodeT builtin(NodeT sym) {

@@ -91,4 +91,40 @@ NodeT nanA(void) {
 NodeT infinityA(void) {
 	return(infinityFloatN);
 }
+#define ARITH(op) \
+	if(!floatP(aP)) \
+		return evalError(strC("<float>"), strC("<junk>"), aP); \
+	if(!floatP(bP)) \
+		return evalError(strC("<float>"), strC("<junk>"), bP); \
+	{ \
+		const struct Float* a = (const struct Float*) getCXXInstance(aP); \
+		const struct Float* b = (const struct Float*) getCXXInstance(bP); \
+		return internNativeFloat(a->value op b->value); \
+	}
+
+NODET floatAdd(NODET aP, NODET bP) {
+	ARITH(+)
+}
+NODET floatSub(NODET aP, NODET bP) {
+	ARITH(-)
+}
+NODET floatMul(NODET aP, NODET bP) {
+	ARITH(*)
+}
+NODET floatDiv(NODET aP, NODET bP) {
+	ARITH(/)
+}
+NODET floatDivrem(NODET aP, NODET bP) {
+	if(!floatP(aP))
+		return evalError(strC("<float>"), strC("<junk>"), aP);
+	if(!floatP(bP))
+		return evalError(strC("<float>"), strC("<junk>"), bP);
+	{
+		const struct Float* a = (const struct Float*) getCXXInstance(aP);
+		const struct Float* b = (const struct Float*) getCXXInstance(bP);
+		NativeInt quot = (NativeInt) (a->value/b->value); /* FIXME bigger integers? */
+		NativeFloat rem = a->value - quot*b->value;
+		return pair(internNativeInt(quot), internNativeFloat(rem));
+	}
+}
 END_NAMESPACE_6D(Values)

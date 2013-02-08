@@ -19,6 +19,7 @@
 #include "6D/FFIs"
 #include "6D/Modulesystem"
 #include "OPLs/MinimalOPL"
+#include "Numbers/Arithmetic"
 #undef GETC
 #undef UNGETC
 #define GETC fgetc(file)
@@ -87,31 +88,58 @@ static int digitInBase(int base, int c) {
 		result = -1;
 	return result;
 }
-static /*INLINE*/ NodeT getNumber(int baseI, const char* name) {
+static NodeT scientificE(NodeT base, NativeInt exp, NodeT value) {
+	int i;
+	assert(exp >= 0);
+	for(i = 0; i < exp; ++i)
+		value = integerMul(value, base);
+	return value;
+}
+static NodeT getNumber(int baseI, const char* name) {
+	char* p;
 	errno = 0;
-	if(strchr(name, '.')) { /* TODO other bases for float */
+	NativeInt value = strtol(name, &p, baseI);
+	if(errno == 0) {
+		NativeInt exp = 0;
+		if(*p == 'e' || *p == 'E') {
+			++p;
+			errno = 0;
+			exp = strtol(p, &p, baseI);
+		}
+		/* TODO fraction for negative exponents? */
+		if(errno || *p)
+			exp = -1;
+		if(exp > 0) {
+			NodeT base = internNativeInt((NativeInt) baseI);
+			return scientificE(base, exp, internNativeInt(value));
+		} else
+			return internNativeInt(value);
+	} else { /* too big */
+		int off;
+		int exp;
+		NodeT base = internNativeInt((NativeInt) baseI);
+		NodeT result = internNativeInt((NativeInt) 0);
+		p = (char*) name;
+		for(;(off = digitInBase(baseI, *p)) != -1;++p) {
+			result = integerMul(result, base);
+			result = integerAddU(result, off);
+		}
+		if(*p == 'e' || *p == 'E') {
+			++p;
+			exp = strtol(p, &p, baseI);
+		} else if(*p)
+			exp = -1;
+		if(exp >= 0)
+			return scientificE(base, exp, result);
+	}
+	{
+		errno = 0;
 		NativeFloat value = strtod(name, NULL);
 		if(errno == 0)
 			return internNativeFloat(value);
-	} else {
-		/* FIXME E handling */
-		char* p;
-		NativeInt value = strtol(name, &p, baseI);
-		if(errno == 0)
-			return internNativeInt(value);
-		else {
-			int off;
-			NodeT base = internNativeInt((NativeInt) baseI);
-			NodeT result = internNativeInt((NativeInt) 0);
-			for(;(off = digitInBase(baseI, *name)) != -1;++name) {
-				result = integerMul(result, base);
-				result = integerAddU(result, off);
-			}
-			if(*name == 0)
-				return result;
-		}
+		else
+			return nil;
 	}
-	return nil;
 }
 static INLINE NodeT getDynEnvEntry(NodeT sym) {
 	const char* name = symbolName(sym);
@@ -345,6 +373,7 @@ static bool Lang_operatorP(struct Lang* self, NodeT node) {
 NodeT initLang(void) {
 	if(Srightbracket == NULL) {
 		NodeT Builtins = initBuiltins();
+		initArithmetic();
 		SminimalOPL = symbolFromStr("minimalOPL");
 		minimalOPLN = dcall(Builtins, SminimalOPL);
 		if(errorP(minimalOPLN)) {
