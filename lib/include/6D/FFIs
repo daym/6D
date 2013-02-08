@@ -32,10 +32,26 @@ typedef unsigned int uint32_t; /* why me... */
 typedef unsigned long long int NativeUInt; /* register type */
 typedef long long int NativeInt; /* register type */
 #define NATIVEINT_FORMAT "%lld"
+#define NATIVEINT_BITCOUNT 64
+#define NATIVEUINT_ONE 1ULL
+#define NATIVEUINT_ZERO 0ULL
 #else
 typedef unsigned long int NativeUInt; /* register type */
 typedef long int NativeInt; /* register type */
 #define NATIVEINT_FORMAT "%ld"
+#if __SIZEOF_LONG__ == 8
+#define NATIVEINT_BITCOUNT 64
+#define NATIVEUINT_ONE 1UL
+#define NATIVEUINT_ZERO 0UL
+#else
+#if __SIZEOF_LONG__ == 4
+#define NATIVEINT_BITCOUNT 32
+#define NATIVEUINT_ONE 1UL
+#define NATIVEUINT_ZERO 0UL
+#else
+#error unsupported integer size
+#endif
+#endif
 #endif
 
 NODET internNativeInt(NativeInt value);

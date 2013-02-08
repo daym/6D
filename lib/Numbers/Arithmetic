@@ -14,6 +14,7 @@ NodeT shl(NodeT amount, NodeT b);
 NodeT shr(NodeT amount, NodeT b);
 NodeT leP(NodeT a, NodeT b);
 NodeT equalP(NodeT a, NodeT b);
+NodeT power(NodeT a, NodeT b);
 void initArithmetic(void);
 END_NAMESPACE_6D(Arithmetic)
 #endif /* ndef __6D_NUMBERS_ARITHMETIC_H */

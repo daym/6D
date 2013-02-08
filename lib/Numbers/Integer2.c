@@ -27,6 +27,8 @@ static NodeT makeInt(NativeUInt value) {
 static struct Integer zerozerozerozero; // self { value = 0, tail = self }
 void initIntegers(void) {
 	int i;
+	i = -1;
+	assert((unsigned int) i == ~0); /* two's complement */
 	zerozerozerozero.tail = refCXXInstance(&zerozerozerozero);
 	zerozerozerozero.value = 0U;
 	for(i = 0; i < 256; ++i) {
@@ -46,114 +48,77 @@ NodeT integerpart(NativeUInt value, NodeT tail) {
 	result->value = value;
 	return refCXXInstance(result);
 }
-/* FIXME determine size */
-#define BITCOUNT 63
-#define HIGHBIT (1ULL<<BITCOUNT)
-#define ALL1 (~0U)
+#define HIGHBIT (NATIVEUINT_ONE<<(NATIVEINT_BITCOUNT - 1))
+#define ALL1 (~NATIVEUINT_ZERO)
 #define SIGNEXTENSION(value) ((value&HIGHBIT)*ALL1)
+#define LOAD_CHUNK1(a) \
+	if(intP(a##V)) { \
+		const struct Int* a = (const struct Int*) getCXXInstance(a##V); \
+		a##value = a->value; \
+		a##tail = nil; \
+	} else if(integerP(a##V)) { \
+		const struct Integer* a = (const struct Integer*) getCXXInstance(a##V); \
+		a##value = a->value; \
+		a##tail = a->tail; \
+		assert(a##tail); \
+	}
+#define LOAD_CHUNK(a) \
+	LOAD_CHUNK1(a) else \
+		return evalError(strC("<integer>"), strC("<junk>"), a##V);
+static INLINE bool negativeP(NativeUInt amount) {
+	return (amount&HIGHBIT) != 0;
+}
+static bool negativeIntegerP(NodeT aV) {
+	while(integerP(aV)) {
+		const struct Integer* a = (const struct Integer*) getCXXInstance(aV);
+		aV = a->tail;
+	}
+	assert(intP(aV));
+	const struct Integer* a = (const struct Integer*) getCXXInstance(aV);
+	return negativeP(a->value);
+}
 /* only suitable for adding "positive" amounts - the negative amounts would have to be sign-extended too much. */
-NodeT integerAddU(NodeT aP, NativeUInt amount) {
-	NativeUInt value;
-	NodeT tail;
+NodeT integerAddU(NodeT aV, NativeUInt amount) {
+	NativeUInt avalue;
+	NodeT atail;
 	if(amount == 0U)
-		return aP;
-	if(intP(aP)) {
-		const struct Int* a = (const struct Int*) getCXXInstance(aP);
-		value = a->value;
-		tail = nil;
-	} else if(integerP(aP)) {
-		const struct Integer* a = (const struct Integer*) getCXXInstance(aP);
-		value = a->value;
-		tail = a->tail;
-		assert(tail);
-	} else
-		return evalError(strC("<integer>"), strC("<junk>"), aP);
-	NativeUInt value2 = value + amount;
-	if(UNLIKELY_6D(!tail && (value2&HIGHBIT) && !(value&HIGHBIT)/* precond && !(amount&HIGHBIT)*/)) { /* flipped sign accidentally (middle) */
+		return aV;
+	assert(!negativeP(amount));
+	LOAD_CHUNK(a)
+	NativeUInt value2 = avalue + amount;
+	/* can we overflow so much it goes around all the way? Not with the precondition above. */
+	if(UNLIKELY_6D(!atail && negativeP(value2) && !negativeP(avalue)/* precond && !negativeP(amount)*/)) { /* we flipped sign accidentally (middle) */
 		/* this can only happen with the MSB of the entire number.  */
-		assert(value2 >= value); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
-		NodeT newMS = intA(SIGNEXTENSION(value)); /* sign extend */
+		assert(value2 >= avalue); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
+		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
 		return integerpart(value2, newMS);
 	}
-	return tail ? integerpart(value2, (value2 < value) ? integerAddU(tail, 1) : tail) : intA(value2);
-}
-NODET integerSubU(NODET aP, NATIVEUINT amount) {
-	NativeUInt value;
-	//NodeT tail;
-	if(amount == 0U)
-		return aP;
-	if(intP(aP)) {
-		const struct Int* a = (const struct Int*) getCXXInstance(aP);
-		value = a->value;
-		//tail = nil;
-	} else if(integerP(aP)) {
-		abort();
-	} else 
-		return evalError(strC("<integer>"), strC("<junk>"), aP);
-	NativeUInt value2 = value - amount;
-	return intA(value2);
-}
-NODET integerSub(NODET aP, NODET bP) {
-	if(intP(bP)) {
-		const struct Int* b = (const struct Int*) getCXXInstance(bP);
-		assert(b->value >= 0);
-		return integerSubU(aP, b->value);
-	} else {
-		abort();
-		return nil;
-	}
+	return atail ? integerpart(value2, (value2 < avalue /*overflow*/) ? integerAddU(atail, 1) : atail) : intA(value2);
 }
 /* only suitable for adding "negative" amounts */
-NodeT integerAddN(NodeT aP, NativeUInt amount) {
-	NativeUInt value;
-	NodeT tail;
-	if(intP(aP)) {
-		const struct Int* a = (const struct Int*) getCXXInstance(aP);
-		value = a->value;
-		tail = nil;
-	} else if(integerP(aP)) {
-		const struct Integer* a = (const struct Integer*) getCXXInstance(aP);
-		value = a->value;
-		tail = a->tail;
-		assert(tail);
-	} else 
-		return evalError(strC("<integer>"), strC("<junk>"), aP);
-	NativeUInt value2 = value + amount;
-	if(UNLIKELY_6D(!tail && !(value2&HIGHBIT) && (value&HIGHBIT) /*&& precond amount&HIGHBIT */)) { /* flipped sign accidentally */
+NodeT integerAddN(NodeT aV, NativeUInt amount) {
+	NativeUInt avalue;
+	NodeT atail;
+	if(amount == 0U)
+		return aV;
+	assert(negativeP(amount));
+	LOAD_CHUNK(a)
+	NativeUInt value2 = avalue + amount;
+	if(UNLIKELY_6D(!atail && !negativeP(value2) && negativeP(avalue) /*&& precond amount&HIGHBIT */)) { /* flipped sign accidentally */
 		/* this can only happen with the MSB of the entire number */
-		assert(value2 >= value); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
-		NodeT newMS = intA(SIGNEXTENSION(value)); /* sign extend */
+		assert(value2 <= avalue); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
+		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
 		return integerpart(value2, newMS);
 	}
-	return tail ? integerpart(value2, integerAddN(integerAddN(tail, (value2 < value) ? 1 : 0), SIGNEXTENSION(value))) : intA(value2);
+	return atail ? integerpart(value2, integerAddN(integerAddN(atail, (value2 < avalue) ? 1 : 0), SIGNEXTENSION(avalue))) : intA(value2);
 }
-NodeT integerAdd(NodeT aP, NodeT bP) {
+NodeT integerAdd(NodeT aV, NodeT bV) {
 	NativeUInt avalue;
 	NodeT atail;
 	NativeUInt bvalue;
 	NodeT btail;
-	if(intP(aP)) {
-		const struct Int* a = (const struct Int*) getCXXInstance(aP);
-		avalue = a->value;
-		atail = nil;
-	} else if(integerP(aP)) {
-		const struct Integer* a = (const struct Integer*) getCXXInstance(aP);
-		avalue = a->value;
-		atail = a->tail;
-		assert(atail);
-	} else
-		return evalError(strC("<integer>"), strC("<junk>"), aP);
-	if(intP(bP)) {
-		const struct Int* b = (const struct Int*) getCXXInstance(bP);
-		bvalue = b->value;
-		btail = nil;
-	} else if(integerP(bP)) {
-		const struct Integer* b = (const struct Integer*) getCXXInstance(bP);
-		bvalue = b->value;
-		btail = b->tail;
-		assert(btail);
-	} else
-		return evalError(strC("<integer>"), strC("<junk>"), bP);
+	LOAD_CHUNK(a)
+	LOAD_CHUNK(b)
 	if(atail && !btail)
 		btail = refCXXInstance(&zerozerozerozero);
 	if(btail && !atail)
@@ -161,82 +126,106 @@ NodeT integerAdd(NodeT aP, NodeT bP) {
 	// here, either both tails are nil or both tails are not nil.
 	NativeUInt value2 = avalue + bvalue;
 	if(UNLIKELY_6D(!atail && 
-	   (((value2&HIGHBIT) && !(avalue&HIGHBIT) && !(bvalue&HIGHBIT)) || 
-	   ((!(value2&HIGHBIT) && (avalue&HIGHBIT) && (bvalue&HIGHBIT)))))) { /* flipped sign accidentally */
+	   ((negativeP(value2) && !negativeP(avalue) && !negativeP(bvalue)) || 
+	   ((!negativeP(value2) && negativeP(avalue) && negativeP(bvalue)))))) { /* flipped sign accidentally */
 		assert(value2 >= avalue); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
 		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
 		return integerpart(value2, newMS);
 	}
 	return atail ? integerpart(value2, integerAddU(integerAdd(atail, btail), (value2 < avalue) ? 1 : 0)) : intA(value2);
 }
+NODET integerSubU(NODET aV, NativeUInt amount) {
+	NativeInt amv;
+	if(amount == 0U)
+		return aV;
+	assert(!negativeP(amount));
+	amv = -((NativeInt) amount);
+	amount = (NativeUInt) amv;
+	assert(negativeP(amount));
+	return integerAddN(aV, amount);
+}
+NODET integerSub(NODET aP, NODET bP) {
+	NativeInt b;
+	if(toNativeInt(bP, &b)) {
+		assert(b >= 0);
+		return integerSubU(aP, b);
+	} else {
+		abort();
+		return nil;
+	}
+}
 NodeT integerSucc(NodeT aP) {
 	return integerAddU(aP, 1);
 }
-NodeT integerMul(NodeT aP, NodeT bP) {
+NodeT integerMulU(NodeT aP, NativeInt b) {
+	return integerMul(aP, intA(b));
+}
+/* TODO do more error handling! */
+NodeT integerMul(NodeT aV, NodeT bV) {
 	/* TODO prefer the shorter one */
 	NodeT result = intA(0);
 	NativeUInt bvalue;
 	NodeT btail;
-	if(intP(bP)) {
-		const struct Int* b = (const struct Int*) getCXXInstance(bP);
-		bvalue = b->value;
-		btail = nil;
-	} else if(integerP(bP)) {
-		const struct Integer* b = (const struct Integer*) getCXXInstance(bP);
-		bvalue = b->value;
-		btail = b->tail;
-		assert(btail);
-	} else
-		return evalError(strC("<integer>"), strC("<junk>"), bP);
+	LOAD_CHUNK(b)
 	{
 		NativeUInt mask;
 		for(mask = HIGHBIT; mask; mask >>= 1) {
 			result = integerShl(result, 1);
 			if(bvalue&mask)
-				result = integerAdd(result, aP);
+				result = integerAdd(result, aV);
 		}
 	}
-	return integerAdd(result, integerShl(integerMul(aP, btail), BITCOUNT + 1));
+	return integerAdd(result, integerShl(integerMul(aV, btail), NATIVEINT_BITCOUNT));
 }
-NodeT integerShl(NodeT aP, unsigned amount) {
+NodeT integerShl(NodeT aV, unsigned amount) {
+	if(amount == 0)
+		return aV;
+	int remainderCount = NATIVEINT_BITCOUNT - amount;
+	NativeUInt mask = (~NATIVEUINT_ZERO << remainderCount); /* TODO &maskall */
+	NativeUInt c = 0;
+	NativeUInt ct;
+	NativeUInt avalue;
+	NodeT atail;
+	while(true) {
+		LOAD_CHUNK(a)
+		ct = (avalue&mask)>>remainderCount;
+		avalue = (avalue << amount) | c;
+		c = ct;
+		aV = atail;
+	}
 	abort();
-	return aP;
+	return aV;
 }
-NodeT integerShr(NodeT aP, unsigned amount) {
+NodeT integerShr(NodeT aV, unsigned amount) {
+	if(amount == 0)
+		return aV;
+	if(amount >= NATIVEINT_BITCOUNT)
+		return intA(0);
+	/*int remainderCount = NATIVEINT_BITCOUNT - amount;*/
+	/*NativeUInt mask = (~NATIVEUINT_ZERO >> remainderCount);*/
+	NativeUInt avalue;
+	NodeT atail;
+	while(true) {
+		LOAD_CHUNK(a)
+		avalue = (avalue >> amount) | 0/*FIXME ((atailvalue or 0)&m)<<remainderCount  */;
+		aV = atail;
+	}
 	abort();
-	return aP;
+	return aV;
 }
-bool integerEqualsP(NodeT aP, NodeT bP) {
+bool integerEqualsP(NodeT aV, NodeT bV) {
 	NativeUInt avalue;
 	NodeT atail;
 	NativeUInt bvalue;
 	NodeT btail;
-	if(intP(aP)) {
-		const struct Int* a = (const struct Int*) getCXXInstance(aP);
-		avalue = a->value;
-		atail = nil;
-	} else if(integerP(aP)) {
-		const struct Integer* a = (const struct Integer*) getCXXInstance(aP);
-		avalue = a->value;
-		atail = a->tail;
-		assert(atail);
-	} else
-		return false; // evalError(strC("<integer>"), strC("<junk>"), aP);
-	if(intP(bP)) {
-		const struct Int* b = (const struct Int*) getCXXInstance(bP);
-		bvalue = b->value;
-		btail = nil;
-	} else if(integerP(bP)) {
-		const struct Integer* b = (const struct Integer*) getCXXInstance(bP);
-		bvalue = b->value;
-		btail = b->tail;
-		assert(btail);
-	} else
-		return false; // evalError(strC("<integer>"), strC("<junk>"), bP);
-	if(atail && !btail)
+	if(aV == bV)
+		return true;
+	if(aV && !bV)
 		return false;
-	if(btail && !atail)
+	if(bV && !aV)
 		return false;
+	LOAD_CHUNK1(a) else return false;
+	LOAD_CHUNK1(b) else return false;
 	if(avalue != bvalue)
 		return false;
 	return integerEqualsP(atail, btail);
@@ -248,37 +237,23 @@ bool integerEqualsIntP(NodeT aP, NativeInt value) {
 	else
 		return false;
 }
-NativeInt integerCompare(NODET aP, NODET bP) {
-	if(intP(aP) && intP(bP)) {
-		const struct Int* a = (const struct Int*) getCXXInstance(aP);
-		const struct Int* b = (const struct Int*) getCXXInstance(bP);
-		/* FIXME make sure not to drop outside of the range */
-		return a->value - b->value;
-	} else if(integerP(aP) && integerP(bP)) {
-		const struct Integer* a = (const struct Integer*) getCXXInstance(aP);
-		const struct Integer* b = (const struct Integer*) getCXXInstance(bP);
-		if(a->value != a->value) {
-			/* FIXME make sure not to drop outside of the range */
-			return a->value - b->value;
-		}
-		return integerCompare(a->tail, b->tail);
-	} else {
-		/* FIXME signal that the integer is bigger */
-		return 99;
-	}
+NativeInt integerCompare(NODET aV, NODET bV) {
+	NodeT r = integerSub(aV, bV);
+	return (r == intA(0)) ? 0 :
+	       negativeIntegerP(r) ? (-1) : 
+	       1;
 }
 NativeInt integerCompareU(NODET aP, NativeInt b) {
-	if(intP(aP)) {
-		const struct Int* a = (const struct Int*) getCXXInstance(aP);
+	NativeInt a;
+	if(toNativeInt(aP, &a)) {
 		/* FIXME make sure not to drop outside of the range */
-		return a->value - b;
+		return a - b;
 	} else
 		abort();
 }
 NodeT integerDivremU(NODET aP, NativeInt b) {
-	if(intP(aP)) {
-		const struct Int* aI = (const struct Int*) getCXXInstance(aP);
-		NativeInt a = aI->value;
+	NativeInt a;
+	if(toNativeInt(aP, &a)) {
 		if(b == 0)
 			return evalError(strC("<nonzero-divisor>"), strC("0"), aP);
 		/* force divisor to be positive (will not have effect on result says the C standard): */
@@ -356,5 +331,18 @@ NodeT integerDiv(NODET aP, NODET bP) {
 	if(errorP(result))
 		return result;
 	return pairFst(result);
+}
+NODET integerPow(NODET aP, NODET bP) {
+	NativeInt b;
+	if(toNativeInt(bP, &b)) {
+		assert(b >= 0);
+		return integerPowU(aP, b);
+	} else
+		abort();
+}
+NODET integerPowU(NODET aP, NATIVEUINT b) {
+	if(b == 0)
+		return intA(1);
+	return integerPowU(integerMulU(aP, b), b);
 }
 END_NAMESPACE_6D(FFIs)

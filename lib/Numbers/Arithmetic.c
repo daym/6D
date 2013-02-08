@@ -21,6 +21,7 @@ static NodeT Sshl;
 static NodeT Sshr;
 static NodeT Slessequal;
 static NodeT Sequal;
+static NodeT Sstarstar;
 /* TODO promotion */
 NodeT add(NodeT a, NodeT b) {
 	return integerAdd(a, b);
@@ -36,6 +37,9 @@ NodeT divide(NodeT a, NodeT b) {
 }
 NodeT divrem(NodeT a, NodeT b) {
 	return integerDivrem(a, b);
+}
+NodeT power(NodeT a, NodeT b) {
+	return integerPow(a, b);
 }
 /* swapped arguments, sorry */
 NodeT shl(NodeT amount, NodeT b) {
@@ -69,6 +73,7 @@ void initArithmetic(void) {
 	Sshr = symbolFromStr("shr");
 	Slessequal = symbolFromStr("<=");
 	Sequal = symbolFromStr("=");
+	Sstarstar = symbolFromStr("**");
 	initIntegers();
 	initFloats();
 	int0 = internNativeUInt((NativeUInt) 0U);
@@ -82,10 +87,11 @@ NODET withArithmetic(NODET body) {
 	       closeOver(Sstar, builtin(symbolFromStr("multiply")), 
 	       closeOver(Sslash, builtin(symbolFromStr("divide")), 
 	       closeOver(Sdivrem, builtin(symbolFromStr("divrem")),
+	       closeOver(Sstarstar, builtin(symbolFromStr("power")),
 	       closeOver(Sshl, builtin(symbolFromStr("shl")),
 	       closeOver(Sshr, builtin(symbolFromStr("shr")), 
 	       closeOver(Slessequal, builtin(symbolFromStr("le?")),
 	       closeOver(Sequal, builtin(symbolFromStr("equal?")),
-	       body)))))))));
+	       body))))))))));
 }
 END_NAMESPACE_6D(Arithmetic)

@@ -112,7 +112,7 @@ static NodeT getNumber(int baseI, const char* name) {
 		if(exp > 0) {
 			NodeT base = internNativeInt((NativeInt) baseI);
 			return scientificE(base, exp, internNativeInt(value));
-		} else
+		} else if(exp == 0)
 			return internNativeInt(value);
 	} else { /* too big */
 		int off;
