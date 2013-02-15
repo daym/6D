@@ -171,6 +171,8 @@ NodeT integerMul(NodeT aV, NodeT bV) {
 		NativeUInt mask;
 		for(mask = HIGHBIT; mask; mask >>= 1) {
 			result = integerShl(result, 1);
+			if(errorP(result))
+				return result;
 			if(bvalue&mask)
 				result = integerAdd(result, aV);
 		}
