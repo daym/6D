@@ -373,7 +373,7 @@ static bool Lang_operatorP(struct Lang* self, NodeT node) {
 NodeT initLang(void) {
 	if(Srightbracket == NULL) {
 		NodeT Builtins = initBuiltins();
-		initArithmetic();
+		initArithmetics();
 		SminimalOPL = symbolFromStr("minimalOPL");
 		minimalOPLN = dcall(Builtins, SminimalOPL);
 		if(errorP(minimalOPLN)) {
