@@ -1,8 +1,0 @@
-#ifndef __6D_ARITHMETIC_H
-#define __6D_ARITHMETIC_H
-#include "6D/Operations"
-BEGIN_NAMESPACE_6D(Arithmetic)
-NODET withArithmetic(NODET body);
-void initArithmetic(void);
-END_NAMESPACE_6D(Arithmetic)
-#endif /* ndef __6D_ARITHMETIC_H */

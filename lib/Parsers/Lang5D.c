@@ -19,7 +19,7 @@
 #include "6D/FFIs"
 #include "6D/Modulesystem"
 #include "OPLs/MinimalOPL"
-#include "Numbers/Arithmetic"
+#include "Arithmetics/Arithmetics"
 #undef GETC
 #undef UNGETC
 #define GETC fgetc(file)

@@ -181,7 +181,8 @@ NodeT integerShl(NodeT aV, unsigned amount) {
 	if(amount == 0)
 		return aV;
 	int remainderCount = NATIVEINT_BITCOUNT - amount;
-	NativeUInt mask = (~NATIVEUINT_ZERO << remainderCount); /* TODO &maskall */
+	/* FIXME grow */
+	NativeUInt mask = (~NATIVEUINT_ZERO) << remainderCount;
 	NativeUInt c = 0;
 	NativeUInt ct;
 	NativeUInt avalue;
@@ -201,6 +202,7 @@ NodeT integerShr(NodeT aV, unsigned amount) {
 		return aV;
 	if(amount >= NATIVEINT_BITCOUNT)
 		return intA(0);
+	/* FIXME shrink */
 	/*int remainderCount = NATIVEINT_BITCOUNT - amount;*/
 	/*NativeUInt mask = (~NATIVEUINT_ZERO >> remainderCount);*/
 	NativeUInt avalue;

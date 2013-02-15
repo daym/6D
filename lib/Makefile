@@ -112,7 +112,7 @@ $(PACKAGE)-$(VERSION)/include/6D/wstrings \
 $(PACKAGE)-$(VERSION)/include/6D/Values \
 $(PACKAGE)-$(VERSION)/include/6D/Builtins \
 $(PACKAGE)-$(VERSION)/include/6D/Modulesystem \
-$(PACKAGE)-$(VERSION)/include/6D/Arithmetic \
+$(PACKAGE)-$(VERSION)/include/6D/Arithmetics \
 $(PACKAGE)-$(VERSION)/include/6D/Lang5D \
 $(PACKAGE)-$(VERSION)/Allocators/Allocators.c \
 $(PACKAGE)-$(VERSION)/Allocators/Allocators \
@@ -128,8 +128,8 @@ $(PACKAGE)-$(VERSION)/Numbers/Integer2 \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio \
 $(PACKAGE)-$(VERSION)/Numbers/Ratio.c \
 $(PACKAGE)-$(VERSION)/Numbers/Real \
-$(PACKAGE)-$(VERSION)/Numbers/Arithmetic.c \
-$(PACKAGE)-$(VERSION)/Numbers/Arithmetic \
+$(PACKAGE)-$(VERSION)/Arithmetics/Arithmetics.c \
+$(PACKAGE)-$(VERSION)/Arithmetics/Arithmetics \
 $(PACKAGE)-$(VERSION)/Strings/Strings \
 $(PACKAGE)-$(VERSION)/Strings/Strings.c \
 $(PACKAGE)-$(VERSION)/Formatters/Math2.c \
@@ -210,7 +210,7 @@ EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o FFIs/Converters
 NUMBERS = Numbers/Integer2.o \
 Numbers/Real.o \
 Numbers/Ratio.o \
-Numbers/Arithmetic.o
+Arithmetics/Arithmetics.o
 STRINGS = Strings/Strings.o
 OBJECTS = Formatters/Math2.o \
 Parsers/Lang5D.o \
@@ -252,7 +252,7 @@ Tests/02_Evaluator/testEvaluator: Tests/02_Evaluator/main.o $(OBJECTS) $(SILLY_G
 Tests/03_Numbers/testNumbers: Tests/03_Numbers/main.o $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 Formatters/Math2.o: Formatters/Math2.c Formatters/Math2 Values/Values include/6D/Values include/6D/Operations include/6D/Evaluators include/6D/FFIs strict/SpecialForms/SpecialForms lazy/SpecialForms/SpecialForms strict/SpecialForms/Quoter Builtins/Builtins
-Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc include/6D/Evaluators include/6D/Builtins Numbers/Arithmetic
+Parsers/Lang5D.o: Parsers/Lang5D.c Scanners/Scanner Parsers/ShuntingYardParser Combinators/Combinators include/6D/Values include/6D/FFIs include/6D/Allocators Numbers/Integer2 include/6D/Operations Parsers/ShuntingYardParser.inc include/6D/Evaluators include/6D/Builtins Arithmetics/Arithmetics
 Scanners/Scanner.o: Scanners/Scanner.c Scanners/Scanner  include/6D/Values include/6D/FFIs
 Values/Values.c.proto Values/Values.o: Values/Values.c Values/Values Values/Symbol Values/Keyword Allocators/Allocators include/6D/Allocators include/6D/Values Numbers/Integer2 Numbers/Real Numbers/Ratio
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
@@ -281,16 +281,16 @@ Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/S
 FFIs/Converters.o: FFIs/Converters.c FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
 Values/Hashtable.o: Values/Hashtable.c Values/Hashtable Values/Values include/6D/Values include/6D/Allocators
 Strings/Strings.o: Strings/Strings.c Strings/Strings include/6D/Values include/6D/Allocators Numbers/Integer2
-Builtins/wrapper.c: Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o Makefile generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto
-	$(OBJDUMP) -t Values/Values.o Numbers/Arithmetic.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o |grep 'g.....F' | awk '{ print $$6 }' | ./generateWrapper Numbers/Arithmetic.c.proto Values/Values.c.proto OPLs/MinimalOPL.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
-Builtins/wrapper.o: Builtins/wrapper.c include/6D/Values include/6D/Allocators Numbers/Integer2 Numbers/Arithmetic 
+Builtins/wrapper.c: Values/Values.o Arithmetics/Arithmetics.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o Makefile generateWrapper Arithmetics/Arithmetics.c.proto Values/Values.c.proto
+	$(OBJDUMP) -t Values/Values.o Arithmetics/Arithmetics.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o |grep 'g.....F' | awk '{ print $$6 }' | ./generateWrapper Arithmetics/Arithmetics.c.proto Values/Values.c.proto OPLs/MinimalOPL.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
+Builtins/wrapper.o: Builtins/wrapper.c include/6D/Values include/6D/Allocators Numbers/Integer2 Arithmetics/Arithmetics 
 OPLs/MinimalOPL.c.proto OPLs/MinimalOPL.o: OPLs/MinimalOPL.c include/6D/Values include/6D/Allocators Numbers/Integer2 include/6D/Operations include/6D/Evaluators include/6D/FFIs
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
-Numbers/Arithmetic.c.proto Numbers/Arithmetic.o: Numbers/Arithmetic.c Numbers/Arithmetic include/6D/Allocators Numbers/Integer2 include/6D/Values
+Arithmetics/Arithmetics.c.proto Arithmetics/Arithmetics.o: Arithmetics/Arithmetics.c Arithmetics/Arithmetics include/6D/Allocators Numbers/Integer2 include/6D/Values
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 Allocators/SillyGC.o: Allocators/SillyGC.cc Allocators/SillyGC include/6D/Values
 	$(CXX) -o $@ -c $< $(CFLAGS)
-Numbers/Arithmetic.o: Numbers/Arithmetic.c  Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values include/6D/Evaluators
+Arithmetics/Arithmetics.o: Arithmetics/Arithmetics.c  Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values include/6D/Evaluators
 test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/02_Evaluator/testEvaluator
 	Tests/01_ShuntingYard/run
 	Tests/03_Numbers/run
@@ -298,7 +298,7 @@ test: Tests/01_ShuntingYard/testShuntingYard Tests/03_Numbers/testNumbers Tests/
 
 all:
 	$(MAKE) -C OPLs all
-	$(MAKE) -C Arithmetic all
+	$(MAKE) -C Arithmetics all
 	$(MAKE) -C Trigonometry all
 	$(MAKE) -C Logic all
 	$(MAKE) -C Composition all
@@ -325,7 +325,7 @@ all:
 clean:
 	rm -f $(OBJECTS) $(SILLY_GC_OBJECTS)
 	$(MAKE) -C OPLs clean
-	$(MAKE) -C Arithmetic clean
+	$(MAKE) -C Arithmetics clean
 	$(MAKE) -C Trigonometry clean
 	$(MAKE) -C Logic clean
 	$(MAKE) -C Composition clean
@@ -353,7 +353,7 @@ distclean:
 	rm -f $(OBJECTS)
 	rm -f $(LIB) $(STATIC_LIB)
 	$(MAKE) -C OPLs distclean
-	$(MAKE) -C Arithmetic distclean
+	$(MAKE) -C Arithmetics distclean
 	$(MAKE) -C Trigonometry distclean
 	$(MAKE) -C Logic distclean
 	$(MAKE) -C Composition distclean
@@ -379,7 +379,7 @@ distclean:
 
 install:
 	$(MAKE) -C OPLs install
-	$(MAKE) -C Arithmetic install
+	$(MAKE) -C Arithmetics install
 	$(MAKE) -C Trigonometry install
 	$(MAKE) -C Logic install
 	$(MAKE) -C Composition install

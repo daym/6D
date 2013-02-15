@@ -1,0 +1,18 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+import [flip] from Composition in 
+import [(&&) (not)] from Logic in 
+let (+) := Builtins.add in 
+let (-) := Builtins.subtract in 
+let (*) := Builtins.multiply in 
+let (/) := Builtins.divide in 
+let divrem := Builtins.divrem in 
+let shl := Builtins.shl in 
+let shr := Builtins.shr in 
+let (<=) := Builtins.le? in 
+let (=) := Builtins.(=) in 
+let (>=) := flip (<=) in 
+let (<) := \a \b a <= b && not (a >= b) in 
+let (>) := flip (<) in 
+(#exports[(+) (-) (*) (/) divrem shl shr (<=) (=) (>=) (<) (>)])

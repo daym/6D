@@ -6,6 +6,6 @@ LDFLAGS += lib/lib6dbuiltins1.a -lgc -lm $(shell pkg-config --libs glib-2.0 gthr
 all: TUI/T5D
 TUI/T5D: TUI/main.o lib/lib6dbuiltins1.a
 	$(CC) -o $@ $^ $(LDFLAGS)
-TUI/main.o: TUI/main.c lib/include/6D/Arithmetic lib/include/6D/Values lib/include/6D/Operations lib/include/6D/Lang5D lib/include/6D/Allocators lib/include/6D/Evaluators lib/include/6D/Builtins
+TUI/main.o: TUI/main.c lib/include/6D/Arithmetics lib/include/6D/Values lib/include/6D/Operations lib/include/6D/Lang5D lib/include/6D/Allocators lib/include/6D/Evaluators lib/include/6D/Builtins
 	$(CC) -c -o $@ $< $(CFLAGS)
 #lib/GCs/SillyGC.o: lib/GCs/SillyGC.cc lib/GCs/SillyGC

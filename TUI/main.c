@@ -5,7 +5,7 @@
 #include "6D/Evaluators"
 #include "6D/Operations"
 #include "6D/Lang5D"
-#include "6D/Arithmetic"
+#include "6D/Arithmetics"
 #include "6D/Builtins"
 USE_NAMESPACE_6D(Values)
 USE_NAMESPACE_6D(Evaluators)
@@ -13,7 +13,7 @@ USE_NAMESPACE_6D(Numbers)
 USE_NAMESPACE_6D(Allocators)
 USE_NAMESPACE_6D(Parsers)
 USE_NAMESPACE_6D(Formatters::TExpression)
-USE_NAMESPACE_6D(Arithmetic)
+USE_NAMESPACE_6D(Arithmetics)
 USE_NAMESPACE_6D(Strings)
 void printPrompt(void) {
 	fprintf(stderr, "eval $ ");
@@ -64,7 +64,7 @@ int main() {
 	//char buffer[2049];
 	rl_initialize();
 	initAllocators();
-	initArithmetic();
+	initArithmetics();
 	NodeT defaultDynEnv = initLang();
 	initEvaluator();
 	builtins = initBuiltins();
@@ -84,7 +84,7 @@ int main() {
 		FILE* f = fmemopen((char*) s, strlen(s), "r");
 		input = Lang_parse1(f, "<stdin>");
 		fclose(f);
-		input = closeOver(symbolFromStr("Builtins"), builtins, withArithmetic(Lang_withDefaultEnv(input)));
+		input = closeOver(symbolFromStr("Builtins"), builtins, withArithmetics(Lang_withDefaultEnv(input)));
 		//print(stderr, prog);
 		//fprintf(stderr, "\n");
 		//fflush(stderr);
