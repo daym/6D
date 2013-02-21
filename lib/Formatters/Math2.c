@@ -148,6 +148,13 @@ static NodeT Formatter_printSymbol(struct Formatter* self, NodeT node) {
 		return evalError(strC("<symbol>"), strC("<junk>"), node);
 	return Formatter_printStr2(self, strlen(s), s);
 }
+static NodeT Formatter_printSymbolAndParens(struct Formatter* self, NodeT node) {
+	NodeT status = nil;
+	status = status ? status : Formatter_printChar(self, '(');
+	status = status ? status : Formatter_printSymbol(self, node);
+	status = status ? status : Formatter_printChar(self, ')');
+	return status;
+}
 static NodeT Formatter_printSymbolreference(struct Formatter* self, int index) {
 	NodeT sym = getSymbolByIndex(index, self->names);
 	return Formatter_printSymbol(self, sym);
@@ -232,9 +239,7 @@ static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 		if(argcount == 1)
 			return Formatter_printPrefixOperation(self, node);
 	}
-	{
-		return Formatter_printBinaryOperation(self, operation(Sspace, callable, argument));
-	}
+	return Formatter_printBinaryOperation(self, operation(Sspace, callable, argument));
 }
 static NodeT Formatter_printFn(struct Formatter* self, NodeT node) {
 	NodeT parameter = fnParameter(node);
