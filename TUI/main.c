@@ -66,7 +66,7 @@ int main() {
 	initAllocators();
 	initArithmetics();
 	NodeT defaultDynEnv = initLang();
-	initEvaluator();
+	initEvaluators();
 	builtins = initBuiltins();
 	Sexports = symbolFromStr("exports");
 	rl_readline_name = "6D";

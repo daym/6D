@@ -8,3 +8,7 @@ TODO: strict-eval the 'from' part of an import.
 
 make symbol name a Str which is not necessarily zero-terminated, ALSO for the internal parts.
 use GMP lib (http://gmplib.org/).
+
+= Pretty Printer =
+
+reinterpret app with '(or quoter) and a symbol as just dot (not sure whether it's fine to hardcode that; other languages do just fine, though).
