@@ -81,7 +81,9 @@ static INLINE NodeT Formatter_printChar(struct Formatter* self, char c) {
 	if(c == '\n')
 		self->hposition = 0;
 	else {
-		++self->hposition;
+		if(((unsigned char) c) >= 0xC0 || c < 0x80) { /* normal UTF-8 start. This is not exactly 100% correct but good enough for now for finding whether it's time to split or not. */
+			++self->hposition;
+		}
 		if(self->hposition > self->maxWidthAccu)
 			self->maxWidthAccu = self->hposition;
 	}
