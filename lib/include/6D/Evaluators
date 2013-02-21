@@ -3,7 +3,7 @@
 #include "6D/Values"
 
 BEGIN_NAMESPACE_6D(Evaluators)
-void initEvaluator(void);
+void initEvaluators(void);
 NODET annotate(NODET environment, NODET node);
 NODET eval(NODET node);
 NODET execute(NODET term);

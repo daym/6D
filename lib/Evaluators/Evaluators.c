@@ -20,7 +20,7 @@ USE_NAMESPACE_6D(Logic)
 USE_NAMESPACE_6D(SpecialForms)
 
 static NodeT Squote;
-void initEvaluator(void) {
+void initEvaluators(void) {
 	Squote = symbolFromStr("'");
 	initCombinators();
 	initLogic();

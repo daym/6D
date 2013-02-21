@@ -112,6 +112,7 @@ NodeT integerAddN(NodeT aV, NativeUInt amount) {
 	}
 	return atail ? integerpart(value2, integerAddN(integerAddN(atail, (value2 < avalue) ? 1 : 0), SIGNEXTENSION(avalue))) : intA(value2);
 }
+/* overflow = neg?(A) == neg?(B) && neg?(A) != neg?(R) */
 NodeT integerAdd(NodeT aV, NodeT bV) {
 	NativeUInt avalue;
 	NodeT atail;
