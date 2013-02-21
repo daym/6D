@@ -1,7 +1,7 @@
 #ifndef __OPLS_MINIMAL_OPL_H
 #define __OPLS_MINIMAL_OPL_H
 #include "6D/Values"
-#define NO_OPERATOR (-2)
+#define NO_OPERATOR (-42)
 BEGIN_NAMESPACE_6D(OPLs)
 void initMinimalOPL(void);
 NodeT minimalOPL(NodeT sym);
