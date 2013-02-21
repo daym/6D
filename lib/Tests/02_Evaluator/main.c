@@ -12,7 +12,7 @@ USE_NAMESPACE_6D(Formatters::TExpression)
 int main(int argc, char* argv[]) {
 	initAllocators();
 	initIntegers();
-	initEvaluator();
+	initEvaluators();
 	NodeT defaultDynEnv = initLang();
 	NodeT prog = argc > 1 ? Lang_parse1(fopen(argv[1], "r"), argv[1]) : Lang_parse1(stdin, "<stdin>");
 	// TODO Memoize
