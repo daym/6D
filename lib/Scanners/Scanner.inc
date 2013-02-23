@@ -40,7 +40,7 @@ END_STRUCT_6D(Scanner)
 			} else if(self->bBeginningOfLine) { /* actual text for the first time on the line */
 				UNGETC(c); /* make sure the user will see the actual text */
 				self->bBeginningOfLine = false;
-				int status = integerCompareU(consHead(self->indents), self->indent);
+				int status = integerCompareD(consHead(self->indents), self->indent);
 				if(status < 0) {
 					self->indents = cons(internNativeInt(self->indent), self->indents);
 					self->value = env_Sindent(self->env);
@@ -50,7 +50,7 @@ END_STRUCT_6D(Scanner)
 					self->value = env_Sdedent(self->env);
 					self->indents = consTail(self->indents); /* decrease indentation by ONE level */
 					assert(!nilP(self->indents)); /* 0 will never be removed */
-					diff = integerCompareU(consHead(self->indents), self->indent);
+					diff = integerCompareD(consHead(self->indents), self->indent);
 					if(diff < 0) { /* self indentation does not exist - it would have been in-between */
 						self->value = env_error(self->env, "<known-indentation>", "<unknown-indentation>");
 						return true;

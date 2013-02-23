@@ -1,4 +1,4 @@
-/* this entire file can be kept maintainable by ensuring everything that is composite goes through either printBinaryOperation or printPrefixOperation. */
+/* this entire file can be kept maintainable by ensuring everything that is composite goes through either printBinaryOperation or printPrefixOperation or printPostfixOperation. */
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -143,17 +143,14 @@ static NodeT getSymbolByIndex(int index, NodeT names) {
 		return getSymbolByIndex(index - 1, consTail(names));
 }
 static NodeT Formatter_printSymbol(struct Formatter* self, NodeT node) {
+	NodeT status = nil;
 	const char* s;
 	/* TODO support escaping? */
 	s = symbolName(node);
 	if(!s)
 		return evalError(strC("<symbol>"), strC("<junk>"), node);
-	return Formatter_printStr2(self, strlen(s), s);
-}
-static NodeT Formatter_printSymbolAndParens(struct Formatter* self, NodeT node) {
-	NodeT status = nil;
 	status = status ? status : Formatter_printChar(self, '(');
-	status = status ? status : Formatter_printSymbol(self, node);
+	status = status ? status : Formatter_printStr2(self, strlen(s), s);
 	status = status ? status : Formatter_printChar(self, ')');
 	return status;
 }
@@ -172,14 +169,15 @@ static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) 
 	self->operatorPrecedenceLimit = precedence;
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, '(');
-	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) < 0;
+	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) < 0; /* right associative */
 	status = status ? status : Formatter_print(self, a);
+	self->bParenEqualLevels = false;
 	if(precedence <= self->plusLevel)
 		status = status ? status : Formatter_printChar(self, ' ');
 	status = status ? status : Formatter_printSymbol(self, o);
 	if(precedence <= self->plusLevel)
 		status = status ? status : Formatter_printChar(self, ' ');
-	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) > 0;
+	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) > 0; /* left associative */
 	status = status ? status : Formatter_print(self, b);
 	self->bParenEqualLevels = false;
 	if(bParen)
@@ -216,6 +214,36 @@ static NodeT Formatter_printPrefixOperation(struct Formatter* self, NodeT node) 
 	self->operatorPrecedenceLimit = oldLimit;
 	return status;
 }
+static NodeT Formatter_printPostfixOperation(struct Formatter* self, NodeT node) {
+	/* TODO test */
+	NodeT status = nil;
+	NodeT o = callCallable(node);
+	NodeT b = callArgument(node);
+	NodeT o2 = o;
+	if(callP(o2)) { /* (\x) x */
+		o2 = callCallable(o2);
+	}
+	int oldLimit = self->operatorPrecedenceLimit;
+	int precedence = Formatter_levelOfOperator(self, o2);
+	bool bParen = (precedence < oldLimit) || (precedence == oldLimit && self->bParenEqualLevels);
+	self->operatorPrecedenceLimit = precedence;
+	self->bParenEqualLevels = false;
+	if(bParen)
+		status = status ? status : Formatter_printChar(self, '(');
+	const char* symname = symbolName(o2);
+	if(!symname)
+		symname = "?";
+	if((precedence <= self->plusLevel || isalpha(symname[0])) && o != Sbackslash)
+		status = status ? status : Formatter_printChar(self, ' ');
+	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o2) > 0;
+	status = status ? status : Formatter_print(self, b);
+	self->bParenEqualLevels = false;
+	status = status ? status : Formatter_print/*Symbol*/(self, o);
+	if(bParen)
+		status = status ? status : Formatter_printChar(self, ')');
+	self->operatorPrecedenceLimit = oldLimit;
+	return status;
+}
 static INLINE int xabs(int value) {
 	return (value >= 0) ? value : (-value);
 }
@@ -240,6 +268,8 @@ static NodeT Formatter_printCall(struct Formatter* self, NodeT node) {
 		int argcount = Formatter_levelOfOperator(self, operator_) != NO_OPERATOR ? Formatter_argcountOfOperator(self, operator_) : 0;
 		if(argcount == 1)
 			return Formatter_printPrefixOperation(self, node);
+		else if(argcount == -1)
+			return Formatter_printPostfixOperation(self, node);
 	}
 	return Formatter_printBinaryOperation(self, operation(Sspace, callable, argument));
 }
@@ -338,6 +368,7 @@ static NodeT Formatter_printInt2(struct Formatter* self, NativeInt value) {
 	status = status ? status : Formatter_printChar(self, hexdigits[rem]);
 	return status;
 }
+/* ignores sign! */
 static NodeT Formatter_printInteger2(struct Formatter* self, NodeT value) {
 	NodeT status = nil;
 	NodeT remN;
@@ -402,7 +433,7 @@ static NodeT Formatter_printFloat(struct Formatter* self, NodeT node) {
 }
 static NodeT Formatter_printInteger(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
-	if(integerCompareU(node, 0) < 0) {
+	if(integerCompareD(node, 0) < 0) {
 		status = status ? status : Formatter_printChar(self, '(');
 		status = status ? status : Formatter_printChar(self, '-');
 		status = status ? status : Formatter_printInteger2(self, node);

@@ -9,7 +9,7 @@ static NodeT unapplyN(NodeT accum, NodeT argument) {
 	NodeT t1 = consTail(accum);
 	NodeT fn = consHead(t1);
 	NodeT t2 = consTail(t1);
-	if(integerCompareU(count, 0) <= 0)
+	if(integerCompareD(count, 0) <= 0)
 		return dcall(fn, t2); /* order is reversed */
 	else {
 		return CLOSED_FN(Unapplier3, cons(integerSubU(count, 1U), cons(fn, cons(argument, t2))));

@@ -30,7 +30,7 @@ void initIntegers(void) {
 	i = -1;
 	assert((unsigned int) i == ~0); /* two's complement */
 	zerozerozerozero.tail = refCXXInstance(&zerozerozerozero);
-	zerozerozerozero.value = 0U;
+	zerozerozerozero.value = NATIVEUINT_ZERO;
 	for(i = 0; i < 256; ++i) {
 		Node_initTag((struct Node*) &ints[i], TAG_Int);
 		ints[i].value = i;
@@ -50,7 +50,7 @@ NodeT integerpart(NativeUInt value, NodeT tail) {
 }
 #define HIGHBIT (NATIVEUINT_ONE<<(NATIVEINT_BITCOUNT - 1))
 #define ALL1 (~NATIVEUINT_ZERO)
-#define SIGNEXTENSION(value) ((value&HIGHBIT)*ALL1)
+#define SIGNEXTENSION(value) ((value&HIGHBIT) ? ALL1 : 0)
 #define LOAD_CHUNK1(a) \
 	if(intP(a##V)) { \
 		const struct Int* a = (const struct Int*) getCXXInstance(a##V); \
@@ -77,11 +77,11 @@ static bool negativeIntegerP(NodeT aV) {
 	const struct Integer* a = (const struct Integer*) getCXXInstance(aV);
 	return negativeP(a->value);
 }
-/* only suitable for adding "positive" amounts - the negative amounts would have to be sign-extended too much. */
+/** only suitable for adding "positive" amounts - the negative amounts would have to be sign-extended too much. */
 NodeT integerAddU(NodeT aV, NativeUInt amount) {
 	NativeUInt avalue;
 	NodeT atail;
-	if(amount == 0U)
+	if(UNLIKELY_6D(amount == NATIVEUINT_ZERO))
 		return aV;
 	assert(!negativeP(amount));
 	LOAD_CHUNK(a)
@@ -89,35 +89,33 @@ NodeT integerAddU(NodeT aV, NativeUInt amount) {
 	/* can we overflow so much it goes around all the way? Not with the precondition above. */
 	if(UNLIKELY_6D(!atail && negativeP(value2) && !negativeP(avalue)/* precond && !negativeP(amount)*/)) { /* we flipped sign accidentally (middle) */
 		/* this can only happen with the MSB of the entire number.  */
-		assert(value2 >= avalue); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
-		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
-		return integerpart(value2, newMS);
+		/* it is impossible that this overflow has been caused by adding any value to a negative value. Therefore, avalue had positive sign (here) */
+		NodeT newMS = intA(NATIVEUINT_ZERO); /* sign extend */
+		return integerpart(value2, newMS); /* it is NECESSARY for this to be there. Don't get the stupid idea of replacing this by Int. */
 	}
-	return atail ? integerpart(value2, (value2 < avalue /*overflow*/) ? integerAddU(atail, 1) : atail) : intA(value2);
+	return atail ? integerpart(value2, (value2 < avalue /*carry*/) ? integerAddU(atail, NATIVEUINT_ONE) : atail) : intA(value2);
 }
-/* only suitable for adding "negative" amounts */
+/** only suitable for "adding negative amounts" (or 0) */
 NodeT integerAddN(NodeT aV, NativeUInt amount) {
 	NativeUInt avalue;
 	NodeT atail;
-	if(amount == 0U)
+	if(UNLIKELY_6D(amount == NATIVEUINT_ZERO))
 		return aV;
 	assert(negativeP(amount));
 	LOAD_CHUNK(a)
 	NativeUInt value2 = avalue + amount;
 	if(UNLIKELY_6D(!atail && !negativeP(value2) && negativeP(avalue) /*&& precond amount&HIGHBIT */)) { /* flipped sign accidentally */
 		/* this can only happen with the MSB of the entire number */
-		assert(value2 <= avalue); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
-		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
+		NodeT newMS = intA(ALL1); /* sign extend */
 		return integerpart(value2, newMS);
 	}
-	return atail ? integerpart(value2, integerAddN(integerAddN(atail, (value2 < avalue) ? 1 : 0), SIGNEXTENSION(avalue))) : intA(value2);
+	/* TODO check whether that's correct. */
+	return atail ? integerpart(value2, integerAddN(integerAddU(atail, (value2 < avalue) ? NATIVEUINT_ONE : NATIVEUINT_ZERO), SIGNEXTENSION(avalue))) : intA(value2);
 }
-/* overflow = neg?(A) == neg?(B) && neg?(A) != neg?(R) */
+/** adds two values */
 NodeT integerAdd(NodeT aV, NodeT bV) {
-	NativeUInt avalue;
-	NodeT atail;
-	NativeUInt bvalue;
-	NodeT btail;
+	NativeUInt avalue, bvalue;
+	NodeT atail, btail;
 	LOAD_CHUNK(a)
 	LOAD_CHUNK(b)
 	if(atail && !btail)
@@ -126,20 +124,20 @@ NodeT integerAdd(NodeT aV, NodeT bV) {
 		atail = refCXXInstance(&zerozerozerozero);
 	// here, either both tails are nil or both tails are not nil.
 	NativeUInt value2 = avalue + bvalue;
+	/* overflow = neg?(A) == neg?(B) && neg?(A) != neg?(R) */
 	if(UNLIKELY_6D(!atail && 
 	   ((negativeP(value2) && !negativeP(avalue) && !negativeP(bvalue)) || 
 	   ((!negativeP(value2) && negativeP(avalue) && negativeP(bvalue)))))) { /* flipped sign accidentally */
-		assert(value2 >= avalue); /* Note that overflow cannot happen anyway because the sign switch was in the "middle" of the range. */
 		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
 		return integerpart(value2, newMS);
 	}
-	return atail ? integerpart(value2, integerAddU(integerAdd(atail, btail), (value2 < avalue) ? 1 : 0)) : intA(value2);
+	return atail ? integerpart(value2, integerAddU(integerAdd(atail, btail), (value2 < avalue) ? NATIVEUINT_ONE : NATIVEUINT_ZERO)) : intA(value2);
 }
+/* subtracts an unsigned amount (note that this still isn't supposed to be too big - i.e. there still is the sign bit). */
 NODET integerSubU(NODET aV, NativeUInt amount) {
 	NativeInt amv;
-	if(amount == 0U)
+	if(amount == NATIVEUINT_ZERO)
 		return aV;
-	assert(!negativeP(amount));
 	amv = -((NativeInt) amount);
 	amount = (NativeUInt) amv;
 	assert(negativeP(amount));
@@ -151,7 +149,7 @@ NODET integerSub(NODET aP, NODET bP) {
 		assert(b >= 0);
 		return integerSubU(aP, b);
 	} else {
-		abort();
+		abort(); /* FIXME */
 		return nil;
 	}
 }
@@ -248,11 +246,15 @@ NativeInt integerCompare(NODET aV, NODET bV) {
 	       negativeIntegerP(r) ? (-1) : 
 	       1;
 }
-NativeInt integerCompareU(NODET aP, NativeInt b) {
+NativeInt integerCompareD(NODET aP, NativeInt b) {
 	NativeInt a;
 	if(toNativeInt(aP, &a)) {
-		/* FIXME make sure not to drop outside of the range */
-		return a - b;
+		if(a > b)
+			return 1;
+		else if(a == b)
+			return 0;
+		else
+			return (-1);
 	} else
 		abort();
 }

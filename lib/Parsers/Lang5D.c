@@ -887,9 +887,9 @@ static int Lang_callRpnOperator(struct Lang* self, NodeT operator_, MNODET* valu
 		return 0;
 	}
 	if(argcount == 1) {
-		fprintf(stderr, "ONE ARG \"");
+		/*fprintf(stderr, "ONE ARG \"");
 		print(stderr, operator_);
-		fprintf(stderr, "\" ");
+		fprintf(stderr, "\" ");*/
 		if(nilP(*values)) {
 			fprintf(stderr, "NOT ENOUGH 1\n");
 			*values = cons(merror("<1-arguments>", "<too-little>"), *values);
@@ -913,9 +913,9 @@ static int Lang_callRpnOperator(struct Lang* self, NodeT operator_, MNODET* valu
 		*values = cons(merror("<2-arguments>", "<too-little>"), *values);
 		return 0;
 	} else {
-		fprintf(stderr, "TWO ARGS \"");
+		/*fprintf(stderr, "TWO ARGS \"");
 		print(stderr, operator_);
-		fprintf(stderr, "\" ");
+		fprintf(stderr, "\" ");*/
 		NodeT b = consHead(*values);
 		*values = consTail(*values);
 		NodeT a = consHead(*values);

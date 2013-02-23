@@ -29,7 +29,7 @@ bool toNativeInt(NODET aP, NativeInt* result);
 bool toNearestNativeInt(NODET node, NativeInt* result);
 NODET internNativeInt(NativeInt value);
 NODET internNativeUInt(NativeUInt value);
-NativeInt integerCompareU(NODET aP, NativeInt b);
+NativeInt integerCompareD(NODET aP, NativeInt b);
 NativeInt integerCompare(NODET aP, NODET b);
 NODET integerDivremU(NODET aP, NativeInt b);
 NODET integerDivrem(NODET aP, NODET bP);
