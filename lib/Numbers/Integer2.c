@@ -39,6 +39,7 @@ void initIntegers(void) {
 static INLINE NodeT intA(NativeUInt value) {
 	if(value >= 0U && value < 256U)
 		return(refCXXInstance(&ints[value]));
+	/* TODO cache small negative values */
 	return makeInt(value);
 }
 NodeT integerpart(NativeUInt value, NodeT tail) {
@@ -133,7 +134,7 @@ NodeT integerAdd(NodeT aV, NodeT bV) {
 	}
 	return atail ? integerpart(value2, integerAddU(integerAdd(atail, btail), (value2 < avalue) ? NATIVEUINT_ONE : NATIVEUINT_ZERO)) : intA(value2);
 }
-/* subtracts an unsigned amount (note that this still isn't supposed to be too big - i.e. there still is the sign bit). */
+/* subtracts an unsigned amount (note that this still supposed to be small - i.e. there still is the sign bit). */
 NODET integerSubU(NODET aV, NativeUInt amount) {
 	NativeInt amv;
 	if(amount == NATIVEUINT_ZERO)
@@ -147,6 +148,8 @@ NODET integerSub(NODET aP, NODET bP) {
 	NativeInt b;
 	if(toNativeInt(bP, &b)) {
 		assert(b >= 0);
+		if(b < 0)
+			abort(); /* FIXME */
 		return integerSubU(aP, b);
 	} else {
 		abort(); /* FIXME */
@@ -156,7 +159,7 @@ NODET integerSub(NODET aP, NODET bP) {
 NodeT integerSucc(NodeT aP) {
 	return integerAddU(aP, 1);
 }
-NodeT integerMulU(NodeT aP, NativeInt b) {
+NodeT integerMulD(NodeT aP, NativeInt b) {
 	return integerMul(aP, intA(b));
 }
 /* TODO do more error handling! */
@@ -172,7 +175,7 @@ NodeT integerMul(NodeT aV, NodeT bV) {
 			result = integerShl(result, 1);
 			if(errorP(result))
 				return result;
-			if(bvalue&mask)
+			if((bvalue&mask) != 0)
 				result = integerAdd(result, aV);
 		}
 	}
@@ -343,13 +346,14 @@ NODET integerPow(NODET aP, NODET bP) {
 	NativeInt b;
 	if(toNativeInt(bP, &b)) {
 		assert(b >= 0);
-		return integerPowU(aP, b);
+		return integerPowD(aP, b);
 	} else
 		abort();
 }
-NODET integerPowU(NODET aP, NATIVEUINT b) {
+NODET integerPowD(NODET aP, NATIVEINT b) {
 	if(b == 0)
 		return intA(1);
-	return integerPowU(integerMulU(aP, b), b);
+	else
+		return integerMul(aP, integerPowD(aP, b - 1));
 }
 END_NAMESPACE_6D(FFIs)

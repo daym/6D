@@ -116,7 +116,7 @@ static NodeT getNumber(int baseI, const char* name) {
 			return internNativeInt(value);
 	} else { /* too big */
 		int off;
-		int exp;
+		int exp = 0;
 		NodeT base = internNativeInt((NativeInt) baseI);
 		NodeT result = internNativeInt((NativeInt) 0);
 		p = (char*) name;
@@ -126,7 +126,10 @@ static NodeT getNumber(int baseI, const char* name) {
 		}
 		if(*p == 'e' || *p == 'E') {
 			++p;
+			errno = 0;
 			exp = strtol(p, &p, baseI);
+			if(errno != 0)
+				exp = -1;
 		} else if(*p)
 			exp = -1;
 		if(exp >= 0)

@@ -16,7 +16,7 @@ bool integerP(NODET node);
 NODET integerAdd(NODET aP, NODET bP);
 NODET integerSub(NODET aP, NODET bP);
 NODET integerMul(NODET aP, NODET bP);
-NODET integerMulU(NODET aP, NATIVEINT amount);
+NODET integerMulD(NODET aP, NATIVEINT amount);
 bool integerEqualsP(NODET aP, NODET bP);
 bool integerEqualsIntP(NODET aP, NATIVEINT value);
 NODET integerAddU(NODET aP, NATIVEUINT amount);
@@ -35,6 +35,6 @@ NODET integerDivremU(NODET aP, NativeInt b);
 NODET integerDivrem(NODET aP, NODET bP);
 NODET integerDiv(NODET aP, NODET bP);
 NODET integerPow(NODET aP, NODET bP);
-NODET integerPowU(NODET aP, NATIVEUINT bP);
+NODET integerPowD(NODET aP, NATIVEINT bP);
 END_NAMESPACE_6D(FFIs)
 #endif /* ndef __NUMBERS_INTEGER2_H */
