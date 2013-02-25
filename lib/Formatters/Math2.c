@@ -56,6 +56,7 @@ struct Formatter {
 	int indentation;
 	int plusLevel;
 };
+NodeT Formatter_printOperand(struct Formatter* self, NodeT node);
 static int Formatter_levelOfOperator(struct Formatter* self, NodeT operator_) {
 	int result;
 	if(!self->levelOfOperator || !symbolName(operator_))
@@ -142,21 +143,26 @@ static NodeT getSymbolByIndex(int index, NodeT names) {
 	else
 		return getSymbolByIndex(index - 1, consTail(names));
 }
-static NodeT Formatter_printSymbol(struct Formatter* self, NodeT node) {
+static NodeT Formatter_printSymbol(struct Formatter* self, NodeT node, int bParens) {
 	NodeT status = nil;
 	const char* s;
 	/* TODO support escaping? */
 	s = symbolName(node);
 	if(!s)
 		return evalError(strC("<symbol>"), strC("<junk>"), node);
-	status = status ? status : Formatter_printChar(self, '(');
+	if(bParens)
+		if(Formatter_levelOfOperator(self, node) == NO_OPERATOR)
+			bParens = 0;
+	if(bParens)
+		status = status ? status : Formatter_printChar(self, '(');
 	status = status ? status : Formatter_printStr2(self, strlen(s), s);
-	status = status ? status : Formatter_printChar(self, ')');
+	if(bParens)
+		status = status ? status : Formatter_printChar(self, ')');
 	return status;
 }
-static NodeT Formatter_printSymbolreference(struct Formatter* self, int index) {
+static NodeT Formatter_printSymbolreference(struct Formatter* self, int index, int bParens) {
 	NodeT sym = getSymbolByIndex(index, self->names);
-	return Formatter_printSymbol(self, sym);
+	return Formatter_printSymbol(self, sym, bParens);
 }
 static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
@@ -170,15 +176,15 @@ static NodeT Formatter_printBinaryOperation(struct Formatter* self, NodeT node) 
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, '(');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) < 0; /* right associative */
-	status = status ? status : Formatter_print(self, a);
+	status = status ? status : Formatter_printOperand(self, a);
 	self->bParenEqualLevels = false;
 	if(precedence <= self->plusLevel)
 		status = status ? status : Formatter_printChar(self, ' ');
-	status = status ? status : Formatter_printSymbol(self, o);
+	status = status ? status : Formatter_print/*Symbol*/(self, o);
 	if(precedence <= self->plusLevel)
 		status = status ? status : Formatter_printChar(self, ' ');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o) > 0; /* left associative */
-	status = status ? status : Formatter_print(self, b);
+	status = status ? status : Formatter_printOperand(self, b);
 	self->bParenEqualLevels = false;
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, ')');
@@ -207,7 +213,7 @@ static NodeT Formatter_printPrefixOperation(struct Formatter* self, NodeT node) 
 	if((precedence <= self->plusLevel || isalpha(symname[0])) && o != Sbackslash)
 		status = status ? status : Formatter_printChar(self, ' ');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o2) < 0;
-	status = status ? status : Formatter_print(self, b);
+	status = status ? status : Formatter_printOperand(self, b);
 	self->bParenEqualLevels = false;
 	if(bParen)
 		status = status ? status : Formatter_printChar(self, ')');
@@ -236,7 +242,7 @@ static NodeT Formatter_printPostfixOperation(struct Formatter* self, NodeT node)
 	if((precedence <= self->plusLevel || isalpha(symname[0])) && o != Sbackslash)
 		status = status ? status : Formatter_printChar(self, ' ');
 	self->bParenEqualLevels = Formatter_argcountOfOperator(self, o2) > 0;
-	status = status ? status : Formatter_print(self, b);
+	status = status ? status : Formatter_printOperand(self, b);
 	self->bParenEqualLevels = false;
 	status = status ? status : Formatter_print/*Symbol*/(self, o);
 	if(bParen)
@@ -458,8 +464,8 @@ static NodeT Formatter_printFFIFn(struct Formatter* self, NodeT node) {
 }
 NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	int i;
-	NodeT result = (i = symbolreferenceIndex(node)) != -1 ? Formatter_printSymbolreference(self, i) : 
-	       symbolP(node) ? Formatter_printSymbol(self, node) : 
+	NodeT result = (i = symbolreferenceIndex(node)) != -1 ? Formatter_printSymbolreference(self, i, 0) : 
+	       symbolP(node) ? Formatter_printSymbol(self, node, 0) : 
 	       keywordP(node) ? Formatter_printKeyword(self, node) : 
 	       callP(node) ? Formatter_printCall(self, node) : 
 	       fnP(node) ? Formatter_printFn(self, node) : 
@@ -476,6 +482,13 @@ NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	       FFIFnP(node) ? Formatter_printFFIFn(self, node) : 
 	       evalError(strC("<printable>"), strC("<unprintable>"), node);
 	self->bParenEqualLevels = false;
+	return result;
+}
+NodeT Formatter_printOperand(struct Formatter* self, NodeT node) {
+	int i;
+	NodeT result = (i = symbolreferenceIndex(node)) != -1 ? Formatter_printSymbolreference(self, i, 1) :
+	               symbolP(node) ? Formatter_printSymbol(self, node, 1) :
+	               Formatter_print(self, node);
 	return result;
 }
 static NodeT minimalOperatorLevel;
