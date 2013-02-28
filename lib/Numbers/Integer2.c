@@ -137,7 +137,7 @@ NodeT integerAdd(NodeT aV, NodeT bV) {
 	}
 	return atail ? integerpart(value2, integerAddU(integerAdd(atail, btail), (value2 < avalue) ? NATIVEUINT_ONE : NATIVEUINT_ZERO)) : intA(value2);
 }
-/* subtracts an unsigned amount (note that this still supposed to be small - i.e. there still is the sign bit). */
+/* subtracts a positive amount (note that this still supposed to be small - i.e. there still is the sign bit). */
 NODET integerSubU(NODET aV, NativeUInt amount) {
 	NativeInt amv;
 	if(amount == NATIVEUINT_ZERO)
