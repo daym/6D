@@ -1,5 +1,3 @@
-#ifndef __VALUES_KEYWORD_H
-#define __VALUES_KEYWORD_H
 /*
 6D programming language
 Copyright (C) 2011  Danny Milosavljevic
@@ -7,14 +5,3 @@ This program is free software: you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "6D/Values"
-#include "Values/Values"
-
-BEGIN_NAMESPACE_6D(Values)
-BEGIN_STRUCT_6D(Keyword)
-	const char* text;
-END_STRUCT_6D(Keyword)
-const char* keywordName(NodeT node);
-END_NAMESPACE_6D(Values)
-
-#endif /* ndef __VALUES_KEYWORD_H */

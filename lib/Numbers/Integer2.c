@@ -1,3 +1,10 @@
+/*
+6D programming language
+Copyright (C) 2011  Danny Milosavljevic
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include <assert.h>
 #include "6D/Values"
 #include "Values/Values"
@@ -84,8 +91,28 @@ static bool negativeIntegerP(NodeT aV) {
 	const struct Integer* a = (const struct Integer*) getCXXInstance(aV);
 	return negativeP(a->value);
 }
+/** only suitable for adding "positive" amounts - the negative amounts would have to be sign-extended too much. 
+    Does NOT check whether the node is actually an Int. */
+static NodeT intAddU(NodeT aV, NativeUInt amount) {
+	//if(LIKELY_6D(intP(aV))) {
+	const struct Int* a = (const struct Int*) getCXXInstance(aV);
+	NativeUInt value2 = a->value + amount;
+	return (value2 < avalue || value2 < amount)/*carry*/ ? integerpart(value2, intA(NATIVEUINT_ZERO)) :
+	                                                       intA(value2);
+	//} else
+	//	return evalError(strC("<int>"), strC("<junk>"), aV);
+}
 /** only suitable for adding "positive" amounts - the negative amounts would have to be sign-extended too much. */
 NodeT integerAddU(NodeT aV, NativeUInt amount) {
+	if(LIKELY_6D(intP(aV)))
+		return intAddU(aV, amount);
+	if(LIKELY_6D(integerP(aV))) { /* it is guaranteed that this does NOT contain a sign */
+		const struct Integer* a = (const struct Integer*) getCXXInstance(aV);
+		NativeUInt value2 = a->value + amount;
+		return integerpart(value2, (value2 < avalue /*carry*/) ? integerAddU(a->tail, NATIVEUINT_ONE) : a->tail);
+	} else
+		return evalError(strC("<integer>"), strC("<junk>"), aV);
+
 	NativeUInt avalue;
 	NodeT atail;
 	if(UNLIKELY_6D(amount == NATIVEUINT_ZERO))
