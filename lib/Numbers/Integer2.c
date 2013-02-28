@@ -54,7 +54,7 @@ NodeT integerpart(NativeUInt value, NodeT tail) {
 #define NATIVEUINT_HALFMASK ((1ULL<<NATIVEUINT_HALFBITCOUNT) - 1)
 #define HIGHBIT (NATIVEUINT_ONE<<(NATIVEINT_BITCOUNT - 1))
 #define ALL1 (~NATIVEUINT_ZERO)
-#define SIGNEXTENSION(value) (((value&HIGHBIT) != 0) ? ALL1 : 0)
+#define SIGNEXTENSION(value) (negativeP(value) ? ALL1 : 0)
 #define LOAD_CHUNK1(a) \
 	if(intP(a##V)) { \
 		const struct Int* a = (const struct Int*) getCXXInstance(a##V); \
