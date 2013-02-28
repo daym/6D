@@ -26,12 +26,14 @@ static NodeT makeInt(NativeUInt value) {
 	return refCXXInstance(result);
 }
 static struct Integer zerozerozerozero; // self { value = 0, tail = self }
+static struct Integer ffffA; // self { value = ~0, tail = self }
 void initIntegers(void) {
-	int i;
-	i = -1;
+	int i = -1;
 	assert((unsigned int) i == ~0); /* two's complement */
 	zerozerozerozero.tail = refCXXInstance(&zerozerozerozero);
 	zerozerozerozero.value = NATIVEUINT_ZERO;
+	ffffA.tail = refCXXInstance(&ffffA);
+	ffffA.value = ~NATIVEUINT_ZERO;
 	for(i = 0; i < CACHED_INT_FRONTIER; ++i) {
 		Node_initTag((struct Node*) &ints[i], TAG_Int);
 		ints[i].value = i;
@@ -55,6 +57,7 @@ NodeT integerpart(NativeUInt value, NodeT tail) {
 #define HIGHBIT (NATIVEUINT_ONE<<(NATIVEINT_BITCOUNT - 1))
 #define ALL1 (~NATIVEUINT_ZERO)
 #define SIGNEXTENSION(value) (negativeP(value) ? ALL1 : 0)
+#define SIGNEXTENSION2(value) refCXXInstance(negativeP(value) ? &ffffA : &zerozerozerozero)
 #define LOAD_CHUNK1(a) \
 	if(intP(a##V)) { \
 		const struct Int* a = (const struct Int*) getCXXInstance(a##V); \
@@ -91,7 +94,7 @@ NodeT integerAddU(NodeT aV, NativeUInt amount) {
 	LOAD_CHUNK(a)
 	NativeUInt value2 = avalue + amount;
 	/* can we overflow so much it goes around all the way? Not with the precondition above. */
-	if(UNLIKELY_6D(!atail && negativeP(value2) && !negativeP(avalue)/* precond && !negativeP(amount)*/)) { /* we flipped sign accidentally (middle) */
+	if(UNLIKELY_6D(atail == nil && negativeP(value2) && !negativeP(avalue)/* precond && !negativeP(amount)*/)) { /* we flipped sign accidentally (middle) */
 		/* this can only happen with the MSB of the entire number.  */
 		/* it is impossible that this overflow has been caused by adding any value to a negative value. Therefore, avalue had positive sign (here) */
 		NodeT newMS = intA(NATIVEUINT_ZERO); /* sign extend */
@@ -108,7 +111,7 @@ NodeT integerAddN(NodeT aV, NativeUInt amount) {
 	assert(negativeP(amount));
 	LOAD_CHUNK(a)
 	NativeUInt value2 = avalue + amount;
-	if(UNLIKELY_6D(!atail && !negativeP(value2) && negativeP(avalue) /*&& precond amount&HIGHBIT */)) { /* flipped sign accidentally */
+	if(UNLIKELY_6D(atail == nil && !negativeP(value2) && negativeP(avalue) /*&& precond amount&HIGHBIT */)) { /* flipped sign accidentally */
 		/* this can only happen with the MSB of the entire number */
 		NodeT newMS = intA(ALL1); /* sign extend */
 		return integerpart(value2, newMS);
@@ -122,14 +125,15 @@ NodeT integerAdd(NodeT aV, NodeT bV) {
 	NodeT atail, btail;
 	LOAD_CHUNK(a)
 	LOAD_CHUNK(b)
-	if(atail && !btail)
-		btail = refCXXInstance(&zerozerozerozero);
-	if(btail && !atail)
-		atail = refCXXInstance(&zerozerozerozero);
+	/* FIXME proper sign */
+	if(atail != nil && btail == nil)
+		btail = SIGNEXTENSION2(bvalue);
+	if(btail != nil && atail == nil)
+		atail = SIGNEXTENSION2(avalue);
 	// here, either both tails are nil or both tails are not nil.
 	NativeUInt value2 = avalue + bvalue;
 	/* overflow = neg?(A) == neg?(B) && neg?(A) != neg?(R) */
-	if(UNLIKELY_6D(!atail && 
+	if(UNLIKELY_6D(atail == nil && 
 	   ((negativeP(value2) && !negativeP(avalue) && !negativeP(bvalue)) || 
 	   ((!negativeP(value2) && negativeP(avalue) && negativeP(bvalue)))))) { /* flipped sign accidentally */
 		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
@@ -288,7 +292,7 @@ NodeT integerDivremU(NODET aP, NativeInt b) {
 			a = -a;
 		}
 		NativeInt quot = (NativeInt) (a/b);
-		NativeInt rem = a  % b;
+		NativeInt rem = a % b;
 		/* C standard says that the remainder has the sign of the dividend(!), mathematics says the remainder is always positive. */
 		if(rem < 0) {
 			rem += b;
