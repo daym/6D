@@ -18,7 +18,8 @@ bool intP(NodeT node) {
 bool integerP(NodeT node) {
 	return tagOfNode(node) == TAG_Integer;
 }
-static struct Int ints[256];
+#define CACHED_INT_FRONTIER 256
+static struct Int ints[CACHED_INT_FRONTIER];
 static NodeT makeInt(NativeUInt value) {
 	struct Int* result = NEW(Int);
 	result->value = value;
@@ -31,13 +32,13 @@ void initIntegers(void) {
 	assert((unsigned int) i == ~0); /* two's complement */
 	zerozerozerozero.tail = refCXXInstance(&zerozerozerozero);
 	zerozerozerozero.value = NATIVEUINT_ZERO;
-	for(i = 0; i < 256; ++i) {
+	for(i = 0; i < CACHED_INT_FRONTIER; ++i) {
 		Node_initTag((struct Node*) &ints[i], TAG_Int);
 		ints[i].value = i;
 	}
 }
 static INLINE NodeT intA(NativeUInt value) {
-	if(value >= 0U && value < 256U)
+	if(value >= 0U && value < CACHED_INT_FRONTIER)
 		return(refCXXInstance(&ints[value]));
 	/* TODO cache small negative values */
 	return makeInt(value);
@@ -49,9 +50,11 @@ NodeT integerpart(NativeUInt value, NodeT tail) {
 	result->value = value;
 	return refCXXInstance(result);
 }
+#define NATIVEUINT_HALFBITCOUNT (NATIVEINT_BITCOUNT>>1)
+#define NATIVEUINT_HALFMASK ((1ULL<<NATIVEUINT_HALFBITCOUNT) - 1)
 #define HIGHBIT (NATIVEUINT_ONE<<(NATIVEINT_BITCOUNT - 1))
 #define ALL1 (~NATIVEUINT_ZERO)
-#define SIGNEXTENSION(value) ((value&HIGHBIT) ? ALL1 : 0)
+#define SIGNEXTENSION(value) (((value&HIGHBIT) != 0) ? ALL1 : 0)
 #define LOAD_CHUNK1(a) \
 	if(intP(a##V)) { \
 		const struct Int* a = (const struct Int*) getCXXInstance(a##V); \
@@ -156,8 +159,21 @@ NODET integerSub(NODET aP, NODET bP) {
 		return nil;
 	}
 }
-NodeT integerSucc(NodeT aP) {
-	return integerAddU(aP, 1);
+NodeT integerSucc(NodeT aV) {
+	return integerAddU(aV, 1);
+}
+NodeT integerMulDigit(NodeT aV, NativeUInt digit/*only HALF the size is available!*/) {
+	/* result length will be the same as aV */
+	if(digit == 0)
+		return intA(0);
+	NativeUInt avalue;
+	NodeT atail;
+	LOAD_CHUNK(a)
+	assert((digit&~NATIVEUINT_HALFMASK) == 0);
+	NativeUInt value2 = avalue*digit;
+	NativeUInt carry = value2>>NATIVEUINT_HALFBITCOUNT;
+	value2 &= NATIVEUINT_HALFMASK;
+	return atail ? integerpart(value2, atail) : intA(value2);
 }
 NodeT integerMulD(NodeT aP, NativeInt b) {
 	return integerMul(aP, intA(b));
