@@ -152,7 +152,7 @@ NodeT eval1(NodeT term) {
 	--recursionLevel;
 	if(errorP(x_argument))
 		return x_argument;
-	if(fnP(x_fn)) {
+	else if(fnP(x_fn)) {
 		NodeT body = fnBody(x_fn);
 		body = shift(x_argument, 0, body);
 		if(errorP(body))
