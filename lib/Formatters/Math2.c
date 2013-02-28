@@ -108,6 +108,10 @@ static NodeT Formatter_printStr2(struct Formatter* self, size_t sz, const char* 
 			status = status ? status : Formatter_printChar(self, '\\');
 			status = status ? status : Formatter_printChar(self, 't');
 			break;
+		case '\f':
+			status = status ? status : Formatter_printChar(self, '\\');
+			status = status ? status : Formatter_printChar(self, 'f');
+			break;
 		case '\b':
 			status = status ? status : Formatter_printChar(self, '\\');
 			status = status ? status : Formatter_printChar(self, 'b');
