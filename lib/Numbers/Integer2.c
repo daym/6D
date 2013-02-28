@@ -100,7 +100,7 @@ NodeT integerAddU(NodeT aV, NativeUInt amount) {
 		NodeT newMS = intA(NATIVEUINT_ZERO); /* sign extend */
 		return integerpart(value2, newMS); /* it is NECESSARY for this to be there. Don't get the stupid idea of replacing this by Int. */
 	}
-	return atail ? integerpart(value2, (value2 < avalue /*carry*/) ? integerAddU(atail, NATIVEUINT_ONE) : atail) : intA(value2);
+	return (atail != nil) ? integerpart(value2, (value2 < avalue /*carry*/) ? integerAddU(atail, NATIVEUINT_ONE) : atail) : intA(value2);
 }
 /** only suitable for "adding negative amounts" (or 0) */
 NodeT integerAddN(NodeT aV, NativeUInt amount) {
@@ -117,7 +117,7 @@ NodeT integerAddN(NodeT aV, NativeUInt amount) {
 		return integerpart(value2, newMS);
 	}
 	/* TODO check whether that's correct. */
-	return atail ? integerpart(value2, integerAddN(integerAddU(atail, (value2 < avalue) ? NATIVEUINT_ONE : NATIVEUINT_ZERO), SIGNEXTENSION(avalue))) : intA(value2);
+	return (atail != nil) ? integerpart(value2, integerAddN(integerAddU(atail, (value2 < avalue) ? NATIVEUINT_ONE : NATIVEUINT_ZERO), SIGNEXTENSION(avalue))) : intA(value2);
 }
 /** adds two values */
 NodeT integerAdd(NodeT aV, NodeT bV) {
@@ -139,7 +139,7 @@ NodeT integerAdd(NodeT aV, NodeT bV) {
 		NodeT newMS = intA(SIGNEXTENSION(avalue)); /* sign extend */
 		return integerpart(value2, newMS);
 	}
-	return atail ? integerpart(value2, integerAddU(integerAdd(atail, btail), (value2 < avalue) ? NATIVEUINT_ONE : NATIVEUINT_ZERO)) : intA(value2);
+	return (atail != nil) ? integerpart(value2, integerAddU(integerAdd(atail, btail), (value2 < avalue) ? NATIVEUINT_ONE : NATIVEUINT_ZERO)) : intA(value2);
 }
 /* subtracts a positive amount (note that this still supposed to be small - i.e. there still is the sign bit). */
 NODET integerSubU(NODET aV, NativeUInt amount) {
