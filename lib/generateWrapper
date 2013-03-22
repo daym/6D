@@ -85,7 +85,7 @@ print "return \\"
 for name in names:
 	print "       (sym == S%s) ? W_%s : " % (name, name)
 print "       (sym == Sexports) ? exports : "
-print "       evalError(strC(\"<known-symbol>\"), strC(\"<unknown-symbol>\"), sym);"
+print "       evaluationError(strC(\"<known-symbol>\"), strC(\"<unknown-symbol>\"), sym);"
 print "}"
 def exportsCtor(names):
 	if len(names) == 0:

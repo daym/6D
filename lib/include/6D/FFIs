@@ -98,14 +98,14 @@ bool toNativeInt(NODET node, NATIVEINT* result) G_5D_PURE;
 static INLINE NodeT marshalStr(NodeT (*cb)(const char* s), NodeT argument) {
 	char* value;
 	if(!stringFromNode(argument, &value))
-		return evalError(strC("<str>"), strC("<junk>"), argument);
+		return evaluationError(strC("<str>"), strC("<junk>"), argument);
 	else
 		return (*cb)(value);
 }
 static INLINE NodeT marshalInt(NodeT (*cb)(int s), NodeT argument) {
 	int value;
 	if(!intFromNode(argument, &value))
-		return evalError(strC("<int>"), strC("<junk>"), argument);
+		return evaluationError(strC("<int>"), strC("<junk>"), argument);
 	else
 		return (*cb)(value);
 }

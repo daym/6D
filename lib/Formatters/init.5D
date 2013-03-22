@@ -1,0 +1,6 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in
+let Error := requireModule "Error" in 
+import [printMath! printS! printLATEX!] from Builtins in 
+Composition.withInterface1 filename
+#exports[printMath! printS! printLATEX!]

@@ -1,17 +1,28 @@
 #!/usr/bin/5D -p OPLs/Math.5D
 let Composition := requireModule "Composition" in 
+let Errors := requireModule "Errors" in 
 Composition.withInterface1 filename
+import [(:) nil intAdd intSubtract intMultiply intDivide intLe? intEquals?] from Builtins in 
 import [flip] from Composition in 
 import [(&&) (not)] from Logic in 
-let (+) := Builtins.add in 
-let (-) := Builtins.subtract in 
-let (*) := Builtins.multiply in 
-let (/) := Builtins.divide in 
-let divrem := Builtins.divrem in 
-let shl := Builtins.shl in 
-let shr := Builtins.shr in 
-let (<=) := Builtins.le? in 
-let (=) := Builtins.(=) in 
+import [] from Errors in 
+let (+) := intAdd 
+	\r \flags nil
+in 
+let (-) := intSubtract 
+	\r \flags nil
+in 
+let (*) := intMultiply 
+	\r \flags nil
+in 
+let (/) := intDivide 
+	\r \flags nil
+in 
+let divrem := nil in 
+let shl := nil in
+let shr := nil in 
+let (<=) := intLe? in 
+let (=) := intEquals? in 
 let (>=) := flip (<=) in 
 let (<) := \a \b a <= b && not (a >= b) in 
 let (>) := flip (<) in 

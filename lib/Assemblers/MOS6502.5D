@@ -1,0 +1,895 @@
+#!/usr/bin/5D -p OPLs/Bits.5D
+let Composition := requireModule "Composition" in
+Composition.withInterface1 filename
+let valueFits16? := \value
+	value >= -#x8000 && value < #x8000
+in 
+let valueFits8? := \value
+	value >= -#x80 && value < #x80
+in 
+let uvalue16 := \value \tl
+	(value>>0)&#xFF,
+	(value>>8)&#xFF,
+	tl
+in 
+let uvalue8 := \value \tl
+	value&#xFF,
+	tl
+in 
+let value16 := \value \tl
+	if(valueFits16? value)
+		uvalue16 (if(value < 0) #x10000 + value else value) tl
+	else
+		Error.raiseErrorWithCode "value16 value out of range" 500,
+		tl
+in
+let value8 := \value \tl
+	if(valueFits8? value)
+		uvalue8 (if(value < 0) #x100 + value else value) tl
+	else
+		Error.raiseErrorWithCode "value8 value out of range" 500,
+		tl
+in
+let branchTable1 := 
+	let overflowed := #x70 in 
+	let notOverflowed := #x50 in 
+	let negative := #x30 in 
+	let notNegative := #x10 in 
+	let zero := #xF0 in 
+	let notZero := #xD0 in 
+	let carried := #xB0 in 
+	let notCarried := #x90 in 
+	let always := #x in 
+	Composition.dispatch1 #exports[overflowed notOverflowed negative notNegative zero notZero carried notCarried always] 
+in 
+let branchRel := \condition \distance \tl
+	if (shortBranch? distance)
+		branchTable1 condition,
+		value8 distance,
+		tl
+	else
+		Error.raiseErrorWithCode "branchRel branch too far" 500,
+		tl
+in 
+let adc :=  \op \tl
+	rem "adds with carry"$
+	if (indirectX? op)
+		#x61,
+		uvalue8 (indirectX op),
+		tl
+	elif (indirectY? op)
+		#x71,
+		uvalue8 (indirectY op),
+		tl
+	elif (zeropage? op)
+		#x65,
+		uvalue8 (zeropage op),
+		tl
+	elif (memoryY? op)
+		#x79,
+		uvalue16 (memoryY op),
+		tl
+	elif (immediate? op)
+		#x69,
+		tl
+	elif (memoryX? op)
+		#x7D,
+		uvalue16 (memoryX op),
+		tl
+	elif (memory? op)
+		#x6D,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#x75,
+		uvalue8 (zeropageX op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let and :=  \op \tl
+	if (indirectX? op)
+		#x21,
+		uvalue8 (indirectX op),
+		tl
+	elif (memoryX? op)
+		#x3D,
+		uvalue16 (memoryX op),
+		tl
+	elif (zeropage? op)
+		#x25,
+		uvalue8 (zeropage op),
+		tl
+	elif (memoryY? op)
+		#x39,
+		uvalue16 (memoryY op),
+		tl
+	elif (immediate? op)
+		#x29,
+		tl
+	elif (indirectY? op)
+		#x31,
+		uvalue8 (indirectY op),
+		tl
+	elif (memory? op)
+		#x2D,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#x35,
+		uvalue8 (zeropageX op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let shiftLeft :=  \op \tl
+	if (memoryX? op)
+		#x1E,
+		uvalue16 (memoryX op),
+		tl
+	elif (accumulator? op)
+		#x0A,
+		tl
+	elif (memory? op)
+		#x0E,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#x16,
+		uvalue8 (zeropageX op),
+		tl
+	elif (zeropage? op)
+		#x06,
+		uvalue8 (zeropage op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let bit :=  \op \tl
+	if (memory? op)
+		#x2C,
+		uvalue16 (memory op),
+		tl
+	elif (zeropage? op)
+		#x24,
+		uvalue8 (zeropage op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let compareRegOp :=
+	let A := 
+		if (indirectX? b)
+			#xC1,
+			uvalue8 (indirectX op),
+			tl
+		elif (memoryX? b)
+			#xDD,
+			uvalue16 (memoryX op),
+			tl
+		elif (zeropage? b)
+			#xC5,
+			uvalue8 (zeropage op),
+			tl
+		elif (memoryY? b)
+			#xD9,
+			uvalue16 (memoryY op),
+			tl
+		elif (immediate? b)
+			#xC9,
+			tl
+		elif (indirectY? b)
+			#xD1,
+			uvalue8 (indirectY op),
+			tl
+		elif (memory? b)
+			#xCD,
+			uvalue16 (memory op),
+			tl
+		elif (zeropageX? b)
+			#xD5,
+			uvalue8 (zeropageX op),
+			tl
+		else
+			Error.raiseErrorWithCode "unknown mode" 500,
+			tl
+	in 
+	let X := \op \tl
+		if (immediate? b)
+			#xE0,
+			tl
+		elif (memory? b)
+			#xEC,
+			uvalue16 (memory op),
+			tl
+		elif (zeropage? b)
+			#xE4,
+			uvalue8 (zeropage op),
+			tl
+		else
+			Error.raiseErrorWithCode "unknown mode" 500,
+			tl
+	in 
+	let Y := \op \tl
+		if (immediate? b)
+			#xC0,
+			tl
+		elif (memory? b)
+			#xCC,
+			uvalue16 (memory op),
+			tl
+		elif (zeropage? b)
+			#xC4,
+			uvalue8 (zeropage op),
+			tl
+		else
+			Error.raiseErrorWithCode "unknown mode" 500,
+			tl
+	in 
+	\a \b \tl Composition.dispatch1 #exports[A X Y] a b tl
+in 
+let dec :=  \dest \tl
+	if (X? dest)
+		#xCA,
+		tl
+	elif (Y? dest)
+		#x88,
+		tl
+	elif (memory? op)
+		#xCE,
+		uvalue16 (memory op),
+		tl
+	elif (memoryX? op)
+		#xDE,
+		uvalue16 (memoryX op),
+		tl
+	elif (zeropageX? op)
+		#xD6,
+		uvalue8 (zeropageX op),
+		tl
+	elif (zeropage? op)
+		#xC6,
+		uvalue8 (zeropage op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let eor :=  \op \tl
+	if (indirectX? op)
+		#x41,
+		uvalue8 (indirectX op),
+		tl
+	elif (zeropage? op)
+		#x45,
+		uvalue8 (zeropage op),
+		tl
+	elif (indirectY? op)
+		#x51,
+		uvalue8 (indirectY op),
+		tl
+	elif (memoryY? op)
+		#x59,
+		uvalue16 (memoryY op),
+		tl
+	elif (immediate? op)
+		#x49,
+		tl
+	elif (memory? op)
+		#x4D,
+		uvalue16 (memory op),
+		tl
+	elif (memoryX? op)
+		#x5D,
+		uvalue16 (memoryX op),
+		tl
+	elif (zeropageX? op)
+		#x55,
+		uvalue8 (zeropageX op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let inc :=  \dest \tl
+	if (X? dest)
+		#xE8,
+		tl
+	elif (Y? dest)
+		#xC8,
+		tl
+	elif (memory? op)
+		#xEE,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#xF6,
+		uvalue8 (zeropageX op),
+		tl
+	elif (zeropage? op)
+		#xE6,
+		uvalue8 (zeropage op),
+		tl
+	elif (memoryX? op)
+		#xFE,
+		uvalue16 (memoryX op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let jmp :=  \op \tl
+	if (mode FIXME in)
+		#x6C,
+		tl
+	elif (memory? op)
+		#x4C,
+		uvalue16 (memory op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let jsr :=  \op \tl
+	if (memory? op)
+		#x20,
+		uvalue16 (memory op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let loadValReg := 
+	let A := \op \tl
+		if (memoryX? op)
+			#xBD,
+			uvalue16 (memoryX op),
+			tl
+		elif (indirectY? op)
+			#xB1,
+			uvalue8 (indirectY op),
+			tl
+		elif (zeropage? op)
+			#xA5,
+			uvalue8 (zeropage op),
+			tl
+		elif (memoryY? op)
+			#xB9,
+			uvalue16 (memoryY op),
+			tl
+		elif (immediate? op)
+			#xA9,
+			tl
+		elif (memory? op)
+			#xAD,
+			uvalue16 (memory op),
+			tl
+		elif (indirectX? op)
+			#xA1,
+			uvalue8 (indirectX op),
+			tl
+		elif (zeropageX? op)
+			#xB5,
+			uvalue8 (zeropageX op),
+			tl
+		else
+			Error.raiseErrorWithCode "unknown mode" 500,
+			tl
+	in 
+	let X :=  \op \tl
+		if (immediate? op)
+			#xA2,
+			tl
+		elif (memoryY? op)
+			#xBE,
+			uvalue16 (memoryY op),
+			tl
+		elif (zeropageY? op)
+			#xB6,
+			uvalue8 (zeropageY op),
+			tl
+		elif (zeropage? op)
+			#xA6,
+			uvalue8 (zeropage op),
+			tl
+		elif (memory? op)
+			#xAE,
+			uvalue16 (memoryX op),
+			tl
+		else
+			Error.raiseErrorWithCode "unknown mode" 500,
+			tl
+	in
+	let Y :=  \op \tl
+		if (immediate? op)
+			#xA0,
+			tl
+		elif (zeropageX? op)
+			#xB4,
+			uvalue8 (zeropageX op),
+			tl
+		elif (memory? op)
+			#xAC,
+			uvalue16 (memory op),
+			tl
+		elif (zeropage? op)
+			#xA4,
+			uvalue8 (zeropage op),
+			tl
+		elif (memoryX? op)
+			#xBC,
+			uvalue16 (memoryX op),
+			tl
+		else
+			Error.raiseErrorWithCode "unknown mode" 500,
+			tl
+	in 
+	\source \dest Composition.dispatch1 #exports[A X Y] dest source
+in 
+let shiftRight :=  \op \tl
+	if (accumulator? op)
+		#x4A,
+		tl
+	elif (memoryX? op)
+		#x5E,
+		uvalue16 (memoryX op),
+		tl
+	elif (memory? op)
+		#x4E,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#x56,
+		uvalue8 (zeropageX op),
+		tl
+	elif (zeropage? op)
+		#x46,
+		uvalue8 (zeropage op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let nop :=  \op \tl
+	if (immediate? op)
+		#x80,
+		tl
+	elif (immediate? op)
+		#x82,
+		tl
+	elif (zeropage? op)
+		#x04,
+		uvalue8 (zeropage op),
+		tl
+	elif (immediate? op)
+		#x89,
+		tl
+	elif (memory? op)
+		#x0C,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#x14,
+		uvalue8 (zeropageX op),
+		tl
+	elif (accumulator? op)
+		#x1A,
+		tl
+	elif (memoryY? op)
+		#x9B,
+		uvalue16 (memoryY op),
+		tl
+	elif (memoryX? op)
+		#x1C,
+		uvalue16 (memoryX op),
+		tl
+	elif (accumulator? op)
+		#xDA,
+		tl
+	elif (memoryX? op)
+		#x5C,
+		uvalue16 (memoryX op),
+		tl
+	elif (zeropageX? op)
+		#x34,
+		uvalue8 (zeropageX op),
+		tl
+	elif (zeropageX? op)
+		#xF4,
+		uvalue8 (zeropageX op),
+		tl
+	elif (accumulator? op)
+		#x3A,
+		tl
+	elif (memoryX? op)
+		#x3C,
+		uvalue16 (memoryX op),
+		tl
+	elif (immediate? op)
+		#xC2,
+		tl
+	elif (zeropage? op)
+		#x44,
+		uvalue8 (zeropage op),
+		tl
+	elif (zeropageX? op)
+		#x54,
+		uvalue8 (zeropageX op),
+		tl
+	elif (accumulator? op)
+		#x5A,
+		tl
+	elif (memoryX? op)
+		#xDC,
+		uvalue16 (memoryX op),
+		tl
+	elif (accumulator? op)
+		#xFA,
+		tl
+	elif (immediate? op)
+		#xE2,
+		tl
+	elif (zeropage? op)
+		#x64,
+		uvalue8 (zeropage op),
+		tl
+	elif (memoryX? op)
+		#xFC,
+		uvalue16 (memoryX op),
+		tl
+	elif (accumulator? op)
+		#xEA,
+		tl
+	elif (zeropageX? op)
+		#x74,
+		uvalue8 (zeropageX op),
+		tl
+	elif (zeropageX? op)
+		#xD4,
+		uvalue8 (zeropageX op),
+		tl
+	elif (accumulator? op)
+		#x7A,
+		tl
+	elif (memoryX? op)
+		#x7C,
+		uvalue16 (memoryX op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let ora :=  \op \tl
+	if (indirectX? op)
+		#x01,
+		uvalue8 (indirectX op),
+		tl
+	elif (indirectY? op)
+		#x11,
+		uvalue8 (indirectY op),
+		tl
+	elif (zeropage? op)
+		#x05,
+		uvalue8 (zeropage op),
+		tl
+	elif (memoryY? op)
+		#x19,
+		uvalue16 (memoryY op),
+		tl
+	elif (immediate? op)
+		#x09,
+		tl
+	elif (memoryX? op)
+		#x1D,
+		uvalue16 (memoryX op),
+		tl
+	elif (memory? op)
+		#x0D,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#x15,
+		uvalue8 (zeropageX op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let rotateLeft :=  \op \tl
+	if (memoryX? op)
+		#x3E,
+		uvalue16 (memoryX op),
+		tl
+	elif (accumulator? op)
+		#x2A,
+		tl
+	elif (memory? op)
+		#x2E,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#x36,
+		uvalue8 (zeropageX op),
+		tl
+	elif (zeropage? op)
+		#x26,
+		uvalue8 (zeropage op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let rotateRight :=  \op \tl
+	if (memoryX? op)
+		#x7E,
+		uvalue16 (memoryX op),
+		tl
+	elif (accumulator? op)
+		#x6A,
+		tl
+	elif (memory? op)
+		#x6E,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#x76,
+		uvalue8 (zeropageX op),
+		tl
+	elif (zeropage? op)
+		#x66,
+		uvalue8 (zeropage op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let sbc :=  \op \tl
+	if (indirectX? op)
+		#xE1,
+		uvalue8 (indirectX op),
+		tl
+	elif (memoryX? op)
+		#xFD,
+		uvalue16 (memoryX op),
+		tl
+	elif (zeropage? op)
+		#xE5,
+		uvalue8 (zeropage op),
+		tl
+	elif (memoryY? op)
+		#xF9,
+		uvalue16 (memoryY op),
+		tl
+	elif (immediate? op)
+		#xE9,
+		tl
+	elif (indirectY? op)
+		#xF1,
+		uvalue8 (indirectY op),
+		tl
+	elif (memory? op)
+		#xED,
+		uvalue16 (memory op),
+		tl
+	elif (zeropageX? op)
+		#xF5,
+		uvalue8 (zeropageX op),
+		tl
+	else
+		Error.raiseErrorWithCode "unknown mode" 500,
+		tl
+in 
+let loadRegMem := 
+	rem "ST"$
+	let A := \op \tl
+		if (indirectX? op)
+			#x81,
+			uvalue8 (indirectX op),
+			tl
+		elif (zeropage? op)
+			#x85,
+			uvalue8 (zeropage op),
+			tl
+		elif (memory? op)
+			#x8D,
+			uvalue16 (memory op),
+			tl
+		elif (indirectY? op)
+			#x91,
+			uvalue8 (indirectY op),
+			tl
+		elif (zeropageX? op)
+			#x95,
+			uvalue8 (zeropageX op),
+			tl
+		elif (memoryY? op)
+			#x99,
+			uvalue16 (memoryY op),
+			tl
+		elif (memoryX? op)
+			#x9D,
+			uvalue16 (memoryX op),
+			tl
+		else
+			Error.raiseErrorWithCode "unknown mode" 500,
+			tl
+	in
+	let X := \op \tl
+		if (zeropageY? op)
+			#x96,
+			uvalue8 (zeropageY op),
+			tl
+		elif (zeropage? op)
+			#x86,
+			uvalue8 (zeropage op),
+			tl
+		elif (memory? op)
+			#x8E,
+			uvalue16 (memory op),
+			tl
+		else
+			Error.raiseErrorWithCode "unknown mode" 500,
+			tl
+	in 
+	let Y := \op \tl
+		if (zeropageX? op)
+			#x94,
+			uvalue8 (zeropageX op),
+			tl
+		elif (memory? op)
+			#x8C,
+			uvalue16 (memory op),
+			tl
+		elif (zeropage? op)
+			#x84,
+			uvalue8 (zeropage op),
+			value8 source,
+			tl
+		else
+			Error.raiseErrorWithCode "unknown mode" 500,
+			tl
+	in 
+	\source \dest \tl Composition.dispatch1 #exports[A X Y] source dest tl
+in 
+rem "Note: invalid opcodes have been left out"$
+let break := \tl 
+	#x00,
+	tl
+in 
+let clearCarry := \tl 
+	#x18,
+	tl
+in 
+let clearDirection := \tl 
+	#xD8,
+	tl
+in 
+let clearInterruptDisabled := \tl 
+	#x58,
+	tl
+in 
+let clearOverflow := \tl 
+	#xB8,
+	tl
+in 
+let pushReg := 
+	let A := \tl 
+		#x48,
+		tl
+	in 
+	let P := \tl 
+		#x08,
+		tl
+	in 
+	\reg \tl #exports[A P] reg tl
+in 
+let popReg := 
+	let A := \tl
+		#x68,
+		tl
+	in
+	let P := \tl
+		#x28,
+		tl
+	in
+	\reg \tl #exports[A P] reg tl
+in 
+let rti := \tl 
+	#x40,
+	tl
+in 
+let ret := \tl 
+	#x60,
+	tl
+in 
+let setCarry := \tl 
+	#x38,
+	tl
+in 
+let setDirection := \tl 
+	#xF8,
+	tl
+in 
+let setInterruptDisabled := \tl 
+	#x78,
+	tl
+in 
+let loadRegReg := 
+	let A := \dest \tl
+		if (symbolsEqual? dest 'X)
+			#xAA,
+			tl
+		elif (symbolsEqual? dest 'Y)
+			#xA8,
+			tl
+		else
+			Error.raiseErrorWithCode "loadRegReg unknown dest register" 500,
+			tl
+	in
+	let S := \dest \tl
+		if (symbolsEqual? dest 'X)
+			#xBA,
+			tl
+		else
+			Error.raiseErrorWithCode "loadRegReg unknown dest register" 500,
+			tl
+	in 
+	let X := \dest \tl
+		if (symbolsEqual? dest 'A)
+			#x8A,
+			tl
+		elif (symbolsEqual? dest 'S)
+			#x9A,
+			tl
+		else
+			Error.raiseErrorWithCode "loadRegReg unknown dest register" 500,
+			tl
+	in 
+	let Y := \dest \tl
+		if (symbolsEqual? dest 'A)
+			#x98,
+			tl
+		else
+			Error.raiseErrorWithCode "loadRegReg unknown dest register" 500,
+			tl
+	in 
+	\source \dest \tl #exports[A S X Y] source dest tl
+in 
+#exports[
+branchRel
+jmp
+jsr
+adc
+sbc
+dec
+inc
+compare
+bit
+and
+ora
+eor
+nop
+shiftLeft
+shiftRight
+rotateLeft
+rotateRight
+loadValReg
+loadRegMem
+loadRegReg
+break
+clearCarry
+clearDirection
+clearInterruptDisabled
+clearOverflow
+pushReg
+popReg
+rti
+ret
+setCarry
+setDirection
+setInterruptDisabled
+]

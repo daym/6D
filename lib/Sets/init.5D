@@ -1,0 +1,31 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let Logic := requireModule "Logic" in 
+let Arithmetic := requireModule "Arithmetic" in 
+let Error := requireModule "Error" in 
+import [nil? cons? head tail (:)] from Builtins in 
+import [($) compose flip rec rem] from Composition in 
+import [(if) (else) (elif) (||) (&&) (#t) (#f) not] from Logic in 
+import [(<=) (>=) (=) (/=) (+) (-) (*) (/) div0 max ceiling] from Arithmetic in 
+let emptySet := in 
+let adjoin := \e \A in 
+let unite := \A \B in 
+let intersect := \A \B in 
+let (∩) := intersect in 
+let (∪) := unite in 
+let contains? := \e \A in 
+let (∈) := contains? in 
+let subset? := \A \B in 
+let superset? := \A \B subset? B A in 
+let properSubset? := \A \B (subset? A B) && (not (subset? B A)) in 
+let properSuperset? := \A \B properSubset? B A in 
+let (=) := \A \B subset? A B && subset? B A in 
+let (≟) := (=) in 
+let (⊂) := properSubset? in 
+let (⊃) := properSuperset? in 
+let (⊆) := subset? in 
+let (⊇) := superset? in 
+let (-) := \A \B in 
+let listOf := \A in 
+(#exports[emptySet adjoin unite intersect (∩) (∪) contains? (∈) subset? superset? properSubset? properSuperset? (=) (≟) (⊂) (⊃) (⊆) (⊇) (-) listOf])

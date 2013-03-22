@@ -1,0 +1,24 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let Logic := requireModule "Logic" in 
+let Arithmetic := requireModule "Arithmetic" in 
+let Error := requireModule "Error" in 
+import [nil? cons? head tail (:)] from List in 
+import [($) compose flip rec rem] from Composition in 
+import [(if) (else) (elif) (||) (&&) (#t) (#f) not] from Logic in 
+import [(<=) (>=) (=) (/=) (+) (-) (*) (/) div0 max ceiling] from Arithmetic in 
+let binaryInsertBy := \(<) \(=) \x \tree
+	if (nil? tree)
+		Tree nil x nil
+	else
+		let Tree a y b := tree in 
+		if (x < y)
+			Tree ((insert x a) y b)
+		elif (x = y)
+			tree
+		else
+			Tree (a y (insert x b))
+in
+let binaryInsert := binaryInsertBy (<) (=) in 
+(#exports[nil nil? cons? list? (:) (++) map merge mergeBy mergeSort mergeSortBy extremum drop foldl foldr filter length head tail reverse enumerate range range1 take takeWhile zip transpose zipBy sum product anyTrue? allTrue? frange frangeLL uniq uniqBy])

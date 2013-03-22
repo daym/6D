@@ -1,0 +1,291 @@
+#!/usr/bin/5D -p OPLs/Bits.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let Error := requireModule "Error" in 
+let Arithmetic := requireModule "Arithmetic" in 
+let List := requireModule "List" in 
+import [(rem) (id) ($) (rec) (if) (else) (elif)] from Composition in 
+import [(+) (*) (**) (/) floor (%) (<) (>) (<=) (>=)] from Arithmetic in 
+import [(:) nil nil?] from List in 
+let (,) := (:) in 
+let (|) := (+) in 
+let (&) := \a \b a % (b + 1) in 
+let (<<) := \a \b a*(2**b) in 
+let (>>) := \a \b floor (a/(2**b)) in 
+let AX := 0 in 
+let CX := 1 in 
+let DX := 2 in 
+let BX := 3 in 
+let SP := 4 in 
+let BP := 5 in 
+let SI := 6 in 
+let DI := 7 in 
+let MODREG := 3 << 6 in 
+let MODCODE0 := \r1 r1 in 
+let MODCODE1 := \r1 (MODREG | (MODCODE0 r1)) in 
+let MODCODE2 := \a \b (MODREG | ((MODCODE0 b) << 3) | (MODCODE0 a)) in 
+let uvaluex := \tl rec\uvaluex \byteCount \value 
+	rem "TODO if negative, use two's complement"$
+	if(byteCount > 0)
+		value&#xFF,
+		uvaluex (byteCount - 1) (value>>8)
+	else
+		tl
+in 
+let valueFits32? := \value
+	value >= -#x80000000 && value < #x80000000
+in 
+let valueFits64? := \value
+	value >= -#x8000000000000000 && value < #x8000000000000000
+in 
+let valueFits8? := \value
+	value >= -#x80 && value < #x80
+in 
+let uvalue32 := \value \tl
+	(value>>0)&#xFF,
+	(value>>8)&#xFF,
+	(value>>16)&#xFF,
+	(value>>24)&#xFF,
+	tl
+in 
+let uvalue8 := \value \tl
+	value&#xFF,
+	tl
+in 
+let value32 := \value \tl
+	if(valueFits32? value)
+		uvalue32 (if(value < 0) #x100000000 + value else value) tl
+	else
+		Error.raiseErrorWithCode "value32 value out of range" 500,
+		tl
+in
+let value8 := \value \tl
+	if(valueFits8? value)
+		uvalue8 (if(value < 0) #x100 + value else value) tl
+	else
+		Error.raiseErrorWithCode "value8 value out of range" 500,
+		tl
+in
+let uvalue64 := \value \tl
+	(value>>0)&#xFF,
+	(value>>8)&#xFF,
+	(value>>16)&#xFF,
+	(value>>24)&#xFF,
+	(value>>32)&#xFF,
+	(value>>40)&#xFF,
+	(value>>48)&#xFF,
+	(value>>56)&#xFF,
+	tl
+in
+let value64 := \value \tl
+	if(valueFits64? value)
+		uvalue64 (if(value < 0) #x10000000000000000 + value else value) tl
+	else
+		Error.raiseErrorWithCode "value64 value out of range" 500,
+		tl
+in 
+let wider? := \wider nil? (wider nil) in 
+let loadValReg := \wider \value \dest \tl
+	wider
+		if(wider? wider && (not (valueFits32? value)))
+			#xB8 + dest,
+			value64 value tl
+		else
+			#xC7,
+			MODCODE1 dest,
+			value32 value tl
+in 
+let loadRegReg := \wider \src \dest \tl
+	wider
+		#x8B,
+		MODCODE2 src dest,
+		tl
+in 
+let popReg := \wider \dest \tl
+	rem "implicitly wide"$
+	#x8F,
+	(MODCODE1 dest),
+	tl
+in 
+let pushReg := \wider \src \tl
+	rem "implicitly wide"$
+	#xFF,
+	(MODCODE1 src) | (6 << 3),
+	tl
+in 
+let addRegReg := \wider \src \dest \tl
+	wider
+		#x01,
+		MODCODE2 dest src,
+		tl
+in 
+let addValReg := \wider \value \dest \tl
+	wider
+		#x81,
+		MODCODE1 dest,
+		emitValue32 value tl
+in 
+let subRegReg := \wider \src \dest \tl
+	wider
+		#x29,
+		MODCODE2 dest src,
+		tl
+in 
+let compareRegReg := \wider \a \b \tl
+	wider
+		#x39
+		MODCODE2 dest src,
+		tl
+in 
+let subValReg := \wider \value \dest \tl
+	wider
+		#x81,
+		(MODCODE1 dest) | (5 << 3),
+		value32 value tl
+in 
+let mulRegReg := \wider \src \dest \tl
+	wider
+		#x0F,
+		#xAF,
+		MODCODE2 src dest,
+		tl
+in 
+let mulValRegReg := \wider \src \value \tl 
+	wider
+		#x69,
+		MODCODE2 src dest,
+		value32 value tl
+in 
+let idiv := \wider \divisor \tl
+	wider
+		#xF7,
+		MODREG | (7 << 3) | divisor,
+		tl
+in 
+let ret := \wider \tl
+	#xC3,
+	tl
+in 
+let clearCarry := \wider \tl
+	#xF8,
+	tl
+in 
+let setCarry := \wider \tl 
+	#xF9,
+	tl
+in 
+let adcValReg := \wider \value \dest \tl
+	wider
+		#x81,
+		#xD0 | dest,
+		value32 value tl
+	
+in 
+let sbbValReg := \wider \value \dest \tl
+	wider
+		#x81,
+		#xD8 + dest,
+		value32 value tl
+in
+let callReg := \wider \src \tl 
+	wider
+		#xff,
+		#xD0 | src,
+		tl
+in 
+let callRel := \wider \value \tl
+	???
+		#xE8,
+		value32 value tl
+in 
+rem "callRel E8 value32"$
+rem "TODO pushRegs, popRegs"$ 
+let shortBranch? := \distance 
+	distance >= -#x80 && distance < #x80
+in 
+rem "TODO 	let CXZero := #xe3, P1=7a, P0=7b "$
+let branchTable1 := 
+	let overflowed := #x70 in 
+	let notOverflowed := #x71 in 
+	let negative := #x78 in 
+	let notNegative := #x79 in 
+	let zero := #x74 in 
+	let notZero := #x75 in 
+	let carried := #x72 in 
+	let notCarried := #x73 in 
+	let belowOrEqualUnsigned := #x76 in 
+	let aboveUnsigned := #x77 in 
+	let less := #x7c in 
+	let greaterOrEqual := #x7d in 
+	let lessOrEqual := #x7e in 
+	let greater := #x7f in 
+	let always := #xeb in 
+	Composition.dispatch1 #exports[overflowed notOverflowed negative notNegative zero notZero carried notCarried belowOrEqualUnsigned aboveUnsigned less greaterOrEqual lessOrEqual greater always] 
+in 
+let branchTable2 := 
+	let overflowed := #x80 in 
+	let notOverflowed := #x81 in 
+	let negative := #x88 in 
+	let notNegative := #x89 in 
+	let zero := #x84 in 
+	let notZero := #x85 in 
+	let carried := #x82 in 
+	let notCarried := #x83 in 
+	let belowOrEqualUnsigned := #x86 in 
+	let aboveUnsigned := #x87 in 
+	let less := #x8c in 
+	let greaterOrEqual := #x8d in 
+	let lessOrEqual := #x8e in 
+	let greater := #x8f in 
+	let always := #xe9 in 
+	Composition.dispatch1 #exports[overflowed notOverflowed negative notNegative zero notZero carried notCarried belowOrEqualUnsigned aboveUnsigned less greaterOrEqual lessOrEqual greater always] 
+in 
+let branchRel := \wider \condition \distance \tl
+	if (shortBranch? distance)
+		branchTable1 condition,
+		value8 distance,
+		tl
+	else
+		if (symbolsEqual? 'always)
+			branchTable2 condition,
+			value32 distance,
+			tl
+		else
+			#x0f,
+			branchTable2 condition,
+			value32 distance,
+			tl
+in 
+rem "TODO: inc, dec, and, or, xor, not, neg, shl, shr"$
+#exports[
+AX
+CX
+DX
+BX
+SP
+BP
+SI
+DI
+pushReg
+popReg
+valueFits32?
+valueFits64?
+loadValReg
+loadRegReg
+addRegReg
+addValReg
+subRegReg
+subValReg
+mulRegReg
+mulValRegReg
+idiv
+ret
+clearCarry
+setCarry
+adcValReg
+sbbValReg
+callReg
+callRel
+branchRel
+compareRegReg
+]

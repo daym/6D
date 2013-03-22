@@ -9,19 +9,25 @@ You should have received a copy of the GNU Lesser General Public License along w
 */
 #include "6D/Values"
 #include "6D/Arithmetics"
+#include "6D/FFIs"
 BEGIN_NAMESPACE_6D(Arithmetics)
-NodeT add(NodeT a, NodeT b);
-NodeT subtract(NodeT a, NodeT b);
-NodeT multiply(NodeT a, NodeT b);
-NodeT divide(NodeT a, NodeT b);
-NodeT divrem(NodeT a, NodeT b);
+NodeT integerAdd(NodeT a, NodeT b);
+NodeT integerAddU(NodeT a, NativeInt b);
+NodeT integerSubtract(NodeT a, NodeT b);
+NodeT integerSubtractU(NodeT a, NativeInt b);
+NodeT integerMultiply(NodeT a, NodeT b);
+NodeT integerDivide(NodeT a, NodeT b);
+NodeT integerDivrem(NodeT a, NodeT b);
+NodeT integerDivremU(NodeT a, NativeInt b);
 /* swapped arguments, sorry */
-NodeT shl(NodeT amount, NodeT b);
+NodeT integerShl(NodeT amount, NodeT b);
 /* swapped arguments, sorry */
-NodeT shr(NodeT amount, NodeT b);
-NodeT leP(NodeT a, NodeT b);
-NodeT equalP(NodeT a, NodeT b);
-NodeT power(NodeT a, NodeT b);
+NodeT integerShr(NodeT amount, NodeT b);
+bool integerLeP(NodeT a, NodeT b);
+bool integerLePU(NodeT a, NativeInt b);
+bool integerGePU(NodeT a, NativeInt b);
+NodeT integerEqualsP(NodeT a, NodeT b);
+//NodeT integerPower(NodeT a, NodeT b);
 void initArithmetics(void);
 NODET withArithmetics(NODET body);
 END_NAMESPACE_6D(Arithmetics)

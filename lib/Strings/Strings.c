@@ -27,7 +27,7 @@ NodeT listFromStr(NodeT str) {
 	if(strP(str)) {
 		char* s;
 		if(!stringFromNode(str, &s))
-			return evalError(strC("<str>"), strC("<junk>"), str);
+			return evaluationError(strC("<str>"), strC("<junk>"), str);
 		return listFromStr2(s, strSize(str));
 	} else
 		return str;
@@ -46,7 +46,7 @@ NodeT strFromList(NodeT l) {
 	for(; len > 0; --len, ++p, l = consTail(l)) {
 		int v;
 		if(!intFromNode(consHead(l), &v) || v < 0 || v > 255)
-			return evalError(strC("<int-list>"), strC("<junk>"), l);
+			return evaluationError(strC("<int-list>"), strC("<junk>"), l);
 		*p = v;
 	}
 	return strC(p);

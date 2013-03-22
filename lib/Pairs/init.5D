@@ -1,0 +1,8 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let fst := Builtins.fst in 
+let snd := Builtins.snd in 
+let pair? := Builtins.pair? in 
+let (,) := Builtins.(,) in 
+(#exports[(,) pair? fst snd])

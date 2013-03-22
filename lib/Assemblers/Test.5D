@@ -1,0 +1,16 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let List := requireModule "List" in 
+import [(:) nil nil?] from List in 
+let end := nil in 
+let Assembler := requireModule "Assemblers/AMD64.5D" in 
+let (,) := (:) in 
+import [pushReg popReg AX ret] from Assembler in 
+let test1 := 
+	pushReg AX,
+	popReg AX,
+	ret,
+	end
+in
+test1

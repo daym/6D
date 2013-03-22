@@ -9,6 +9,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include "6D/Evaluators"
 #include "SpecialForms/Unapplier"
 #include "Numbers/Integer2"
+#include "Arithmetics/Arithmetics"
 BEGIN_NAMESPACE_6D(SpecialForms)
 USE_NAMESPACE_6D(Values)
 static NodeT unapplyN(NodeT accum, NodeT argument) {
@@ -16,10 +17,10 @@ static NodeT unapplyN(NodeT accum, NodeT argument) {
 	NodeT t1 = consTail(accum);
 	NodeT fn = consHead(t1);
 	NodeT t2 = consTail(t1);
-	if(integerCompareD(count, 0) <= 0)
+	if(integerLePU(count, 0))
 		return dcall(fn, t2); /* order is reversed */
 	else {
-		return CLOSED_FN(Unapplier3, cons(integerSubU(count, 1U), cons(fn, cons(argument, t2))));
+		return CLOSED_FN(Unapplier3, cons(integerSubtractU(count, 1), cons(fn, cons(argument, t2))));
 	}
 }
 static NodeT unapply(NodeT count, NodeT fn) {

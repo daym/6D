@@ -1,0 +1,6 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in
+Composition.withInterface1 filename
+let Error := requireModule "Error" in 
+let messageBox! := Builtins.messageBox! in 
+(#exports[messageBox!])

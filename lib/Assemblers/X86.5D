@@ -1,0 +1,59 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let X := requireModule "Assemblers/X.5D" in 
+import [id] from Composition in 
+import [AX CX DX BX SP BP SI DI valueFits32? valueFits64?] from X in 
+let pushReg := X.pushReg id in 
+let popReg := X.popReg id in 
+let loadValReg := X.loadValReg id in 
+let loadRegReg := X.loadRegReg id in 
+let addRegReg := X.addRegReg id in 
+let addValReg := X.addValReg id in 
+let subRegReg := X.subRegReg id in 
+let subValReg := X.subValReg id in 
+let mulRegReg := X.mulRegReg id in 
+let mulValRegReg := X.mulValRegReg id in 
+let idiv := X.idiv id in 
+let ret := X.ret id in 
+let clearCarry := X.clearCarry id in 
+let setCarry := X.setCarry id in 
+let adcValReg := X.adcValReg id in 
+let sbbValReg := X.sbbValReg id in 
+let callReg := X.callReg id in 
+let callRel := X.callRel id in 
+let branchRel := X.branchRel id in 
+let compareRegReg := X.compareRegReg id in 
+cmov
+#exports[
+AX
+CX
+DX
+BX
+SP
+BP
+SI
+DI
+pushReg
+popReg
+valueFits32?
+valueFits64?
+loadValReg
+loadRegReg
+addRegReg
+addValReg
+subRegReg
+subValReg
+mulRegReg
+mulValRegReg
+idiv
+ret
+clearCarry
+setCarry
+adcValReg
+sbbValReg
+callReg
+callRel
+branchRel
+compareRegReg
+]

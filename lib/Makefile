@@ -207,7 +207,7 @@ LDFLAGS += -lpthread $(LIBGC_LD_WRAP_LDFLAGS)
 STRICT_OBJECTS = strict/SpecialForms/Quoter.o strict/Logic/Logic.o strict/SpecialForms/Constanter.o strict/SpecialForms/Identer.o strict/SpecialForms/SpecialForms.o strict/SpecialForms/Unapplier.o
 
 EVAL_OBJECTS = Evaluators/Evaluators.o Combinators/Combinators.o FFIs/Converters.o
-NUMBERS = Numbers/Integer2.o \
+NUMBERS_OBJECTS = Numbers/Integer2.o \
 Numbers/Real.o \
 Numbers/Ratio.o \
 Arithmetics/Arithmetics.o
@@ -224,7 +224,7 @@ Values/wstrings.o \
 Values/Hashtable.o \
 $(STRICT_OBJECTS) \
 $(EVAL_OBJECTS) \
-$(NUMBERS) \
+$(NUMBERS_OBJECTS) \
 $(STRINGS) \
 Modulesystem/Exports.o \
 Modulesystem/Memoizer.o \
@@ -265,7 +265,8 @@ Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.c Parsers/Lang5D Formatters/M
 Tests/03_Numbers/main.o: Tests/03_Numbers/main.c Parsers/Lang5D Formatters/Math2 include/6D/Allocators include/6D/Values include/6D/Evaluators Tests/sillyprint.inc include/6D/Arithmetics
 Values/wstrings.o: Values/wstrings.c include/6D/wstrings Allocators/Allocators include/6D/Allocators
 Evaluators/Evaluators.o: Evaluators/Evaluators.c strict/SpecialForms/SpecialForms include/6D/Operations  lazy/SpecialForms/SpecialForms Values/Values
-Numbers/Integer2.o: Numbers/Integer2.c Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
+Numbers/Integer2.o Numbers/Integer2.c.proto: Numbers/Integer2.c Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
+	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 Numbers/Real.o: Numbers/Real.c Numbers/Real Numbers/Small Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
 Numbers/Ratio.o: Numbers/Ratio.c Numbers/Ratio Numbers/Small Numbers/Real Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values
 strict/SpecialForms/Quoter.o: strict/SpecialForms/Quoter.c strict/SpecialForms/Quoter strict/SpecialForms/SpecialForms include/6D/Operations include/6D/Values
@@ -281,13 +282,13 @@ Builtins/Builtins.o: Builtins/Builtins.c Builtins/Builtins strict/SpecialForms/S
 FFIs/Converters.o: FFIs/Converters.c FFIs/Converters Numbers/Integer2 Numbers/Real Numbers/Ratio include/6D/Values include/6D/FFIs strict/Logic/Logic lazy/Logic/Logic
 Values/Hashtable.o: Values/Hashtable.c Values/Hashtable Values/Values include/6D/Values include/6D/Allocators
 Strings/Strings.o: Strings/Strings.c Strings/Strings include/6D/Values include/6D/Allocators Numbers/Integer2
-Builtins/wrapper.c: Values/Values.o Arithmetics/Arithmetics.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o Makefile generateWrapper Arithmetics/Arithmetics.c.proto Values/Values.c.proto
-	$(OBJDUMP) -t Values/Values.o Arithmetics/Arithmetics.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o |grep 'g.....F' | awk '{ print $$6 }' | ./generateWrapper Arithmetics/Arithmetics.c.proto Values/Values.c.proto OPLs/MinimalOPL.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
-Builtins/wrapper.o: Builtins/wrapper.c include/6D/Values include/6D/Allocators Numbers/Integer2 Arithmetics/Arithmetics 
+Builtins/wrapper.c: Values/Values.o Numbers/Integer2.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o Makefile generateWrapper Numbers/Integer2.c.proto Values/Values.c.proto
+	$(OBJDUMP) -t Values/Values.o Numbers/Integer2.o $(STRICT_OBJECTS) OPLs/MinimalOPL.o |grep 'g.....F' | awk '{ print $$6 }' | ./generateWrapper Numbers/Integer2.c.proto Values/Values.c.proto OPLs/MinimalOPL.c.proto > Builtins/wrapper.c.new && mv Builtins/wrapper.c.new Builtins/wrapper.c
+Builtins/wrapper.o: Builtins/wrapper.c include/6D/Values include/6D/Allocators Numbers/Integer2  
 OPLs/MinimalOPL.c.proto OPLs/MinimalOPL.o: OPLs/MinimalOPL.c include/6D/Values include/6D/Allocators Numbers/Integer2 include/6D/Operations include/6D/Evaluators include/6D/FFIs
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
-Arithmetics/Arithmetics.c.proto Arithmetics/Arithmetics.o: Arithmetics/Arithmetics.c Arithmetics/Arithmetics include/6D/Allocators Numbers/Integer2 include/6D/Values
-	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
+Arithmetics/Arithmetics.o: Arithmetics/Arithmetics.c Arithmetics/Arithmetics include/6D/Allocators Numbers/Integer2 include/6D/Values
+	$(CC) -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 Allocators/SillyGC.o: Allocators/SillyGC.cc Allocators/SillyGC include/6D/Values
 	$(CXX) -o $@ -c $< $(CFLAGS)
 Arithmetics/Arithmetics.o: Arithmetics/Arithmetics.c  Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values include/6D/Evaluators
@@ -302,24 +303,22 @@ all:
 	$(MAKE) -C Trigonometry all
 	$(MAKE) -C Logic all
 	$(MAKE) -C Composition all
-	$(MAKE) -C List all
-	$(MAKE) -C Pair all
-	$(MAKE) -C Set all
+	$(MAKE) -C Lists all
+	$(MAKE) -C Pairs all
+	$(MAKE) -C Sets all
 	$(MAKE) -C OS all
 	$(MAKE) -C IO all
 	$(MAKE) -C Maybe all
 	$(MAKE) -C UI all
-	$(MAKE) -C FFI all
-	$(MAKE) -C String all
-	$(MAKE) -C Reflection all
-	$(MAKE) -C Error all
-	$(MAKE) -C LinearAlgebra all
-	$(MAKE) -C OO all
-	$(MAKE) -C Tree all
+	$(MAKE) -C FFIs all
+	$(MAKE) -C Strings all
+	$(MAKE) -C Reflections all
+	$(MAKE) -C Errors all
+	$(MAKE) -C Objects all
+	$(MAKE) -C Trees all
 	$(MAKE) -C Evaluators all
 	$(MAKE) -C Parsers all
 	$(MAKE) -C Assemblers all
-	$(MAKE) -C Compilers all
 	$(MAKE) -C Formatters all
 
 clean:
@@ -329,24 +328,22 @@ clean:
 	$(MAKE) -C Trigonometry clean
 	$(MAKE) -C Logic clean
 	$(MAKE) -C Composition clean
-	$(MAKE) -C List clean
-	$(MAKE) -C Pair clean
-	$(MAKE) -C Set clean
+	$(MAKE) -C Lists clean
+	$(MAKE) -C Pairs clean
+	$(MAKE) -C Sets clean
 	$(MAKE) -C OS clean
 	$(MAKE) -C IO clean
 	$(MAKE) -C Maybe clean
 	$(MAKE) -C UI clean
-	$(MAKE) -C FFI clean
-	$(MAKE) -C String clean
-	$(MAKE) -C Reflection clean
-	$(MAKE) -C Error clean
-	$(MAKE) -C LinearAlgebra clean
-	$(MAKE) -C OO clean
-	$(MAKE) -C Tree clean
+	$(MAKE) -C FFIs clean
+	$(MAKE) -C Strings clean
+	$(MAKE) -C Reflections clean
+	$(MAKE) -C Errors clean
+	$(MAKE) -C Objects clean
+	$(MAKE) -C Trees clean
 	$(MAKE) -C Evaluators clean
 	$(MAKE) -C Parsers clean
 	$(MAKE) -C Assemblers clean
-	$(MAKE) -C Compilers clean
 	$(MAKE) -C Formatters clean
 
 distclean:
@@ -357,24 +354,22 @@ distclean:
 	$(MAKE) -C Trigonometry distclean
 	$(MAKE) -C Logic distclean
 	$(MAKE) -C Composition distclean
-	$(MAKE) -C List distclean
-	$(MAKE) -C Pair distclean
-	$(MAKE) -C Set distclean
+	$(MAKE) -C Lists distclean
+	$(MAKE) -C Pairs distclean
+	$(MAKE) -C Sets distclean
 	$(MAKE) -C OS distclean
 	$(MAKE) -C IO distclean
 	$(MAKE) -C Maybe distclean
 	$(MAKE) -C UI distclean
-	$(MAKE) -C FFI distclean
-	$(MAKE) -C String distclean
-	$(MAKE) -C Reflection distclean
-	$(MAKE) -C Error distclean
-	$(MAKE) -C LinearAlgebra distclean
-	$(MAKE) -C OO distclean
-	$(MAKE) -C Tree distclean
+	$(MAKE) -C FFIs distclean
+	$(MAKE) -C Strings distclean
+	$(MAKE) -C Reflections distclean
+	$(MAKE) -C Errors distclean
+	$(MAKE) -C Objects distclean
+	$(MAKE) -C Trees distclean
 	$(MAKE) -C Evaluators distclean
 	$(MAKE) -C Parsers distclean
 	$(MAKE) -C Assemblers distclean
-	$(MAKE) -C Compilers distclean
 	$(MAKE) -C Formatters distclean
 
 install:
@@ -383,24 +378,22 @@ install:
 	$(MAKE) -C Trigonometry install
 	$(MAKE) -C Logic install
 	$(MAKE) -C Composition install
-	$(MAKE) -C List install
-	$(MAKE) -C Pair install
-	$(MAKE) -C Set install
+	$(MAKE) -C Lists install
+	$(MAKE) -C Pairs install
+	$(MAKE) -C Sets install
 	$(MAKE) -C OS install
 	$(MAKE) -C IO install
 	$(MAKE) -C Maybe install
 	$(MAKE) -C UI install
-	$(MAKE) -C FFI install
-	$(MAKE) -C String install
-	$(MAKE) -C Reflection install
-	$(MAKE) -C Error install
-	$(MAKE) -C LinearAlgebra install
-	$(MAKE) -C OO install
-	$(MAKE) -C Tree install
+	$(MAKE) -C FFIs install
+	$(MAKE) -C Strings install
+	$(MAKE) -C Reflections install
+	$(MAKE) -C Errors install
+	$(MAKE) -C Objects install
+	$(MAKE) -C Trees install
 	$(MAKE) -C Evaluators install
 	$(MAKE) -C Parsers install
 	$(MAKE) -C Assemblers install
-	$(MAKE) -C Compilers install
 	$(MAKE) -C Formatters install
 
 dist:

@@ -71,7 +71,7 @@ int getFreeVariables(NodeT freeNames, NodeT root) {
 	return freeNamesCount;
 }
 static INLINE NodeT error(const char* expectedText, const char* gotText, NodeT context) {
-	return evalError(strC(expectedText), strC(gotText), context);
+	return evaluationError(strC(expectedText), strC(gotText), context);
 }
 static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, NodeT boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.

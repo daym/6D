@@ -25,18 +25,30 @@ BEGIN_STRUCT_6D(Scanner)
 	bool bBeginningOfLine;
 	NodeT env;
 	NODET indents;
-	int indent; /* of current line */
+	NativeUInt indent; /* of current line */
 	NODET SEOF;
 	bool bEOF;
 END_STRUCT_6D(Scanner)
+	static INLINE int integerCompareD(NODET a, NATIVEINT bvalue) {
+		NATIVEINT avalue;
+		if(!toNativeInt(a, &avalue))
+			abort();
+		return (avalue < bvalue) ? (-1) :
+		       (avalue == bvalue) ? 0 :
+		       1;
+	}
 	/** \return whether we already injected a token or not. */
 	static bool Scanner_skipWhitespace(struct Scanner* self) {
 		int c;
 		if(!self->bEOF)
 		while((c = GETC) != EOF && c != 26/*EOF*/) {
 			if(c == ' ' || c == '\t') {
-				if(self->bBeginningOfLine)
+				if(self->bBeginningOfLine) {
 					self->indent += 1;
+					if(self->indent == 0) { /* overflow */
+						abort();
+					}
+				}
 			} else if(c == '\r') {
 			} else if(c == '\n') {
 				self->bBeginningOfLine = true;

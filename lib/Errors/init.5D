@@ -1,0 +1,7 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in
+Composition.withInterface1 filename
+let raiseErrorWithCode := (\part \code [part code]) in 
+let raiseMissingSymbolError := Composition.raiseMissingSymbolError in 
+let error? := (\a Builtins.cons? a) in 
+(#exports[raiseErrorWithCode raiseMissingSymbolError error?])

@@ -1,0 +1,52 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in
+Composition.withInterface1 filename
+let List := requireModule "List" in 
+let Error := requireModule "Error" in
+let Logic := requireModule "Logic" in 
+let Maybe := requireModule "Maybe" in 
+let Arithmetic := requireModule "Arithmetic" in 
+import [(if) (else) (elif)] from Logic in 
+import [divmod0 (/=) (+) (-) (*) (⋅) (<) (=)] from Arithmetic in 
+import [($) (rec) (|)] from Composition in 
+import [head tail nil? foldr map drop (++) reverse foldl] from List in 
+import [listFromStr str? strFromKeyword strFromList] from Builtins in 
+import [(?;) return?] from Maybe in 
+let strcat := \a \b strFromList ((listFromStr a) ++ (listFromStr b)) in 
+let strjoinp := (\sepl \strings 
+	let prefixSepl := (\x sepl ++ listFromStr x) in 
+	let parts := (map prefixSepl strings) in 
+	foldr (++) "" parts
+) in 
+let strjoin := (\sep \strings 
+	let sepl := (listFromStr sep) in 
+	if (nil? strings)
+		""
+	else
+		strFromList (drop (List.length sepl) (strjoinp sepl strings))
+) in 
+let strFromIntegerBase := 
+	let build := \base rec\build\a
+		let cr := divmod0 a base in 
+		let c := head cr in 
+		let r := head (tail cr) in 
+		(#\0 + r):(if (c /= 0) (build c) else [])
+	in 
+	\base \value
+	if (value < 0)
+		#\-:(build base (-value) | reverse) | strFromList
+	else
+		build base value | reverse | strFromList
+in 
+let strFromInteger := strFromIntegerBase 10 in 
+let integerFromStrBase :=
+	let build := \base foldl (\a \b a⋅base + b - #\0) 0 in
+	\base \value
+	if ((head value) = #\-)
+		-(build base (tail value))
+	else
+		build base value
+in 
+let integerFromStr := integerFromStrBase 10 in 
+let substr := \beginning \end \box Builtins.substr beginning end box in 
+(#exports[listFromStr str? strFromKeyword strFromList substr strcat strjoin strFromInteger integerFromStr])

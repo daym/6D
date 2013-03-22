@@ -147,8 +147,8 @@ NodeT ratioB(NodeT n) G_5D_PURE;
 
 /* errors */
 
-NodeT parseError(NodeT aExpectedInput, NodeT aGotInput) G_5D_PURE;
-NodeT evalError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) G_5D_PURE;
+NodeT parsingError(NodeT aExpectedInput, NodeT aGotInput) G_5D_PURE;
+NodeT evaluationError(NodeT aExpectedInput, NodeT aGotInput, NodeT aContext) G_5D_PURE;
 bool errorP(NodeT n) G_5D_PURE;
 NodeT errorKind(NodeT node) G_5D_PURE;
 NodeT errorExpectedInput(NodeT node) G_5D_PURE;

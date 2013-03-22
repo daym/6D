@@ -19,6 +19,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include "SpecialForms/SpecialForms"
 #include "Builtins/Builtins"
 #include "OPLs/MinimalOPL"
+#include "Arithmetics/Arithmetics"
 BEGIN_NAMESPACE_6D(Formatters)
 USE_NAMESPACE_6D(Evaluators)
 USE_NAMESPACE_6D(Values)
@@ -27,8 +28,8 @@ static NodeT Sbackslash;
 static NodeT Sspace;
 static NodeT Sslash;
 static NodeT Scomma;
-static NodeT SevalError;
-static NodeT evalErrorF;
+static NodeT SevaluationError;
+static NodeT evaluationErrorF;
 static NodeT SminimalOPL;
 static NodeT SoperatorLevel;
 static NodeT SoperatorArgcount;
@@ -85,7 +86,7 @@ static int Formatter_argcountOfOperator(struct Formatter* self, NodeT operator_)
 // TODO static struct Formatter silentFormatter;
 static INLINE NodeT Formatter_printChar(struct Formatter* self, char c) {
 	if(fputc(c, self->outputStream) == EOF)
-		return evalError(strC("<stream>"), strC("<broken-stream>"), nil);
+		return evaluationError(strC("<stream>"), strC("<broken-stream>"), nil);
 	if(c == '\n')
 		self->hposition = 0;
 	else {
@@ -160,7 +161,7 @@ static NodeT Formatter_printSymbol(struct Formatter* self, NodeT node, int bPare
 	/* TODO support escaping? */
 	s = symbolName(node);
 	if(!s)
-		return evalError(strC("<symbol>"), strC("<junk>"), node);
+		return evaluationError(strC("<symbol>"), strC("<junk>"), node);
 	if(bParens)
 		if(Formatter_levelOfOperator(self, node) == NO_OPERATOR)
 			bParens = 0;
@@ -305,7 +306,7 @@ static NodeT Formatter_printKeyword(struct Formatter* self, NodeT node) {
 	/* TODO support escaping? */
 	s = keywordName(node);
 	if(!s)
-		return evalError(strC("<symbol>"), strC("<junk>"), node);
+		return evaluationError(strC("<symbol>"), strC("<junk>"), node);
 	status = status ? status : Formatter_printChar(self, '@');
 	status = status ? status : Formatter_printStr2(self, strlen(s), s);
 	return status;
@@ -314,7 +315,7 @@ static NodeT Formatter_printStr(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
 	char* s;
 	if(!stringFromNode(node, &s))
-		status = evalError(strC("<str>"), strC("<junk>"), node);
+		status = evaluationError(strC("<str>"), strC("<junk>"), node);
 	status = status ? status : Formatter_printChar(self, '"');
 	status = status ? status : Formatter_printStr2(self, strSize(node), s);
 	status = status ? status : Formatter_printChar(self, '"');
@@ -395,7 +396,7 @@ static NodeT Formatter_printInteger2(struct Formatter* self, NodeT value) {
 	value = pairFst(qr);
 	remN = pairSnd(qr);
 	if(!toNativeInt(remN, &rem))
-		return evalError(strC("<integer-remainder>"), strC("<junk>"), remN);
+		return evaluationError(strC("<integer-remainder>"), strC("<junk>"), remN);
 	if(rem < 0)
 		rem += 10;
 	if(value != 0)
@@ -407,7 +408,7 @@ static NodeT Formatter_printInt(struct Formatter* self, NodeT node) {
 	NativeInt value;
 	NodeT status = nil;
 	if(!toNativeInt(node, &value))
-		return evalError(strC("<int>"), strC("<junk>"), node);
+		return evaluationError(strC("<int>"), strC("<junk>"), node);
 	if(value < 0) {
 		status = status ? status : Formatter_printChar(self, '(');
 		status = status ? status : Formatter_printChar(self, '-');
@@ -428,7 +429,7 @@ static NodeT Formatter_printFloat(struct Formatter* self, NodeT node) {
 	int i;
 	/* TODO hexadecimal floating point (a) */
 	if(!toNativeFloat(node, &value) || snprintf(buffer, 200, NATIVEFLOAT_FORMAT, value) < 0)
-		return evalError(strC("<float>"), strC("<junk>"), node);
+		return evaluationError(strC("<float>"), strC("<junk>"), node);
 	for(i = 0; nilP(status) && (c = buffer[i]) != 0; ++i) {
 		if(c == '.')
 			bSawDot = true;
@@ -450,7 +451,7 @@ static NodeT Formatter_printFloat(struct Formatter* self, NodeT node) {
 }
 static NodeT Formatter_printInteger(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
-	if(integerCompareD(node, 0) < 0) {
+	if(!integerGePU(node, 0)) { /* node < 0 */
 		status = status ? status : Formatter_printChar(self, '(');
 		status = status ? status : Formatter_printChar(self, '-');
 		status = status ? status : Formatter_printInteger2(self, node);
@@ -464,7 +465,7 @@ static NodeT Formatter_printError(struct Formatter* self, NodeT node) {
 	NodeT expectedInput = errorExpectedInput(node);
 	NodeT gotInput = errorGotInput(node);
 	NodeT context = errorContext(node);
-	return Formatter_print(self, call5(SevalError, kind, expectedInput, gotInput, context));
+	return Formatter_print(self, call5(SevaluationError, kind, expectedInput, gotInput, context));
 }
 static NodeT Formatter_printFFIFn(struct Formatter* self, NodeT node) {
 	NodeT status = nil;
@@ -491,7 +492,7 @@ NodeT Formatter_print(struct Formatter* self, NodeT node) {
 	       errorP(node) ? Formatter_printError(self, node) : 
 	       boxP(node) ? Formatter_printBox(self, node) : 
 	       FFIFnP(node) ? Formatter_printFFIFn(self, node) : 
-	       evalError(strC("<printable>"), strC("<unprintable>"), node);
+	       evaluationError(strC("<printable>"), strC("<unprintable>"), node);
 	self->bParenEqualLevels = false;
 	return result;
 }
@@ -527,12 +528,12 @@ void initMathFormatters(void) {
 		Sin = symbolFromStr("in");
 		Sequal = symbolFromStr("=");
 		Scolonequal = symbolFromStr(":=");
-		SevalError = symbolFromStr("evalError");
+		SevaluationError = symbolFromStr("evaluationError");
 		SminimalOPL = symbolFromStr("minimalOPL");
 		SoperatorLevel = symbolFromStr("operatorLevel");
 		SoperatorArgcount = symbolFromStr("operatorArgcount");
 		Splus = symbolFromStr("+");
-		evalErrorF = dcall(builtins, quote2(SevalError));
+		evaluationErrorF = dcall(builtins, quote2(SevaluationError));
 		NodeT minimalOPL = dcall(builtins, SminimalOPL);
 		minimalOperatorLevel = dcall(minimalOPL, SoperatorLevel);
 		minimalOperatorArgcount = dcall(minimalOPL, SoperatorArgcount);

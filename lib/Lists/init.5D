@@ -1,0 +1,154 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let Logic := requireModule "Logic" in 
+let Arithmetic := requireModule "Arithmetic" in 
+let Error := requireModule "Error" in 
+let Pair := requireModule "Pair" in 
+import [nil? cons? head tail (:)] from Builtins in 
+import [($) compose flip (rec) (rem)] from Composition in 
+import [(if) (else) (elif) (||) (&&) (#t) (#f) not] from Logic in 
+import [(<=) (>=) (=) (/=) (+) (-) (*) (⋅) (/) div0 max ceiling] from Arithmetic in 
+import [(,)] from Pair in 
+let nil := [] in 
+let list? := \a nil? a || cons? a in 
+let foldl := \f rec \foldl \v \list 
+	if (nil? list) 
+		v
+	else 
+		foldl (f v (head list)) (tail list)
+in 
+let foldr := \f \v rec \foldr \list 
+	if (nil? list) 
+		v
+	else
+		f (head list) (foldr (tail list))
+in 
+let (++) := \a \b foldr (:) b a in 
+let drop := rec \drop \count \list 
+	if (count <= 0 || nil? list) 
+		list 
+	else 
+		drop (count - 1) (tail list)
+in 
+let take := rec \take \count \list 
+	if (count <= 0 || nil? list) 
+		nil 
+	else
+		(head list):(take (count - 1) (tail list))
+in 
+let takeWhile := \predicate rec \take \list 
+	if (nil? list || not (predicate (head list)))
+		nil 
+	else
+		(head list):(take (tail list))
+in 
+let map := \f \list foldr (compose (:) f) nil list in 
+let mergeBy := \lessEqualComparator rec \mergeBy \l1 \l2 
+	if (nil? l1 && nil? l2) 
+		[]
+	elif (nil? l2) 
+		(head l1):(mergeBy (tail l1) l2) 
+	elif (not (nil? l1) && lessEqualComparator (head l1) (head l2)) 
+		(head l1):(mergeBy (tail l1) l2)
+	else 
+		(head l2):(mergeBy l1 (tail l2))
+in 
+let merge := mergeBy (<=) in 
+let length2 := foldr (\x \y y + 1) 0 in 
+let length := rec \length \list 
+	if (nil? list) 
+		0 
+	else
+		(1 + length (tail list))
+in 
+let mergeSortBy := \lessEqualComparator 
+	let merge := mergeBy lessEqualComparator in 
+	rec \sort \list 
+		if (nil? list || nil? (tail list)) 
+			list 
+		else 
+			let halfCount := div0 (length list) 2 in 
+			let leftHalf := take halfCount list in 
+			let rightHalf := drop halfCount list in 
+			merge (sort leftHalf) (sort rightHalf)
+in 
+let mergeSort := mergeSortBy (<=) in 
+let extremum := \fn \values foldr fn (head values) values in 
+let filter := \f rec \filter \list 
+	if (nil? list) 
+		nil 
+	elif (f (head list)) 
+		(head list):(filter (tail list)) 
+	else
+		filter (tail list)
+in 
+let reverse := \list foldl (flip (:)) nil list in 
+let rangeLL := \terminator \step \end 
+	if (step <= 0 - 1)
+		rec \rangeLL \beginning
+			if (beginning <= end) 
+				terminator 
+			else
+				beginning:(rangeLL (beginning + step))
+	else
+		rec \rangeLL \beginning
+			if (beginning >= end) 
+				terminator 
+			else
+				beginning:(rangeLL (beginning + step))
+in 
+let range1 := \beginning \end rangeLL [] 1 end beginning in 
+let range := \beginning \end \step rangeLL [] step end beginning in 
+let frangeLL := \terminator \step \end \beginning
+	let n := ceiling (end - beginning)/step in 
+	let range := rec\range \i
+		if (i >= n) 
+			terminator 
+		else 
+			(beginning + i⋅step):(range (i + 1))
+	in 
+	range 0
+in 
+let frange := \beginning \end \step 
+	rem "a version of (range) more suited to floating-point values: Errors don't accumulate that much on every step."
+	frangeLL [] step end beginning
+in 
+let frange2 := \beginning \end \step 
+	rem "a version of (range) more suited to floating-point values: Errors don't accumulate that much on every step."
+	let count := ceiling ((end - beginning)/step) in 
+	map (\i i*step) (range 0 count 1)
+in 
+let zipBy := \zipper rec \zipBy \l1 \l2 
+	if (nil? l1 || nil? l2) 
+		nil 
+	else 
+		(zipper (head l1) (head l2)):(zipBy (tail l1) (tail l2))
+in 
+let uniqBy := \(=) rec\uniq \list 
+	if (nil? list)
+		[]
+	else
+		let h := head list in 
+		let t := tail list in 
+		if (nil? t)
+			h:[]
+		else
+			let h2 := head t in 
+			if (h = h2)
+				uniq t
+			else
+				h:(uniq t)
+in 
+let uniq := uniqBy (=) in 
+let zip := zipBy (\x \y x,y) in 
+let repeatEndlessly := rec\repeatEndlessly \v v:(repeatEndlessly v) in 
+let transpose := \matrix foldr (zipBy (:)) (repeatEndlessly nil) matrix in 
+let enumerate := \list zip (range 0 (length list) 1) list in 
+let sum := \list foldr (+) 0 list in 
+let product := \list foldr (*) 1 list in 
+let anyTrue? := \list foldr (||) #f list in 
+let allTrue? := \list foldr (&&) #t list in 
+let ∃ := \xs \predicate anyTrue? (map predicate xs) in 
+let ∀ := \xs \predicate allTrue? (map predicate xs) in 
+(#exports[nil nil? cons? list? (:) (++) map merge mergeBy mergeSort mergeSortBy extremum drop foldl foldr filter length head tail reverse enumerate range range1 take takeWhile zip transpose zipBy sum product anyTrue? allTrue? frange frangeLL uniq uniqBy ∀ ∃])

@@ -1,0 +1,64 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let List := requireModule "List" in 
+import [(:)] from List in 
+let X := requireModule "Assemblers/X.5D" in 
+import [($)] from Composition in 
+rem "TODO R8..R15"$
+import [AX CX DX BX SP BP SI DI valueFits32? valueFits64?] from X in 
+let wider := \box
+	#x48:box
+in 
+let pushReg := X.pushReg wider in 
+let popReg := X.popReg wider in 
+let loadValReg := X.loadValReg wider in 
+let loadRegReg := X.loadRegReg wider in 
+let addRegReg := X.addRegReg wider in 
+let addValReg := X.addValReg wider in 
+let subRegReg := X.subRegReg wider in 
+let subValReg := X.subValReg wider in 
+let mulRegReg := X.mulRegReg wider in 
+let mulValRegReg := X.mulValRegReg wider in 
+let idiv := X.idiv wider in 
+let ret := X.ret wider in 
+let clearCarry := X.clearCarry wider in 
+let setCarry := X.setCarry wider in 
+let adcValReg := X.adcValReg wider in 
+let sbbValReg := X.sbbValReg wider in 
+let callReg := X.callReg wider in 
+let callRel := X.callRel wider in 
+let branchRel := X.branchRel wider in 
+let compareRegReg := X.compareRegReg wider in 
+#exports[
+AX
+CX
+DX
+BX
+SP
+BP
+SI
+DI
+pushReg
+popReg
+valueFits32?
+valueFits64?
+loadValReg
+loadRegReg
+addRegReg
+addValReg
+subRegReg
+subValReg
+mulRegReg
+mulValRegReg
+idiv
+ret
+clearCarry
+setCarry
+adcValReg
+sbbValReg
+callReg
+callRel
+branchRel
+compareRegReg
+]

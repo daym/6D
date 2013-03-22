@@ -1,0 +1,7 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let Error := requireModule "Error" in 
+import [allocateRecord! allocateMemory! duplicateRecord! packRecord recordSize unpackRecord archDepLibName strUntilZero environFromList listFromEnviron requireSharedLibrary] from Builtins in 
+let allocatePointer! := allocateMemory! (recordSize "p") in 
+(#exports[allocateRecord! allocateMemory! duplicateRecord! packRecord recordSize unpackRecord archDepLibName strUntilZero allocatePointer! environFromList listFromEnviron requireSharedLibrary])

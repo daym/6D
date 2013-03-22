@@ -1,0 +1,150 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+import [($)] from Composition in 
+Composition.withInterface1 filename
+let R0 := 0 in 
+let R1 := 1 in 
+let R2 := 2 in 
+let R3 := 3 in 
+let R4 := 4 in 
+let R5 := 5 in 
+let R6 := 6 in 
+let R7 := 7 in 
+let R8 := 8 in 
+let R9 := 9 in 
+let SL := 10 in 
+let FP := 11 in 
+let IP := 12 in 
+let SP := 13 in 
+let LR := 14 in 
+let PC := 15 in 
+rem "all opcodes start with e... what does that mean?"$
+let MR := \r1 r1 in 
+let instruction := \opcode \a \b \c \tl 
+	opcode>>4,
+	(opcode&#xF)<<4 | b,
+	rem "and other things"
+	a << 4,
+	rem "just above c are 2 nibbles for other purposes."
+	c,
+	tl
+in 
+let minstruction := \opcode \mode \flags \tl
+	opcode>>4,
+	(opcode&#xF)<<4 | mode,
+	flags>>8,
+	flags&#xFF,
+	tl
+in 
+let addRegRegReg := \a \b \c \tl instruction #xE08 (MR a) (MR b) (MR c) tl in 
+let adcRegRegReg := \a \b \c \tl instruction #xE0A (MR a) (MR b) (MR c) tl in 
+let subRegRegReg := \a \b \c \tl instruction #xE04 (MR a) (MR b) (MR c) tl in 
+let sbcRegRegReg := \a \b \c \tl instruction #xE0C (MR a) (MR b) (MR c) tl in 
+let loadRegReg := \src \dest \tl instruction #xE1A (MR src) (MR dest) tl in 
+let loadImmReg := \value \dest \tl instruction #xE3A (MR dest) 0 value tl in 
+let mulRegRegReg := \a \b \c \tl instruction #xE04 (MR a) (MR b) (MR c) tl in 
+let pushRegs := \regs \tl minstruction #xE92 #xD regs tl in 
+let popRegs := \regs \tl minstruction #xE8B #xD regs tl in 
+let pushReg := \reg \tl emitPushRegs (1 << reg) tl in 
+let popReg := \reg \tl emitPopRegs (1 << reg) tl in 
+let ret := loadRegReg LR PC in 
+let branchTable1 := 
+	let overflowed := #x in 
+	let notOverflowed := #x in 
+	let negative := #x in 
+	let notNegative := #x in 
+	let zero := #x in 
+	let notZero := #x in 
+	let carried := #x in 
+	let notCarried := #x in 
+	let belowOrEqualUnsigned := #x in 
+	let aboveUnsigned := #x in 
+	let less := #x in 
+	let greaterOrEqual := #x in 
+	let lessOrEqual := #x in 
+	let greater := #x in 
+	let always := #x in 
+	Composition.dispatch1 #exports[overflowed notOverflowed negative notNegative zero notZero carried notCarried belowOrEqualUnsigned aboveUnsigned less greaterOrEqual lessOrEqual greater always] 
+in 
+let branchTable2 := 
+	let overflowed := #x in 
+	let notOverflowed := #x in 
+	let negative := #x in 
+	let notNegative := #x in 
+	let zero := #x in 
+	let notZero := #x in 
+	let carried := #x in 
+	let notCarried := #x in 
+	let belowOrEqualUnsigned := #x in 
+	let aboveUnsigned := #x in 
+	let less := #x in 
+	let greaterOrEqual := #x in 
+	let lessOrEqual := #x in 
+	let greater := #x in 
+	rem "let always := #x in "
+	Composition.dispatch1 #exports[overflowed notOverflowed negative notNegative zero notZero carried notCarried belowOrEqualUnsigned aboveUnsigned less greaterOrEqual lessOrEqual greater always] 
+in 
+let branchRel := \condition \distance \tl 
+	branchTable1 condition,
+	tl
+in 
+rem "
+   4:	e1a0f00e 	mov	pc, lr
+  3c:	e080000f 	add	r0, r0, pc
+        ^^^^^  ^
+        INSba  c
+  80:	e3a0000a 	mov	r0, #10	; 0xa
+  84:	e3a0100a 	mov	r1, #10	; 0xa
+  7c:	e00a0f91 	mul	sl, r1, pc
+  7c:	e041a00f 	sub	sl, r1, pc
+  40:	e0811000 	add	r1, r1, r0
+  80:	e92d0010 	push	{r4}
+  84:	e8bd0010 	pop	{r4}
+  80:	e92d0013 	push	{r0, r1, r4}
+  80:	e92d0033 	push	{r0, r1, r4, r5}
+  80:	e92d8033 	push	{r0, r1, r4, r5, pc}
+            ^
+  84:	e8bd0013 	pop	{r0, r1, r4}
+  84:	e8bd0033 	pop	{r0, r1, r4, r5}
+  84:	e8bd8033 	pop	{r0, r1, r4, r5, pc}
+TODO carry
+TODO thumb
+TODO int div via library?
+"
+#exports[
+R0
+R1
+R2
+R3
+R4
+R5
+R6
+R7
+R8
+R9
+SL
+FP
+IP
+SP
+LR
+PC
+addRegRegReg
+adcRegRegReg
+subRegRegReg
+sbcRegRegReg
+loadRegReg
+loadImmReg
+mulRegRegReg
+addRegReg
+adcRegReg
+subRegReg
+sbcRegReg
+mulRegReg
+pushReg
+popReg
+pushRegs
+popRegs
+ret
+branchRel
+compareRegReg
+]

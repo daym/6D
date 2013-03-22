@@ -100,9 +100,9 @@ NodeT infinityA(void) {
 }
 #define ARITH(op) \
 	if(!floatP(aP)) \
-		return evalError(strC("<float>"), strC("<junk>"), aP); \
+		return evaluationError(strC("<float>"), strC("<junk>"), aP); \
 	if(!floatP(bP)) \
-		return evalError(strC("<float>"), strC("<junk>"), bP); \
+		return evaluationError(strC("<float>"), strC("<junk>"), bP); \
 	{ \
 		const struct Float* a = (const struct Float*) getCXXInstance(aP); \
 		const struct Float* b = (const struct Float*) getCXXInstance(bP); \
@@ -123,9 +123,9 @@ NODET floatDiv(NODET aP, NODET bP) {
 }
 NODET floatDivrem(NODET aP, NODET bP) {
 	if(!floatP(aP))
-		return evalError(strC("<float>"), strC("<junk>"), aP);
+		return evaluationError(strC("<float>"), strC("<junk>"), aP);
 	if(!floatP(bP))
-		return evalError(strC("<float>"), strC("<junk>"), bP);
+		return evaluationError(strC("<float>"), strC("<junk>"), bP);
 	{
 		const struct Float* a = (const struct Float*) getCXXInstance(aP);
 		const struct Float* b = (const struct Float*) getCXXInstance(bP);

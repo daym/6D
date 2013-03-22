@@ -81,7 +81,7 @@ BEGIN_STRUCT_6D(Lang)
 	NodeT operatorPrefixNeutral;
 END_STRUCT_6D(Lang)
 static INLINE NodeT merror(const char* expectedPart, const char* gotPart) {
-	return parseError(strC(expectedPart), strC(gotPart));
+	return parsingError(strC(expectedPart), strC(gotPart));
 }
 static INLINE const char* nvl(const char* a, const char* b) {
 	return a ? a : b;
@@ -96,10 +96,11 @@ static int digitInBase(int base, int c) {
 	return result;
 }
 static NodeT scientificE(NodeT base, NativeInt exp, NodeT value) {
-	int i;
 	assert(exp >= 0);
+	/*return integerPowU(base, exp);*/
+	int i;
 	for(i = 0; i < exp; ++i)
-		value = integerMul(value, base);
+		value = integerMultiply(value, base);
 	return value;
 }
 static NodeT getNumber(int baseI, const char* name) {
@@ -128,7 +129,7 @@ static NodeT getNumber(int baseI, const char* name) {
 		NodeT result = internNativeInt((NativeInt) 0);
 		p = (char*) name;
 		for(;(off = digitInBase(baseI, *p)) != -1;++p) {
-			result = integerMul(result, base);
+			result = integerMultiply(result, base);
 			result = integerAddU(result, off);
 		}
 		if(*p == 'e' || *p == 'E') {

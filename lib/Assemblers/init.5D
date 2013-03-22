@@ -1,0 +1,9 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in
+Composition.withInterface1 filename
+let X := requireModule "Assemblers/X.5D" in 
+let X86 := requireModule "Assemblers/X86.5D" in 
+let AMD64 := requireModule "Assemblers/AMD64.5D" in 
+let ARM := requireModule "Assemblers/ARM.5D" in 
+let MOS6502 := requireModule "Assemblers/MOS6502.5D" in 
+#exports[X X86 AMD64 ARM]

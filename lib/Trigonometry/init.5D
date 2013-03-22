@@ -1,0 +1,60 @@
+#!/usr/bin/5D -p OPLs/Math.5D
+let Composition := requireModule "Composition" in 
+Composition.withInterface1 filename
+let Logic := requireModule "Logic" in 
+let Error := requireModule "Error" in 
+let Arithmetic := requireModule "Arithmetic" in 
+import [(rem) (rec) flip ($) compose] from Composition in 
+import [not (&&) (||) (if) (else) (elif)] from Logic in 
+import [(-) (*) (/) (+) (<=) mod (<) (>) (=) log signum sqrt exp] from Arithmetic in 
+let pi := 3.141592653589793 in 
+let π := pi in 
+let cos := \angle
+	let approx := (\x 1 - x*x/2 + x*x*x*x/24 - x*x*x*x*x*x/720) in 
+	approx ((mod (angle + pi) 2*pi) - pi)
+in
+let sin := \angle
+	let approx := (\x x - x*x*x/6 + x*x*x*x*x/120 - x*x*x*x*x*x*x/(120*6*7)) in 
+	approx ((mod (angle + pi) 2*pi) - pi)
+in
+let tan := (\x (sin x)/(cos x)) in 
+let atan := \v 
+	v - 1/3*v*v*v + 1/5*v*v*v*v*v 
+in 
+let atan1 := \y \x
+	atan (y/x)
+in 
+let atan2 := \y \x
+	if (x > 0)
+		atan1 y x
+	elif (x < 0)
+		atan1 y x - π
+	elif (x = 0)
+		if (y > 0)
+			π
+		elif (y < 0)
+			(-π)
+		else
+			Error.raiseErrorWithCode "0/0 is undefined" 500
+in
+let sec := \x 1/(cos x) in 
+let csc := \x 1/(sin x) in 
+let cot := \x 1/(tan x) in 
+let asin := \x atan (x/sqrt(-x*x + 1)) in 
+let asec := \x atan (x/sqrt(x*x - 1)) in 
+let acsc := \x (asec x) + ((signum x) - 1)*π/2 in 
+let acot := \x -(atan x) + π/2 in 
+let acos := \x π/2 -(asin x) in 
+let sinh := \x (exp x - exp (-x))/2 in 
+let cosh := \x (exp x + exp (-x))/2 in 
+let tanh := \x (sinh x)/(cosh x) in 
+let sech := \x 2/(exp x + exp (-x)) in 
+let csch := \x 2/(exp x - exp (-x)) in 
+let coth := \x 2*(exp (-x))/(exp x - exp (-x)) + 1 in 
+let asinh := \x log (x + sqrt(x*x + 1)) in 
+let acosh := \x log (x + sqrt(x*x - 1)) in 
+let atanh := \x (asinh x)/(acosh x) in 
+let asech := \x log (sqrt (-x*x + 1) + 1/x) in 
+let acsch := \x log ((signum x)*(sqrt(x*x + 1))/x) in 
+let acoth := \x (log ((x + 1)/(x - 1)))/2 in 
+(#exports[pi π cos sin tan atan atan1 atan2 sec csc cot asin asec acsc acot acos sinh cosh tanh sech csch coth asinh acosh atanh asech acsch acoth])
