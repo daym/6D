@@ -15,7 +15,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include "6D/Operations"
 BEGIN_NAMESPACE_6D(Parsers)
 struct Lang;
-NodeT initLang(void);
+void initLang(void);
 NodeT Lang_parse1(FILE* f, const char* name);
 NodeT Lang_parse1OPL(NODET OPL, FILE* f, const char* name);
 NodeT Lang_withDefaultEnv(NODET body);

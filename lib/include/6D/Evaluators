@@ -10,7 +10,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include "6D/Values"
 
 BEGIN_NAMESPACE_6D(Evaluators)
-void initEvaluators(void);
+NodeT initEvaluators(void);
 NODET annotate(NODET environment, NODET node);
 NODET eval(NODET node);
 NODET execute(NODET term);

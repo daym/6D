@@ -9,7 +9,6 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
-#include <ctype.h>
 #include <alloca.h>
 #include "6D/Evaluators"
 #include "6D/Allocators"
@@ -80,103 +79,6 @@ BEGIN_STRUCT_6D(Lang)
 	NodeT operatorArgcount;
 	NodeT operatorPrefixNeutral;
 END_STRUCT_6D(Lang)
-static INLINE NodeT merror(const char* expectedPart, const char* gotPart) {
-	return parsingError(strC(expectedPart), strC(gotPart));
-}
-static INLINE const char* nvl(const char* a, const char* b) {
-	return a ? a : b;
-}
-static int digitInBase(int base, int c) {
-	int result = (c >= '0' && c <= '9') ? 0 +  (c - '0') :
-	             (c >= 'a' && c <= 'z') ? 10 + (c - 'a') : 
-	             (c >= 'A' && c <= 'Z') ? 10 + (c - 'A') : 
-	             (-1);
-	if(result >= base)
-		result = -1;
-	return result;
-}
-static NodeT scientificE(NodeT base, NativeInt exp, NodeT value) {
-	assert(exp >= 0);
-	/*return integerPowU(base, exp);*/
-	int i;
-	for(i = 0; i < exp; ++i)
-		value = integerMultiply(value, base);
-	return value;
-}
-static NodeT getNumber(int baseI, const char* name) {
-	char* p;
-	errno = 0;
-	NativeInt value = strtol(name, &p, baseI);
-	if(errno == 0) {
-		NativeInt exp = 0;
-		if(*p == 'e' || *p == 'E') {
-			++p;
-			errno = 0;
-			exp = strtol(p, &p, baseI);
-		}
-		/* TODO fraction for negative exponents? */
-		if(errno || *p)
-			exp = -1;
-		if(exp > 0) {
-			NodeT base = internNativeInt((NativeInt) baseI);
-			return scientificE(base, exp, internNativeInt(value));
-		} else if(exp == 0)
-			return internNativeInt(value);
-	} else { /* too big */
-		int off;
-		int exp = 0;
-		NodeT base = internNativeInt((NativeInt) baseI);
-		NodeT result = internNativeInt((NativeInt) 0);
-		p = (char*) name;
-		for(;(off = digitInBase(baseI, *p)) != -1;++p) {
-			result = integerMultiply(result, base);
-			result = integerAddU(result, off);
-		}
-		if(*p == 'e' || *p == 'E') {
-			++p;
-			errno = 0;
-			exp = strtol(p, &p, baseI);
-			if(errno != 0)
-				exp = -1;
-		} else if(*p)
-			exp = -1;
-		if(exp >= 0)
-			return scientificE(base, exp, result);
-	}
-	{
-		errno = 0;
-		NativeFloat value = strtod(name, NULL);
-		if(errno == 0)
-			return internNativeFloat(value);
-		else
-			return nil;
-	}
-}
-static INLINE NodeT getDynEnvEntry(NodeT sym) {
-	const char* name = symbolName(sym);
-	NodeT result = nil;
-	if(name) {
-		if(isdigit(name[0])) { /* since there is an infinite number of numbers, make sure not to precreate all of them :-) */
-			result = getNumber(10, name);
-		} else if(name[0] == '#' && isdigit(name[1])) {
-			char* p;
-			errno = 0;
-			NativeInt base = strtol(&name[1], &p, 10);
-			if(errno == 0 && p && *p) {
-				++p; /* skip 'r' */
-				result = getNumber(base, p);
-			}
-		}
-	}
-	if(result)
-		return result;
-	fprintf(stderr, "info: expression was: ");
-	print(stderr, sym);
-	fprintf(stderr, "\n");
-	fflush(stderr);
-	return merror("<dynamic-variable>", nvl(symbolName(sym), "???"));
-}
-DEFINE_STRICT_FN(DynEnv, getDynEnvEntry(argument))
 
 static bool mathUnicodeOperatorInRangeP(int codepoint) {
 	return (codepoint >= 0x2200 && codepoint < 0x2300) ||
@@ -331,6 +233,9 @@ static NodeT mquote(NodeT a) {
 	//return quote(a);
 	return call(Squote, a);
 }
+static INLINE NodeT merror(const char* expectedPart, const char* gotPart) {
+	return parsingError(strC(expectedPart), strC(gotPart));
+}
 static NodeT Lang_error(struct Lang* self, const char* expectedPart, const char* gotPart) {
 	return merror(expectedPart, gotPart);
 }
@@ -381,7 +286,7 @@ static NodeT Lang_openingParenOf(struct Lang* self, NodeT node) {
 static bool Lang_operatorP(struct Lang* self, NodeT node) {
 	return Lang_operatorLevel(self, node) != NO_OPERATOR;
 }
-NodeT initLang(void) {
+void initLang(void) {
 	if(Srightbracket == NULL) {
 		NodeT Builtins = initBuiltins();
 		initArithmetics();
@@ -423,12 +328,10 @@ NodeT initLang(void) {
 		SoperatorArgcount = symbolFromStr("operatorArgcount");
 		SoperatorPrefixNeutral = symbolFromStr("operatorPrefixNeutral");
 		Squote = symbolFromStr("'");
-		INIT_FN(DynEnv);
 		/*defaultDynEnv = DynEnv;*/
 		//L = box(NEW_NOGC(Lang));
 		initMinimalOPL();
 	}
-	return DynEnv;
 }
 static bool Lang_macroStarterP(struct Lang* self, NodeT node) {
 	return /*(node == Slet) || (node == Simport) ||*/ (node == Sbackslash) || (node == Sleftbracket) || (node == Sleftcurly);
@@ -521,6 +424,15 @@ static NodeT collect1Buf(FILE* file, int* linenumber, bool (*continueP)(int inpu
 		return merror("<value>", "<EOF>");
 	else
 		return collectBuf(file, linenumber, prefix, continueP, outBuf);
+}
+static int digitInBase(int base, int c) {
+	int result = (c >= '0' && c <= '9') ? 0 +  (c - '0') :
+	             (c >= 'a' && c <= 'z') ? 10 + (c - 'a') : 
+	             (c >= 'A' && c <= 'Z') ? 10 + (c - 'A') : 
+	             (-1);
+	if(result >= base)
+		result = -1;
+	return result;
 }
 static NodeT collectEscaped(FILE* file, int* linenumber, int prefix, bool (*continueP)(int input)) {
 	int streamStatus;

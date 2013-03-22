@@ -264,7 +264,7 @@ Tests/01_ShuntingYard/main.o: Tests/01_ShuntingYard/main.c Parsers/Lang5D Format
 Tests/02_Evaluator/main.o: Tests/02_Evaluator/main.c Parsers/Lang5D Formatters/Math2 include/6D/Allocators include/6D/Values include/6D/Evaluators include/6D/Builtins Tests/sillyprint.inc
 Tests/03_Numbers/main.o: Tests/03_Numbers/main.c Parsers/Lang5D Formatters/Math2 include/6D/Allocators include/6D/Values include/6D/Evaluators Tests/sillyprint.inc include/6D/Arithmetics
 Values/wstrings.o: Values/wstrings.c include/6D/wstrings Allocators/Allocators include/6D/Allocators
-Evaluators/Evaluators.o: Evaluators/Evaluators.c strict/SpecialForms/SpecialForms include/6D/Operations  lazy/SpecialForms/SpecialForms Values/Values
+Evaluators/Evaluators.o: Evaluators/Evaluators.c strict/SpecialForms/SpecialForms include/6D/Operations  lazy/SpecialForms/SpecialForms Values/Values Values/Error
 Numbers/Integer2.o Numbers/Integer2.c.proto: Numbers/Integer2.c Numbers/Integer2 Numbers/Small include/6D/FFIs include/6D/Values Values/Values
 	$(CC) -aux-info $<.proto.new -c -o $@ $< $(CFLAGS) && mv $<.proto.new $<.proto
 Numbers/Real.o: Numbers/Real.c Numbers/Real Numbers/Small Numbers/Integer2 include/6D/FFIs include/6D/Values Values/Values

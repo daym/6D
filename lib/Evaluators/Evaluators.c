@@ -8,6 +8,8 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <errno.h>
+#include <ctype.h>
 #include "Evaluators/Evaluators"
 #include "Values/Values"
 #include "6D/Values"
@@ -19,6 +21,8 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include "SpecialForms/SpecialForms"
 #include "Combinators/Combinators"
 #include "Logic/Logic"
+#include "Arithmetics/Arithmetics"
+#include "Values/Error"
 
 BEGIN_NAMESPACE_6D(Evaluators)
 USE_NAMESPACE_6D(Values)
@@ -26,12 +30,109 @@ USE_NAMESPACE_6D(Combinators)
 USE_NAMESPACE_6D(Logic)
 USE_NAMESPACE_6D(SpecialForms)
 
+static INLINE const char* nvl(const char* a, const char* b) {
+	return a ? a : b;
+}
+static int digitInBase(int base, int c) {
+	int result = (c >= '0' && c <= '9') ? 0 +  (c - '0') :
+	             (c >= 'a' && c <= 'z') ? 10 + (c - 'a') : 
+	             (c >= 'A' && c <= 'Z') ? 10 + (c - 'A') : 
+	             (-1);
+	if(result >= base)
+		result = -1;
+	return result;
+}
+static NodeT scientificE(NodeT base, NativeInt exp, NodeT value) {
+	assert(exp >= 0);
+	/*return integerPowU(base, exp);*/
+	int i;
+	for(i = 0; i < exp; ++i)
+		value = integerMultiply(value, base);
+	return value;
+}
+static NodeT getNumber(int baseI, const char* name) {
+	char* p;
+	errno = 0;
+	NativeInt value = strtol(name, &p, baseI);
+	if(errno == 0) {
+		NativeInt exp = 0;
+		if(*p == 'e' || *p == 'E') {
+			++p;
+			errno = 0;
+			exp = strtol(p, &p, baseI);
+		}
+		/* TODO fraction for negative exponents? */
+		if(errno || *p)
+			exp = -1;
+		if(exp > 0) {
+			NodeT base = internNativeInt((NativeInt) baseI);
+			return scientificE(base, exp, internNativeInt(value));
+		} else if(exp == 0)
+			return internNativeInt(value);
+	} else { /* too big */
+		int off;
+		int exp = 0;
+		NodeT base = internNativeInt((NativeInt) baseI);
+		NodeT result = internNativeInt((NativeInt) 0);
+		p = (char*) name;
+		for(;(off = digitInBase(baseI, *p)) != -1;++p) {
+			result = integerMultiply(result, base);
+			result = integerAddU(result, off);
+		}
+		if(*p == 'e' || *p == 'E') {
+			++p;
+			errno = 0;
+			exp = strtol(p, &p, baseI);
+			if(errno != 0)
+				exp = -1;
+		} else if(*p)
+			exp = -1;
+		if(exp >= 0)
+			return scientificE(base, exp, result);
+	}
+	{
+		errno = 0;
+		NativeFloat value = strtod(name, NULL);
+		if(errno == 0)
+			return internNativeFloat(value);
+		else
+			return nil;
+	}
+}
+static INLINE NodeT getDynEnvEntry(NodeT sym) {
+	const char* name = symbolName(sym);
+	NodeT result = nil;
+	if(name) {
+		if(isdigit(name[0])) { /* since there is an infinite number of numbers, make sure not to precreate all of them :-) */
+			result = getNumber(10, name);
+		} else if(name[0] == '#' && isdigit(name[1])) {
+			char* p;
+			errno = 0;
+			NativeInt base = strtol(&name[1], &p, 10);
+			if(errno == 0 && p && *p) {
+				++p; /* skip 'r' */
+				result = getNumber(base, p);
+			}
+		}
+	}
+	if(result)
+		return result;
+	//fprintf(stderr, "info: expression was: ");
+	//print(stderr, sym);
+	//fprintf(stderr, "\n");
+	//fflush(stderr);
+	return evaluationError(strC("<dynamic-variable>"), strC(nvl(symbolName(sym), "???")), sym); /* TODO more context */
+}
+DEFINE_STRICT_FN(DynEnv, getDynEnvEntry(argument))
+
 static NodeT Squote;
-void initEvaluators(void) {
+NodeT initEvaluators(void) {
 	Squote = symbolFromStr("'");
 	initCombinators();
 	initLogic();
 	initSpecialForms();
+	INIT_FN(DynEnv);
+	return DynEnv;
 }
 static bool quoteP(NodeT n) {
 	return n == Squote;
@@ -73,6 +174,7 @@ int getFreeVariables(NodeT freeNames, NodeT root) {
 static INLINE NodeT error(const char* expectedText, const char* gotText, NodeT context) {
 	return evaluationError(strC(expectedText), strC(gotText), context);
 }
+
 static NodeT annotateImpl(NodeT dynEnv, NodeT boundNames, NodeT boundNamesSet, NodeT root) {
 	// TODO maybe traverse cons etc? maybe not.
 	NodeT result;
