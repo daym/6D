@@ -5,7 +5,6 @@ This program is free software: you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* TODO: raw strings */
 #include <stdlib.h>
 #include <assert.h>
 #include <errno.h>
@@ -504,11 +503,13 @@ static NodeT collect(FILE* file, int* linenumber, int prefix, bool (*continueP)(
 		abort();
 	status = collectBuf(file, linenumber, prefix, continueP, sst);
 	if(!nilP(status)) {
-		fclose(sst);
+		if(fclose(sst) != 0)
+			abort();
 		return status;
 	}
 	NodeT result = (s[0]) ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
-	fclose(sst);
+	if(fclose(sst) != 0)
+		abort();
 	return result;
 }
 static NodeT collect1Buf(FILE* file, int* linenumber, bool (*continueP)(int input), FILE* outBuf) {
@@ -520,7 +521,7 @@ static NodeT collect1Buf(FILE* file, int* linenumber, bool (*continueP)(int inpu
 	else
 		return collectBuf(file, linenumber, prefix, continueP, outBuf);
 }
-static NodeT collectC(FILE* file, int* linenumber, int prefix, bool (*continueP)(int input)) {
+static NodeT collectEscaped(FILE* file, int* linenumber, int prefix, bool (*continueP)(int input)) {
 	int streamStatus;
 	int c;
 	FILE* sst;
@@ -604,16 +605,17 @@ static NodeT collectC(FILE* file, int* linenumber, int prefix, bool (*continueP)
 		UNGETC(c);
 		result = (s[0]) ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
 	}
-	fclose(sst);
+	if(fclose(sst) != 0)
+		abort();
 	return result;
 }
-static NodeT collect1C(FILE* file, int* linenumber, bool (*continueP)(int input)) {
+static NodeT collect1Escaped(FILE* file, int* linenumber, bool (*continueP)(int input)) {
 	int prefix;
 	prefix = GETC;
 	if(prefix == EOF)
 		return merror("<value>", "<EOF>");
 	else
-		return collect(file, linenumber, prefix, continueP);
+		return collectEscaped(file, linenumber, prefix, continueP);
 }
 static NodeT collectUnicodeID(FILE* file, int* linenumber, int prefix, const char* prev) {
 	int c;
@@ -630,7 +632,8 @@ static NodeT collectUnicodeID(FILE* file, int* linenumber, int prefix, const cha
 	fflush(sst);
 	UNGETC(c);
 	NodeT result = s[0] ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
-	fclose(sst);
+	if(fclose(sst) != 0)
+		abort();
 	return result;
 }
 static NodeT readUnicodeOperator3(FILE* file, int* linenumber, int c) {
@@ -680,7 +683,8 @@ static NodeT readDigits(FILE* file, int* linenumber, int c) {
 		/*printf(">%s<\n", s);*/
 		status = symbolFromStr(GCx_strdup(s));
 	}
-	fclose(sst);
+	if(fclose(sst) != 0)
+		abort();
 	return status;
 }
 static int collectNumeric3(FILE* file, int* linenumber, int base, bool (*continueP)(int input)) {
@@ -701,13 +705,59 @@ static NodeT collectNumeric2(FILE* file, int* linenumber, int base, bool (*conti
 	fflush(sst);
 	UNGETC(c);
 	NodeT result = s[0] ? symbolFromStr(GCx_strdup(s)) : merror("<value>", "<nothing>");
-	fclose(sst);
+	if(fclose(sst) != 0)
+		abort();
 	return(result);
 }
 static NodeT readShebang(FILE* file, int* linenumber, int c) {
 	return collect(file, linenumber, c, shebangBodyCharP);
 }
-static NodeT readHashExports(FILE* file, int* linenumber, int c) {
+/* C compat... */
+static NodeT readEscapedString(FILE* file, int* linenumber, int c) {
+	if(c == '"') { /* FIXME error handling */
+		NodeT n = collect1Escaped(file, linenumber, stringBodyCharP);
+		int c2 = GETC;
+		if(c2 != '"') {
+			char buf[2] = {0,0};
+			buf[0] = c2;
+			return merror("<doublequote>", buf);
+		} else if(errorP(n))
+			return n;
+		else {
+			char const* nn = symbolName(n);
+			assert(nn);
+			return strC(nn); // TODO maybe we should special-case those just as we did numbers (instead of creating the strings here)?
+		}
+	} else
+		return merror("<string>", "<junk>");
+}
+static NodeT collect1(FILE* file, int* linenumber, bool (*continueP)(int input)) {
+	int prefix;
+	prefix = GETC;
+	if(prefix == EOF)
+		return merror("<value>", "<EOF>");
+	else
+		return collect(file, linenumber, prefix, continueP);
+}
+static NodeT readString(FILE* file, int* linenumber, int c) {
+	if(c == '"') { /* FIXME error handling */
+		NodeT n = collect1(file, linenumber, stringBodyCharP);
+		int c2 = GETC;
+		if(c2 != '"') {
+			char buf[2] = {0,0};
+			buf[0] = c2;
+			return merror("<doublequote>", buf);
+		} else if(errorP(n)) {
+			return n;
+		} else {
+			char const* nn = symbolName(n);
+			assert(nn);
+			return strC(nn); // TODO maybe we should special-case those just as we did numbers (instead of creating the strings here)?
+		}
+	} else
+		return merror("<string>", "<junk>");
+}
+static NodeT readHashE(FILE* file, int* linenumber, int c) {
 	assert(c == 'e');
 	char c0 = GETC;
 	if(c0 == 'x') {
@@ -726,6 +776,27 @@ static NodeT readHashExports(FILE* file, int* linenumber, int c) {
 								UNGETC(c0);
 								return Shashexports;
 							}
+						}
+					}
+				}
+			}
+		}
+	} else if(c0 == '"')
+		return readEscapedString(file, linenumber, c0);
+	else if(c0 == 's') {
+		char c0 = GETC;
+		if(c0 == 'c') {
+			char c0 = GETC;
+			if(c0 == 'a') {
+				char c0 = GETC;
+				if(c0 == 'p') {
+					char c0 = GETC;
+					if(c0 == 'e') {
+						char c0 = GETC;
+						if(c0 == 'd') {
+							char c0 = GETC;
+							if(c0 == '"')
+								return readEscapedString(file, linenumber, c0);
 						}
 					}
 				}
@@ -752,7 +823,7 @@ static NodeT readSpecialCoding(FILE* file, int* linenumber, int c2) {
 	case '!':
 		return readShebang(file, linenumber, c);
 	case 'e':
-		return readHashExports(file, linenumber, c);
+		return readHashE(file, linenumber, c);
 	case 't':
 		return Shasht;
 	case 'f':
@@ -768,24 +839,6 @@ static NodeT readSpecialCoding(FILE* file, int* linenumber, int c2) {
 		} else
 				return merror("<special-coding>", "<junk>");
 	}
-}
-static NodeT readString(FILE* file, int* linenumber, int c) {
-	if(c == '"') { /* FIXME error handling */
-		NodeT n = collect1C(file, linenumber, stringBodyCharP);
-		int c2 = GETC;
-		if(c2 != '"') {
-			char buf[2] = {0,0};
-			buf[0] = c2;
-			return merror("<doublequote>", buf);
-		} else if(errorP(n)) {
-			return n;
-		} else {
-			char const* nn = symbolName(n);
-			assert(nn);
-			return strC(nn); // TODO maybe we should special-case those just as we did numbers (instead of creating the strings here)?
-		}
-	} else
-		return merror("<string>", "<junk>");
 }
 static NodeT Lang_readToken(struct Lang* self, FILE* file, int* linenumber) {
 	int c;
