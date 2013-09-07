@@ -135,7 +135,6 @@ static bool operatorCharP(int input) {
 	case '\\':
 	case '^':
 	case '_':
-	case '`':
 	case '|':
 	case '~':
 		return true;
@@ -200,6 +199,9 @@ static bool binaryBodyCharP(int input) {
 }
 static bool stringBodyCharP(int input) {
 	return (input && input != '"');
+}
+static bool escapedSymbolBodyCharP(int input) {
+	return (input && input != '`');
 }
 static bool raryBodyCharP(int input) {
 	return (input >= '0' && input <= '9') || (input >= 'a' && input <= 'z') || (input >= 'A' && input <= 'Z');
@@ -653,7 +655,7 @@ static NodeT collect1(FILE* file, int* linenumber, bool (*continueP)(int input))
 		return collect(file, linenumber, prefix, continueP);
 }
 static NodeT readString(FILE* file, int* linenumber, int c) {
-	if(c == '"') { /* FIXME error handling */
+	if(c == '"') {
 		NodeT n = collect1(file, linenumber, stringBodyCharP);
 		int c2 = GETC;
 		if(c2 != '"') {
@@ -669,6 +671,22 @@ static NodeT readString(FILE* file, int* linenumber, int c) {
 		}
 	} else
 		return merror("<string>", "<junk>");
+}
+static NodeT readEscapedID(FILE* file, int* linenumber, int c) {
+	if(c == '`') {
+		NodeT n = collect1(file, linenumber, escapedSymbolBodyCharP);
+		int c2 = GETC;
+		if(c2 != '`') {
+			char buf[2] = {0,0};
+			buf[0] = c2;
+			return merror("<backtick>", buf);
+		} else if(errorP(n)) {
+			return n;
+		} else {
+			return n;
+		}
+	} else
+		return merror("<symbol>", "<junk>");
 }
 static NodeT readHashE(FILE* file, int* linenumber, int c) {
 	assert(c == 'e');
@@ -778,6 +796,8 @@ static NodeT Lang_readToken(struct Lang* self, FILE* file, int* linenumber) {
 		return readString(file, linenumber, c);
 	else if(c == '\'')
 		return Squote;
+	else if(c == '`')
+		return readEscapedID(file, linenumber, c);
 	else {
 		char buf[2] = {0,0};
 		buf[0] = c;
