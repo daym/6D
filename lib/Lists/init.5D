@@ -62,7 +62,7 @@ let length := rec \length \list
 	else
 		(1 + length (tail list))
 in 
-let mergeSortBy := \lessEqualComparator 
+let mergesortBy := \lessEqualComparator 
 	let merge := mergeBy lessEqualComparator in 
 	rec \sort \list 
 		if (nil? list || nil? (tail list)) 
@@ -73,7 +73,9 @@ let mergeSortBy := \lessEqualComparator
 			let rightHalf := drop halfCount list in 
 			merge (sort leftHalf) (sort rightHalf)
 in 
-let mergeSort := mergeSortBy (<=) in 
+let mergesort := mergesortBy (<=) in 
+let sort := mergesort in 
+let sortBy := mergesortBy in 
 let extremum := \fn \values foldr fn (head values) values in 
 let filter := \f rec \filter \list 
 	if (nil? list) 
@@ -151,4 +153,4 @@ let anyTrue? := \list foldr (||) #f list in
 let allTrue? := \list foldr (&&) #t list in 
 let ∃ := \xs \predicate anyTrue? (map predicate xs) in 
 let ∀ := \xs \predicate allTrue? (map predicate xs) in 
-(#exports[nil nil? cons? list? (:) (++) map merge mergeBy mergeSort mergeSortBy extremum drop foldl foldr filter length head tail reverse enumerate range range1 take takeWhile zip transpose zipBy sum product anyTrue? allTrue? frange frangeLL uniq uniqBy ∀ ∃])
+(#exports[nil nil? cons? list? (:) (++) map merge mergeBy sort sortBy extremum drop foldl foldr filter length head tail reverse enumerate range range1 take takeWhile zip transpose zipBy sum product anyTrue? allTrue? frange frangeLL uniq uniqBy ∀ ∃])
