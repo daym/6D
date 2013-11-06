@@ -103,9 +103,9 @@ static INLINE NodeT getDynEnvEntry(NodeT sym) {
 	const char* name = symbolName(sym);
 	NodeT result = nil;
 	if(name) {
-		if(isdigit(name[0])) { /* since there is an infinite number of numbers, make sure not to precreate all of them :-) */
+		if(digitInBase(10, name[0])) { /* since there is an infinite number of numbers, make sure not to precreate all of them :-) */
 			result = getNumber(10, name);
-		} else if(name[0] == '#' && isdigit(name[1])) {
+		} else if(name[0] == '#' && digitInBase(10, name[1])) {
 			char* p;
 			errno = 0;
 			NativeInt base = strtol(&name[1], &p, 10);
