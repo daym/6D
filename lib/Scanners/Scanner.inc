@@ -30,7 +30,7 @@ BEGIN_STRUCT_6D(Scanner)
 	bool bEOF;
 END_STRUCT_6D(Scanner)
 	static INLINE int integerCompareD(NODET a, NATIVEINT bvalue) {
-		NATIVEINT avalue;
+		NATIVEINT avalue = 0;
 		if(!toNativeInt(a, &avalue))
 			abort();
 		return (avalue < bvalue) ? (-1) :

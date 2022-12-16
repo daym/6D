@@ -405,7 +405,7 @@ static NodeT Formatter_printInteger2(struct Formatter* self, NodeT value) {
 	return status;
 }
 static NodeT Formatter_printInt(struct Formatter* self, NodeT node) {
-	NativeInt value;
+	NativeInt value = 0;
 	NodeT status = nil;
 	if(!toNativeInt(node, &value))
 		return evaluationError(strC("<int>"), strC("<junk>"), node);
@@ -421,7 +421,7 @@ static NodeT Formatter_printInt(struct Formatter* self, NodeT node) {
 	return status;
 }
 static NodeT Formatter_printFloat(struct Formatter* self, NodeT node) {
-	NativeFloat value;
+	NativeFloat value = 0;
 	NodeT status = nil;
 	char buffer[201];
 	char c;

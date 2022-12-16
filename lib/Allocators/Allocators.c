@@ -22,7 +22,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 #include "Allocators/Allocators"
 BEGIN_NAMESPACE_6D(Allocators)
 void initAllocators(void) {
-	g_thread_init(NULL);
+//	g_thread_init(NULL);
 #ifdef _G_NEW
 	/* Solaris doesn't have that for some reason */
 	g_mem_gc_friendly = TRUE;
