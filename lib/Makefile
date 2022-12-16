@@ -3,6 +3,7 @@
 #LIBGC_LD_WRAP_LDFLAGS = -Wl,--wrap -Wl,read -Wl,--wrap -Wl,dlopen -Wl,--wrap -Wl,pthread_create -Wl,--wrap -Wl,pthread_join -Wl,--wrap -Wl,pthread_detach -Wl,--wrap -Wl,pthread_sigmask -Wl,--wrap -Wl,sleep
 
 OBJDUMP ?= objdump
+CC = gcc
 PACKAGE = 6d
 VERSION = 0.0.1
 DISTFILES = \

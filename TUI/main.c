@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <editline/readline.h>
+#include <editline.h>
 #include "6D/Allocators"
 #include "6D/Values"
 #include "6D/Evaluators"
